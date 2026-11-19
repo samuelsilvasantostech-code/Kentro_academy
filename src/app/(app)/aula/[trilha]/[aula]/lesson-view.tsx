@@ -6,8 +6,6 @@ import type { TrackLesson } from "@/lib/catalog";
 import { duration, mmss } from "@/lib/format";
 import { Ico } from "@/components/ico";
 import { VideoCover } from "./video-cover";
-import { FlowStrip } from "@/components/flow/FlowStrip";
-import type { Flow } from "@/components/flow/model";
 import { askQuestion, completeLesson, deleteNote, markAnswersSeen, saveNote, undoLesson } from "../../../actions";
 
 type Props = {
@@ -23,9 +21,6 @@ type Props = {
   notes: { id: string; body: string; created_at: string }[];
   questions: { id: string; body: string; answer: string | null; created_at: string; answered_at: string | null; answer_seen_at: string | null }[];
   initialTab?: "duvidas";
-  /** Fluxo da trilha montado no servidor (objeto simples) e rótulos da faixa. */
-  flow?: Flow;
-  flowLabel?: string;
 };
 
 const TABS = { resumo: "Resumo", capitulos: "Capítulos", materiais: "Materiais", anotacoes: "Anotações", duvidas: "Dúvidas" } as const;
@@ -84,8 +79,6 @@ export function LessonView(p: Props) {
         </div>
       )}
 
-      <div className="lesson-flow">{p.flow && <FlowStrip flow={p.flow} label={p.flowLabel ?? "Posição da aula na trilha"} />}</div>
-
       <header className="lesson-head">
         <div>
           <h1 className="lesson-title">{l.title}</h1>
@@ -95,7 +88,7 @@ export function LessonView(p: Props) {
           </div>
         </div>
         <div className="lesson-bar">
-          {p.prevId && <Link className="btn btn-s" href={`/aula/${track.id}/${p.prevId}`}><Ico name="arrowL" />Aula anterior</Link>}
+          {p.prevId && <Link className="btn btn-s lesson-prev" href={`/aula/${track.id}/${p.prevId}`} aria-label="Aula anterior"><Ico name="arrowL" /><span aria-hidden="true">Aula anterior</span></Link>}
           {p.done ? (
             <>
               <button className="btn btn-s" disabled={pending} onClick={() => { setPopFor(null); run(() => undoLesson(l.id)); }} title="Desmarcar como concluída">{pop ? <span className="ck-pop" aria-hidden="true"><Ico name="check" strokeWidth={3} /></span> : <Ico name="check" strokeWidth={3} />}Concluída</button>

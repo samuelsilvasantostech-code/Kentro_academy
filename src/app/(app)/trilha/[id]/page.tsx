@@ -41,6 +41,16 @@ export default async function Trilha({ params, searchParams }: { params: Promise
   const st = statuses.get(t.id);
   const earned = !!st?.certified;
   const nextT = earned ? nextTrack(tracks, t.id, (x) => !!statuses.get(x)?.certified) : null;
+  // O que falta, em palavras: "faltam 3 aulas + 2 quizzes".
+  const lessonsLeft = p.total - p.done;
+  const quizzesLeft = quizzes.filter((m) => !quizPassed.has(m.id)).length;
+  const left = [
+    lessonsLeft > 0 && `${lessonsLeft} ${lessonsLeft === 1 ? "aula" : "aulas"}`,
+    quizzesLeft > 0 && `${quizzesLeft} ${quizzesLeft === 1 ? "quiz" : "quizzes"}`,
+  ].filter(Boolean).join(" + ");
+  const leftText = left ? `${lessonsLeft + quizzesLeft === 1 ? "Falta" : "Faltam"} ${left}${p.secondsLeft > 0 ? ` (cerca de ${minutes(p.secondsLeft)})` : ""}.` : earned ? "Trilha concluída." : "Tudo feito. O certificado já pode ser emitido.";
+  // Só o módulo onde o aluno está fica aberto (o da próxima aula; se a trilha acabou, nenhum).
+  const openModule = nx && lessonsLeft > 0 ? nx.moduleIndex : -1;
 
   return (
     <>
@@ -81,7 +91,10 @@ export default async function Trilha({ params, searchParams }: { params: Promise
             <b>Ao final você vai conseguir</b>
             <ul className="outc">{t.outcomes.map((o) => <li key={o}>{o}</li>)}</ul>
           </>}
-          <div><div className="bar"><i style={{ width: `${p.pct}%` }} /></div><p className="dim" style={{ fontSize: 13, marginTop: 6 }}>{p.pct}% concluído, faltam {minutes(p.secondsLeft)}</p></div>
+          <div className="thero-prog">
+            <div className="kprog"><span className="pbar" role="progressbar" aria-label="Progresso na trilha" aria-valuemin={0} aria-valuemax={100} aria-valuenow={p.pct}><i style={{ width: `${p.pct}%` }} /></span><b>{p.pct}%</b></div>
+            <p>{leftText}</p>
+          </div>
         </div>
       </section>
 
@@ -102,7 +115,7 @@ export default async function Trilha({ params, searchParams }: { params: Promise
             const secs = m.lessons.reduce((a, l) => a + l.duration_seconds, 0);
             const nq = quizCount.get(m.id) ?? 0;
             return (
-              <details key={m.id} className={`mod ${all ? "done" : ""}`} open={mi < 2 || d > 0}>
+              <details key={m.id} className={`mod ${all ? "done" : ""}`} open={mi === openModule || (openModule < 0 && mi === 0 && !all)}>
                 <summary className="mod-h">
                   <span className="mod-n">{all ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M5 12.5l4.5 4.5L19 7.5" /></svg> : mi + 1}</span>
                   <div style={{ flex: 1 }}>
@@ -113,14 +126,14 @@ export default async function Trilha({ params, searchParams }: { params: Promise
                 </summary>
                 <div className="mod-b">
                   {m.lessons.map((l) => (
-                    <Link key={l.id} className="li" href={`/aula/${t.id}/${l.id}`}>
+                    <Link key={l.id} className={`li${nx?.id === l.id && !done.has(l.id) ? " nxt" : ""}`} href={`/aula/${t.id}/${l.id}`}>
                       <span className={`chk ${done.has(l.id) ? "on" : ""}`}>{done.has(l.id) ? <Tick /> : null}</span>
-                      <span className="t">{l.title}</span><span className="dur">{l.youtube_id && l.duration_seconds > 0 ? duration(l.duration_seconds) : !l.youtube_id ? "Leitura" : ""}</span>
+                      <span className="t">{l.title}{done.has(l.id) && <span className="sr-only"> (concluída)</span>}{nx?.id === l.id && !done.has(l.id) && <span className="li-next">Próxima</span>}</span><span className="dur">{l.youtube_id && l.duration_seconds > 0 ? duration(l.duration_seconds) : !l.youtube_id ? "Leitura" : ""}</span>
                     </Link>
                   ))}
                   {nq > 0 && (
                     <Link className="li quiz" href={`/quiz/${t.id}/${mi}`}>
-                      <span className={`chk ${quizPassed.has(m.id) ? "on" : ""}`} style={quizPassed.has(m.id) ? undefined : { borderColor: "var(--amarelo)" }}>{quizPassed.has(m.id) ? <Tick /> : "?"}</span>
+                      <span className={`chk chk-q ${quizPassed.has(m.id) ? "on" : ""}`}>{quizPassed.has(m.id) ? <Tick /> : <Ico name="help" size={13} strokeWidth={2.4} />}</span>
                       <span className="t">Quiz do módulo<span className="dim" style={{ fontWeight: 400, marginLeft: 10 }}>{nq} pergunta{nq > 1 ? "s" : ""}</span></span><span className="dur">~{Math.max(1, Math.round(nq * 0.7))} min</span>
                     </Link>
                   )}
@@ -128,13 +141,13 @@ export default async function Trilha({ params, searchParams }: { params: Promise
               </details>
             );
           })}
-          <div className="cert">
-            <span className="cert-ico" aria-hidden><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="9" r="5" /><path d="m9 13-1.5 7L12 18l4.5 2L15 13" /></svg></span>
+          <div className={`cert${earned ? " is-on" : ""}`}>
+            <span className="cert-ico" aria-hidden><Ico name={earned ? "award" : "lock"} size={26} /></span>
             <div style={{ flex: 1 }}>
               <b>Certificado: {t.name}</b>
               <div className="dim" style={{ fontSize: 13 }}>{earned ? `Conquistado${st?.hasNew ? ". Novo conteúdo nesta trilha" : ""}.` : `Liberado ao concluir todas as aulas${quizzes.length ? " e quizzes" : ""}.`}</div>
             </div>
-            {earned ? <Link className="btn btn-p btn-sm" href={`/certificado/${t.id}`}>Ver certificado</Link> : <span className="pill a">{p.pct}%</span>}
+            {earned ? <Link className="btn btn-p btn-sm" href={`/certificado/${t.id}`}>Ver certificado</Link> : <span className="cert-pct">{p.pct}%</span>}
           </div>
         </div>}
       </section>

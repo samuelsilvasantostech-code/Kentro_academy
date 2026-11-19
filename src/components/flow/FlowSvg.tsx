@@ -47,7 +47,7 @@ function Shape({ n, color, r, state }: { n: FlowNode; color: string; r: number; 
     return (
       <path
         d={`M0 ${-s}L${s} 0L0 ${s}L${-s} 0Z`}
-        style={{ fill: done ? decisao : next ? palco : "none", stroke: decisao, strokeWidth: sw, strokeOpacity: done || next ? 1 : 0.55, strokeLinejoin: "round" }}
+        style={{ fill: done ? sinal : next ? palco : "none", stroke: done ? sinal : decisao, strokeWidth: sw, strokeOpacity: done || next ? 1 : 0.55, strokeLinejoin: "round" }}
       />
     );
   }

@@ -488,3 +488,48 @@ main:focus{outline:0}
 /* cards e listas: borda sobe no hover, brilho só no foco/hover */
 .kcont,.side,.faq details,.stat,.badge,.side-box,.tcard,.mod{border-color:var(--linha)}
 .kcont:hover,.tcard:hover{border-color:var(--linha-2)}
+
+/* ===================== Órbita — fase 3: trilha e aula ===================== */
+/* trilha: progresso com o que falta, lista de aulas, marco do certificado */
+.thero-prog{display:grid;gap:8px}
+.thero-prog p{font-size:14px;color:var(--tinta-2);line-height:1.5}
+.thero-flow .kf-stage{border:1px solid var(--linha)}
+.mod-b .li{min-height:56px}
+.chk{width:20px;height:20px}
+.li .dur{font-variant-numeric:tabular-nums}
+.li.nxt{background:var(--violeta-suave);box-shadow:inset 3px 0 0 var(--violeta)}
+.li.nxt .chk{border-color:var(--violeta-tx);box-shadow:0 0 0 3px rgba(128,0,255,.28)}
+.li-next{display:inline-block;margin-left:10px;font-size:12px;font-weight:700;color:var(--sinal-tx);background:rgba(185,138,255,.14);border-radius:999px;padding:2px 9px;vertical-align:1px}
+.li.quiz{color:var(--tinta);font-weight:600}
+.cert{border:1px solid color-mix(in srgb,var(--violeta-tx) 45%,var(--linha));border-style:solid}
+.cert:not(.is-on){background:var(--superficie);border-color:var(--linha-2)}
+.cert:not(.is-on) .cert-ico{background:var(--rebaixo);color:var(--tinta-3)}
+.cert-pct{font-size:13px;font-weight:700;color:var(--sinal-tx);background:var(--violeta-suave);border-radius:999px;padding:4px 11px;font-variant-numeric:tabular-nums}
+
+/* aula: player com moldura de 24px; lateral com módulos que abrem e fecham */
+.video{border-radius:24px;box-shadow:0 34px 60px -34px rgba(128,0,255,.55),0 0 0 1px var(--linha)}
+.lesson-head{margin-top:22px}
+.side-k{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--tinta-3)}
+.side-sec+.side-sec{border-top:1px solid var(--linha)}
+.side-sec>summary{list-style:none;display:flex;align-items:center;gap:10px;min-height:44px;padding:10px 20px;cursor:pointer}
+.side-sec>summary::-webkit-details-marker{display:none}
+.side-sec>summary:hover{color:var(--tinta)}
+.side-mod>span:first-child{flex:1;min-width:0}
+.side-mod-n{font-size:12px;font-weight:600;font-variant-numeric:tabular-nums}
+.side-chev{flex:none;transition:transform .2s var(--ease-in)}
+.side-sec[open] .side-chev{transform:rotate(180deg)}
+.side-sec .li:last-child{margin-bottom:6px}
+
+/* celular: Anterior e Concluir ficam fixos logo acima da barra de navegação */
+@media (max-width:640px){
+  .lesson{padding-bottom:84px}
+  .lesson-bar{position:fixed;z-index:29;left:10px;right:10px;bottom:calc(108px + env(safe-area-inset-bottom));flex-wrap:nowrap;gap:8px;padding:8px;border:1px solid var(--linha);border-radius:18px;background:rgba(20,18,28,.94);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:0 12px 30px rgba(0,0,0,.5)}
+  .lesson-bar .btn{min-height:48px}
+  .lesson-bar .lesson-prev{flex:0 0 48px;padding:0}
+  .lesson-prev>span{display:none}
+  .side{margin-top:4px}
+  .tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:0 16px}
+  .tabs::-webkit-scrollbar{display:none}
+  .tabs [role=tab]{flex:none;white-space:nowrap}
+}
+@media print{.lesson-bar{position:static}}

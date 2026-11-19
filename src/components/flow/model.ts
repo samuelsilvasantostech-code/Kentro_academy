@@ -150,5 +150,5 @@ export function edgeControls(a: Point, b: Point, orientation: Orientation): [Poi
 
 export const PALCO = "#0A0910";
 export const SINAL = "#B98AFF";
-export const DECISAO = "#FFC857";
-export const VIOLETA = "#6D28F5";
+export const DECISAO = "#F5A524";
+export const VIOLETA = "#8000FF";

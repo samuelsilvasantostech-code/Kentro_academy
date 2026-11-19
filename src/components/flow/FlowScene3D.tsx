@@ -3,7 +3,7 @@
 import { useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Html } from "@react-three/drei";
+import { Edges, Html } from "@react-three/drei";
 import * as THREE from "three";
 import { DECISAO, PALCO, SINAL, VIOLETA, edgeControls, layoutFlow, stateLabel, type Flow, type FlowNode } from "./model";
 import { FitCamera, usePageVisible } from "./scene-utils";
@@ -18,8 +18,8 @@ function Node({ still, n, p, color, hovered, onHover, onOpen }: { still: boolean
   const body = useRef<THREE.Group>(null);
   const done = n.state === "feito";
   const next = n.state === "proximo";
-  // Concluído é --sinal (roxo claro) em toda trilha; pendente é cinza neutro.
-    const pending = useMemo(() => "#" + new THREE.Color("#3d3a52").lerp(new THREE.Color(color), 0.06).getHexString(), [color]);
+  // Órbita: concluído aceso em lavanda (--sinal), próximo branco com pulso, pendente escuro com contorno visível.
+  const pending = "#2A2638";
 
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
@@ -58,15 +58,18 @@ function Node({ still, n, p, color, hovered, onHover, onOpen }: { still: boolean
               <meshStandardMaterial color={done ? SINAL : pending} transparent opacity={done ? 1 : 0.55} emissive={done ? SINAL : pending} emissiveIntensity={done ? 0.45 : 0.12} roughness={0.5} />
             </mesh>
           ) : (
-            <mesh>
-              <sphereGeometry args={[R, 32, 24]} />
+            // nó de cristal (octaedro alongado, facetado)
+            <mesh scale={[0.9, 1.25, 0.9]} rotation={[0, Math.PI / 4, 0]}>
+              <octahedronGeometry args={[R * 1.05, 0]} />
               <meshStandardMaterial
                 color={done ? SINAL : next ? "#ffffff" : pending}
                 emissive={done ? SINAL : next ? SINAL : pending}
-                emissiveIntensity={done ? 0.55 : next ? 0.5 : 0.06}
-                roughness={done || next ? 0.35 : 0.7}
-                metalness={0.1}
+                emissiveIntensity={done ? 0.55 : next ? 0.5 : 0.1}
+                roughness={done || next ? 0.3 : 0.6}
+                metalness={0.15}
+                flatShading
               />
+              <Edges color={done || next ? "#F5F3FF" : "#6E6888"} />
             </mesh>
           ))}
         {done && n.kind === "aula" && !n.reading && (
@@ -78,7 +81,9 @@ function Node({ still, n, p, color, hovered, onHover, onOpen }: { still: boolean
         {n.kind === "quiz" && (
           <mesh scale={[1, 1.25, 0.6]}>
             <octahedronGeometry args={[R * 1.15, 0]} />
-            <meshStandardMaterial color={done ? DECISAO : "#6a5a8a"} emissive={DECISAO} emissiveIntensity={done ? 0.5 : next ? 0.45 : 0.12} roughness={0.35} />
+            {/* quiz feito vira progresso (lavanda); pendente fica âmbar (pede ação) */}
+            <meshStandardMaterial color={done ? SINAL : "#4A3A1A"} emissive={done ? SINAL : DECISAO} emissiveIntensity={done ? 0.5 : next ? 0.45 : 0.18} roughness={0.35} flatShading />
+            <Edges color={done ? "#F5F3FF" : DECISAO} />
           </mesh>
         )}
         {n.kind === "certificado" && (
@@ -108,8 +113,9 @@ function Node({ still, n, p, color, hovered, onHover, onOpen }: { still: boolean
         <Html position={[0, R * 2.4, 0]} center zIndexRange={[20, 0]} style={{ pointerEvents: "none" }}>
           <div
             style={{
-              background: "#fff",
-              color: "#1A1C3A",
+              background: "#1B1826",
+              color: "#F5F3FF",
+              border: "1px solid #3A3550",
               padding: "6px 10px",
               borderRadius: 10,
               fontSize: 13,
@@ -121,7 +127,7 @@ function Node({ still, n, p, color, hovered, onHover, onOpen }: { still: boolean
               boxShadow: "0 2px 12px rgba(0,0,0,.35)",
             }}
           >
-            {n.title} <span style={{ color: "#565A7E" }}>({stateLabel(n)})</span>
+            {n.title} <span style={{ color: "#C3BED6" }}>({stateLabel(n)})</span>
           </div>
         </Html>
       )}
