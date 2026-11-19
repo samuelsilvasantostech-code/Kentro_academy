@@ -5,15 +5,18 @@ import { Ico } from "@/components/ico";
 import { duration, mmss } from "@/lib/format";
 import { readPosition, subscribePosition, writePosition } from "@/lib/video-position";
 import { topicIcon } from "@/lib/topic";
+import { saveVideoPosition } from "../../../actions";
 
 /**
  * Capa da aula: assunto, módulo e duração, com ícone do tema e botão de play.
  * O player do YouTube só é carregado depois do clique (página mais leve).
  * Retomada: o player avisa o tempo atual por postMessage (enablejsapi); guardamos neste navegador
- * e, na próxima visita, a capa oferece continuar de onde parou.
+ * e, na próxima visita, a capa oferece continuar de onde parou. Com a migração 0007 a posição também vai
+ * para a conta (a cada 15 s de vídeo), e a capa prefere a da conta: assim vale em qualquer aparelho.
  */
 const YT_ORIGIN = "https://www.youtube-nocookie.com";
-export function VideoCover({ youtubeId, title, moduleTitle, trackName, position, seconds, start, playing, onPlay }: {
+export function VideoCover({ lessonId, youtubeId, title, moduleTitle, trackName, position, seconds, start, serverAt, playing, onPlay }: {
+  lessonId: string;
   youtubeId: string;
   title: string;
   moduleTitle: string;
@@ -21,10 +24,13 @@ export function VideoCover({ youtubeId, title, moduleTitle, trackName, position,
   position: { index: number; total: number };
   seconds: number;
   start: number;
+  /** Posição salva na conta (null = nenhuma, ou migração 0007 pendente). */
+  serverAt: number | null;
   playing: boolean;
   onPlay: () => void;
 }) {
-  const saved = useSyncExternalStore(subscribePosition, () => readPosition(youtubeId), () => 0);
+  const local = useSyncExternalStore(subscribePosition, () => readPosition(youtubeId), () => 0);
+  const saved = serverAt ?? local;
   // Posição escolhida no clique; fica fixa enquanto o vídeo toca (o iframe não recarrega a cada gravação).
   const [from, setFrom] = useState(0);
   const frame = useRef<HTMLIFrameElement>(null);
@@ -32,6 +38,7 @@ export function VideoCover({ youtubeId, title, moduleTitle, trackName, position,
   useEffect(() => {
     if (!playing) return;
     let last = 0;
+    let sent = -1;
     let heard = false;
     // O player pode ainda não estar pronto no onLoad: repete o pedido até ele responder (no máximo 10 s).
     let tries = 0;
@@ -49,14 +56,20 @@ export function VideoCover({ youtubeId, title, moduleTitle, trackName, position,
         // Grava no máximo a cada 5 s de vídeo (e sempre ao voltar para trás).
         if (Math.abs(t - last) < 5) return;
         last = t;
-        writePosition(youtubeId, t, d.info?.duration || seconds);
+        const total = d.info?.duration || seconds;
+        writePosition(youtubeId, t, total);
+        // Na conta: a cada 15 s de vídeo. O 0 inicial (antes do salto para o ponto salvo) não apaga nada.
+        if (sent < 0 ? t >= 10 : Math.abs(t - sent) >= 15) {
+          sent = t;
+          saveVideoPosition(lessonId, t, total).catch(() => {});
+        }
       } catch {
         /* mensagem que não é do player */
       }
     };
     window.addEventListener("message", onMsg);
     return () => { clearInterval(ping); window.removeEventListener("message", onMsg); };
-  }, [playing, youtubeId, seconds]);
+  }, [playing, youtubeId, seconds, lessonId]);
 
   if (playing) {
     const at = start || from;

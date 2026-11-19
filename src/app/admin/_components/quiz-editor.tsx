@@ -8,14 +8,15 @@ import { FormMessage } from "./form-message";
 import { SubmitButton } from "./submit-button";
 import { Ico } from "@/components/ico";
 
-type Q = { key: number; question: string; options: string; correct: string; explanation: string };
+type Q = { key: number; question: string; options: string; correct: string; explanation: string; lesson: string };
 const MAX = 50;
 
-export function QuizEditor({ moduleId, initial }: { moduleId: string; initial: AdminQuizQuestion[] }) {
+/** lessons: aulas do módulo para "Reveja a aula"; null enquanto a migração 0007 não for aplicada (campo some). */
+export function QuizEditor({ moduleId, initial, lessons = null }: { moduleId: string; initial: AdminQuizQuestion[]; lessons?: { id: string; title: string }[] | null }) {
   const [state, action] = useActionState(saveQuiz, undefined);
   const nextKey = useRef(initial.length);
   const [qs, setQs] = useState<Q[]>(() =>
-    initial.map((q, i) => ({ key: i, question: q.question, options: q.options.join("\n"), correct: String(q.correct), explanation: q.explanation ?? "" })),
+    initial.map((q, i) => ({ key: i, question: q.question, options: q.options.join("\n"), correct: String(q.correct), explanation: q.explanation ?? "", lesson: q.lesson_id ?? "" })),
   );
   const [clear, setClear] = useState(false);
   const err = state?.fieldErrors ?? {};
@@ -51,6 +52,15 @@ export function QuizEditor({ moduleId, initial }: { moduleId: string; initial: A
               name={`q${i}_explanation`} label="Explicação" note="(o aluno vê quando passa no quiz, com 70% ou mais)" multiline rows={2}
               value={q.explanation} onChange={(e) => patch(q.key, { explanation: e.target.value })} error={err[`q${i}_explanation`]}
             />
+            {lessons && lessons.length > 0 && (
+              <SelectField
+                name={`q${i}_lesson`} label="Aula para rever" note="(opcional: aparece para o aluno que errar esta pergunta)" value={q.lesson}
+                onChange={(e) => patch(q.key, { lesson: e.target.value })} error={err[`q${i}_lesson`]}
+              >
+                <option value="">Nenhuma em especial</option>
+                {lessons.map((l, j) => <option key={l.id} value={l.id}>{`${j + 1}. ${l.title}`}</option>)}
+              </SelectField>
+            )}
             <div>
               <button type="button" className="btn btn-s btn-sm adm-danger" onClick={() => setQs((l) => l.filter((x) => x.key !== q.key))}>
                 Remover pergunta {i + 1}
@@ -63,7 +73,7 @@ export function QuizEditor({ moduleId, initial }: { moduleId: string; initial: A
       <div className="adm-btns">
         <button
           type="button" className="btn btn-s" disabled={qs.length >= MAX}
-          onClick={() => setQs((l) => [...l, { key: nextKey.current++, question: "", options: "", correct: "", explanation: "" }])}
+          onClick={() => setQs((l) => [...l, { key: nextKey.current++, question: "", options: "", correct: "", explanation: "", lesson: "" }])}
         >
           <Ico name="plus" size={16} />Adicionar pergunta
         </button>

@@ -84,6 +84,8 @@ export const getAdminLessons = cache(async (): Promise<AdminLessonListItem[]> =>
 export type AdminLessonDetail = {
   id: string; youtube_id: string | null; title: string; summary: string | null; duration_seconds: number;
   steps: string[]; published: boolean; chapters: Chapter[]; materials: Material[]; links: AdminLessonLink[];
+  /** Pontos-chave (migração 0007; lista vazia enquanto ela não existir). */
+  key_points: string[];
 };
 
 /** Uma aula completa para o formulário de edição (use chaptersToText/materialsToText/formatDuration de validate.ts). */
@@ -102,15 +104,18 @@ export async function getAdminLesson(id: string): Promise<AdminLessonDetail | nu
     chapters: Chapter[]; materials: (Material & { position: number })[]; module_lessons: LessonLinkRow;
   };
   const { module_lessons, chapters, materials, ...rest } = d;
+  // Consulta à parte: antes da migração 0007 a coluna não existe e o erro é ignorado.
+  const { data: kp } = await supabase.from("lessons").select("key_points").eq("id", id).maybeSingle();
   return {
     ...rest,
+    key_points: (kp?.key_points as string[] | undefined) ?? [],
     chapters: [...chapters].sort((a, b) => a.start_seconds - b.start_seconds),
     materials: [...materials].sort((a, b) => a.position - b.position).map(({ title, url, description }) => ({ title, url, description })),
     links: toLinks(module_lessons),
   };
 }
 
-export type AdminQuizQuestion = { id: string; position: number; question: string; options: string[]; correct: number; explanation: string | null };
+export type AdminQuizQuestion = { id: string; position: number; question: string; options: string[]; correct: number; explanation: string | null; lesson_id?: string | null };
 
 /** Gabarito completo de um módulo (RPC admin_quiz_questions: a tabela não entrega correct/explanation nem ao admin). */
 export async function getAdminQuiz(moduleId: string): Promise<AdminQuizQuestion[]> {

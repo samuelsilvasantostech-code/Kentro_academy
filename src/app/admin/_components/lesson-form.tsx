@@ -15,9 +15,11 @@ type Props = {
   /** Só na criação: trilhas com módulos, para os selects dependentes. */
   tracks?: AdminTrack[];
   presetModule?: string;
+  /** Migração 0007 aplicada: mostra o campo de pontos-chave. */
+  keyPoints?: boolean;
 };
 
-export function LessonForm({ initial, tracks = [], presetModule }: Props) {
+export function LessonForm({ initial, tracks = [], presetModule, keyPoints = false }: Props) {
   const [state, action] = useActionState(saveLesson, undefined);
   const router = useRouter();
   const editing = !!initial;
@@ -82,6 +84,13 @@ export function LessonForm({ initial, tracks = [], presetModule }: Props) {
         <h2>Conteúdo</h2>
         <Field name="title" label="Título" required defaultValue={v("title", initial?.title ?? "")} error={err.title} />
         <Field name="summary" label="Resumo" note="(opcional)" multiline rows={4} defaultValue={v("summary", initial?.summary ?? "")} error={err.summary} />
+        {keyPoints && (
+          <Field
+            name="key_points" label="Pontos-chave" note="(opcional)" multiline rows={4} error={err.key_points}
+            defaultValue={v("key_points", initial?.key_points.join("\n") ?? "")} hint="O que o aluno precisa lembrar. Um por linha, até 8."
+            placeholder={"Etiquetas organizam os atendimentos por assunto\nSó o administrador cria etiquetas novas"}
+          />
+        )}
         <Field
           name="steps" label="Faça agora no seu Kentro" multiline rows={4} error={err.steps}
           defaultValue={v("steps", initial?.steps.join("\n") ?? "")} hint="Um passo por linha."

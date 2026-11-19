@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getAdminLesson, getAdminTracks } from "@/lib/admin/queries";
+import { hasLearningFeatures } from "@/lib/features";
 import { deleteLesson, setLessonPublished, unlinkLesson } from "../../_actions/lessons";
 import { ActionButton } from "../../_components/action-button";
 import { ConfirmDelete } from "../../_components/confirm-delete";
@@ -17,7 +18,7 @@ export default async function EditarAula({
   const { nova } = await searchParams;
   const lesson = await getAdminLesson(id);
   if (!lesson) notFound();
-  const tracks = await getAdminTracks();
+  const [tracks, kp] = await Promise.all([getAdminTracks(), hasLearningFeatures()]);
 
   return (
     <>
@@ -41,7 +42,7 @@ export default async function EditarAula({
         </div>
       </section>
 
-      <LessonForm key={lesson.id} initial={lesson} />
+      <LessonForm key={lesson.id} initial={lesson} keyPoints={kp} />
 
       <section className="adm-card" aria-labelledby="a-mods">
         <h2 id="a-mods">Em quais módulos ela aparece</h2>

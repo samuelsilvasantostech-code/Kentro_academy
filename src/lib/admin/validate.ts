@@ -196,7 +196,7 @@ export const materialsToText = (m: Material[]) =>
 
 // ---------- Quiz ----------
 
-export type QuizQuestion = { question: string; options: string[]; correct: number; explanation: string | null };
+export type QuizQuestion = { question: string; options: string[]; correct: number; explanation: string | null; lesson_id?: string | null };
 
 /** Opções: uma por linha, de 2 a 6. */
 export function parseQuizOptions(v: unknown): Result<string[]> {

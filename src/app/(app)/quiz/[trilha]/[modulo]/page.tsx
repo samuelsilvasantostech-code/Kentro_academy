@@ -17,8 +17,13 @@ export default async function Quiz({ params }: { params: Promise<{ trilha: strin
 
   const supabase = await createClient();
   // O gabarito não vai para o navegador: a correção é feita no servidor (submitQuiz).
-  const { data: questions } = await supabase.from("quiz_questions").select("question, options").eq("module_id", m.id).order("position");
+  const [{ data: questions }, rv] = await Promise.all([
+    supabase.from("quiz_questions").select("question, options").eq("module_id", m.id).order("position"),
+    // Aula indicada para rever cada pergunta (migração 0007; antes dela o erro é ignorado). Não revela o gabarito.
+    supabase.from("quiz_questions").select("lesson_id").eq("module_id", m.id).order("position"),
+  ]);
   if (!questions?.length) notFound();
+  const review = rv.data?.length === questions.length ? rv.data.map((r) => (r.lesson_id as string | null) ?? null) : [];
 
   return (
     <div className="qz">
@@ -33,7 +38,7 @@ export default async function Quiz({ params }: { params: Promise<{ trilha: strin
         <span><Ico name="help" size={15} />{questions.length} pergunta{questions.length > 1 ? "s" : ""}</span>
         <span><Ico name="target" size={15} />Você precisa de 70% para concluir o módulo</span>
       </div>
-      <QuizForm moduleId={m.id} trackId={t.id} questions={questions} lessons={m.lessons.map((l) => ({ id: l.id, title: l.title, href: `/aula/${t.id}/${l.id}` }))} />
+      <QuizForm moduleId={m.id} trackId={t.id} questions={questions} review={review} lessons={m.lessons.map((l) => ({ id: l.id, title: l.title, href: `/aula/${t.id}/${l.id}` }))} />
     </div>
   );
 }

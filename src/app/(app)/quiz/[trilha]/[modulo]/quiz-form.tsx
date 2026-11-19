@@ -52,7 +52,7 @@ type Lesson = { id: string; title: string; href: string };
  * Quiz com uma pergunta por tela. A correção é no servidor; reprovado vê só acerto/erro por questão
  * (nunca o gabarito) e a lista de aulas do módulo para rever. Gabarito e explicação só depois da aprovação.
  */
-export function QuizForm({ moduleId, trackId, questions, lessons, submit = submitQuiz }: { moduleId: string; trackId: string; questions: { question: string; options: string[] }[]; lessons: Lesson[]; submit?: typeof submitQuiz }) {
+export function QuizForm({ moduleId, trackId, questions, lessons, review = [], submit = submitQuiz }: { moduleId: string; trackId: string; questions: { question: string; options: string[] }[]; lessons: Lesson[]; review?: (string | null)[]; submit?: typeof submitQuiz }) {
   const [answers, setAnswers] = useState<number[]>([]);
   const [step, setStep] = useState(0);
   const [result, setResult] = useState<QuizResult | null>(null);
@@ -67,6 +67,9 @@ export function QuizForm({ moduleId, trackId, questions, lessons, submit = submi
   const chosen = answers[step];
   const passed = !!result?.passed;
   const wrong = result ? result.results.map((r, i) => (r ? -1 : i)).filter((i) => i >= 0) : [];
+  // Aulas indicadas pelas perguntas erradas (o admin escolhe uma por pergunta): aparecem destacadas na lista.
+  const lessonOf = (qi: number) => lessons.find((x) => x.id === review[qi]);
+  const toReview = new Set(wrong.map((qi) => review[qi]).filter(Boolean));
 
   // Ao trocar de pergunta o foco vai para o enunciado (não na primeira tela, para não pular o cabeçalho).
   useEffect(() => {
@@ -114,7 +117,7 @@ export function QuizForm({ moduleId, trackId, questions, lessons, submit = submi
                   <p className="qrev-k">Aulas deste módulo</p>
                   <ol>
                     {lessons.map((l, i) => (
-                      <li key={l.id}><Link href={l.href}><span className="qrev-n">{i + 1}</span><span className="qrev-t">{l.title}</span><Ico name="arrowR" size={16} /></Link></li>
+                      <li key={l.id} className={toReview.has(l.id) ? "is-hint" : undefined}><Link href={l.href}><span className="qrev-n">{i + 1}</span><span className="qrev-t">{l.title}{toReview.has(l.id) && <span className="qrev-tag">Revise esta</span>}</span><Ico name="arrowR" size={16} /></Link></li>
                     ))}
                   </ol>
                 </div>
@@ -159,7 +162,8 @@ export function QuizForm({ moduleId, trackId, questions, lessons, submit = submi
                   <p>
                     <b>{right ? "Você acertou." : "Você errou."}</b>
                     {passed && result.explanations?.[qi] ? ` ${result.explanations[qi]}` : ""}
-                    {!passed && !right && lessons.length > 0 ? <> <a href="#rever">Reveja as aulas do módulo</a> antes de tentar de novo.</> : ""}
+                    {!passed && !right && lessonOf(qi) ? <> Reveja a aula <Link href={lessonOf(qi)!.href}>{lessonOf(qi)!.title}</Link> antes de tentar de novo.</>
+                      : !passed && !right && lessons.length > 0 ? <> <a href="#rever">Reveja as aulas do módulo</a> antes de tentar de novo.</> : ""}
                   </p>
                 </div>
               </li>

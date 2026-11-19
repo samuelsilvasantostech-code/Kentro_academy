@@ -805,3 +805,20 @@ main:focus{outline:0}
   .ktrks::-webkit-scrollbar{display:none}
   .ktrks>li{scroll-snap-align:start}
 }
+
+/* ===================== Órbita — fase 6B: pontos-chave, rever aula, busca nas anotações ===================== */
+.kpts{margin-top:18px;border:1px solid rgba(185,138,255,.28);border-radius:16px;padding:16px 18px;background:linear-gradient(135deg,rgba(128,0,255,.12),transparent 70%)}
+.kpts h2{display:flex;align-items:center;gap:9px;font-size:16px;letter-spacing:-.01em;margin-bottom:10px}
+.kpts h2 .ico{color:var(--violeta-tx)}
+.kpts ul{list-style:none;display:grid;gap:8px}
+.kpts li{display:flex;align-items:flex-start;gap:10px;font-size:15px;line-height:1.5;color:var(--tinta)}
+.kpts li .ico{flex:none;margin-top:4px;color:var(--violeta-tx)}
+
+.qrev li.is-hint a{border-color:rgba(185,138,255,.55);background:rgba(128,0,255,.1)}
+.qrev-tag{display:inline-block;margin-left:8px;font-size:12px;font-weight:700;color:#E2CCFF;background:rgba(128,0,255,.28);border-radius:7px;padding:1px 7px;vertical-align:1px}
+
+.msearch{display:flex;align-items:center;gap:10px;border:1px solid var(--linha);border-radius:14px;background:var(--superficie);padding:6px 6px 6px 14px;margin-bottom:14px;transition:border-color .2s}
+.msearch:focus-within{border-color:rgba(185,138,255,.6)}
+.msearch>.ico{color:var(--tinta-3);flex:none}
+.msearch input[type=search]{flex:1;min-width:0;min-height:40px;border:0;background:transparent;color:var(--tinta);font:inherit;font-size:15px;outline:none}
+.msearch .btn{min-height:40px}

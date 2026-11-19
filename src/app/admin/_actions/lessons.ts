@@ -18,6 +18,7 @@ import {
  *   title         2 a 160 caracteres
  *   summary       opcional, até 2000
  *   steps         "Faça agora no seu Kentro": um passo por linha
+ *   key_points    pontos-chave, um por linha, até 8 (só vem no form com a migração 0007; ausente = não mexe)
  *   chapters      uma linha por capítulo: "mm:ss Título"
  *   materials     uma linha por material: "Título | https://link | descrição opcional"
  *   module_id     uuid do módulo (obrigatório só na criação; na edição use linkLesson/unlinkLesson)
@@ -38,6 +39,7 @@ export async function saveLesson(_prev: FormState, form: FormData): Promise<Form
   const title = f.get("title", text(form.get("title"), { min: 2, max: 160 }));
   const summary = f.get("summary", text(form.get("summary"), { max: 2000 }));
   const steps = f.get("steps", parseLines(form.get("steps"), { max: 20, maxLen: 300 }));
+  const keyPoints = form.has("key_points") ? f.get("key_points", parseLines(form.get("key_points"), { max: 8, maxLen: 200 })) : undefined;
   const chapters = f.get("chapters", parseChapters(form.get("chapters")));
   const materials = f.get("materials", parseMaterials(form.get("materials")));
   if (f.failed) return fail("Confira os campos destacados.", form, f.errors);
@@ -61,6 +63,15 @@ export async function saveLesson(_prev: FormState, form: FormData): Promise<Form
     if (error.code === "P0002") return fail("Aula ou módulo não encontrado.", form);
     if (error.code === "23503") return fail("Módulo não encontrado.", form);
     return fail(GENERIC_ERROR, form);
+  }
+  if (keyPoints) {
+    // Fora da RPC para não depender da versão dela; a aula já foi salva, então uma falha aqui só avisa.
+    const { error: kpErr } = await supabase.from("lessons").update({ key_points: keyPoints }).eq("id", data as string);
+    if (kpErr) {
+      logDbError("saveLesson.key_points", kpErr);
+      catalogChanged();
+      return done("Aula salva, mas os pontos-chave não foram gravados. Abra a aula e salve de novo.", data as string);
+    }
   }
   catalogChanged();
   return done(id ? "Aula salva." : "Aula criada como rascunho. Publique quando estiver pronta.", data as string);

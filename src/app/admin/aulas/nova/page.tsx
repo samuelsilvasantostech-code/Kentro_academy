@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getAdminTracks } from "@/lib/admin/queries";
+import { hasLearningFeatures } from "@/lib/features";
 import { LessonForm } from "../../_components/lesson-form";
 import { BackLink } from "../../_components/back-link";
 
@@ -7,7 +8,7 @@ export const metadata: Metadata = { title: "Nova aula" };
 
 export default async function NovaAula({ searchParams }: { searchParams: Promise<{ modulo?: string }> }) {
   const { modulo } = await searchParams;
-  const tracks = await getAdminTracks();
+  const [tracks, kp] = await Promise.all([getAdminTracks(), hasLearningFeatures()]);
   return (
     <>
       <div className="adm-head">
@@ -17,7 +18,7 @@ export default async function NovaAula({ searchParams }: { searchParams: Promise
           <p className="muted">Ela nasce como rascunho. Você publica depois de conferir.</p>
         </div>
       </div>
-      <LessonForm tracks={tracks} presetModule={modulo} />
+      <LessonForm tracks={tracks} presetModule={modulo} keyPoints={kp} />
     </>
   );
 }

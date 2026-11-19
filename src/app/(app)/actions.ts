@@ -139,3 +139,18 @@ export async function submitQuiz(moduleId: string, answers: number[]): Promise<Q
   revalidatePath("/", "layout");
   return data as QuizResult;
 }
+
+/**
+ * Guarda na conta onde o aluno parou no vídeo (tabela da migração 0007; sem ela, falha em silêncio
+ * e a retomada continua só neste navegador). Perto do início ou do fim apaga, para recomeçar do zero.
+ */
+export async function saveVideoPosition(lessonId: string, seconds: number, total: number) {
+  if (typeof lessonId !== "string" || !lessonId || lessonId.length > 64 || !Number.isFinite(seconds) || !Number.isFinite(total)) return;
+  const { supabase, user } = await authed();
+  const s = Math.floor(seconds);
+  const { error } = s < 10 || (total > 0 && s > total - 20)
+    ? await supabase.from("video_progress").delete().eq("user_id", user.id).eq("lesson_id", lessonId)
+    : await supabase.from("video_progress").upsert({ user_id: user.id, lesson_id: lessonId, seconds: Math.min(s, 86400), updated_at: new Date().toISOString() });
+  // 42P01/PGRST205: tabela ainda não existe (migração 0007 pendente). Não é erro do aluno.
+  if (error && error.code !== "42P01" && error.code !== "PGRST205") logErr("saveVideoPosition", error);
+}

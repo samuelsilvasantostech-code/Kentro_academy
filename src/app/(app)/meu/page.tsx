@@ -3,7 +3,7 @@ import Link from "next/link";
 import { NameForm } from "./name-form";
 import { allLessons, getCatalog, getMe, nextOf, progress, type Track } from "@/lib/catalog";
 import { createClient } from "@/lib/supabase/server";
-import { minutes } from "@/lib/format";
+import { minutes, normalize } from "@/lib/format";
 import { Ico, type IcoName } from "@/components/ico";
 import { CrystalGlyph } from "@/components/crystal/CrystalGlyph";
 import { getTrackStatuses, type TrackStatus } from "../certificado/completion";
@@ -62,8 +62,9 @@ function DoneRow({ t, st }: { t: Track; st?: TrackStatus }) {
   );
 }
 
-export default async function Meu({ searchParams }: { searchParams: Promise<{ aba?: string }> }) {
-  const { aba } = await searchParams;
+export default async function Meu({ searchParams }: { searchParams: Promise<{ aba?: string; q?: string }> }) {
+  const { aba, q: rawQ } = await searchParams;
+  const q = (typeof rawQ === "string" ? rawQ : "").trim().slice(0, 100);
   const tab: Tab = TABS.some(([k]) => k === aba) ? (aba as Tab) : "cursos";
   const [{ user, profile, done, quizDone }, tracks] = await Promise.all([getMe(), getCatalog()]);
   const all = allLessons(tracks);
@@ -74,13 +75,18 @@ export default async function Meu({ searchParams }: { searchParams: Promise<{ ab
   const [statuses, notesQ] = await Promise.all([
     getTrackStatuses(),
     tab === "anotacoes"
-      ? supabase.from("notes").select("id, body, lesson_id, created_at", { count: "exact" }).eq("user_id", user.id).order("created_at", { ascending: false }).limit(50)
+      ? supabase.from("notes").select("id, body, lesson_id, created_at", { count: "exact" }).eq("user_id", user.id).order("created_at", { ascending: false }).limit(q ? 500 : 50)
       : supabase.from("notes").select("id", { count: "exact", head: true }).eq("user_id", user.id),
   ]);
   const notesCount = notesQ.count ?? 0;
   type Note = { id: string; body: string; lesson_id: string; created_at: string };
-  const notes = tab === "anotacoes" ? ((notesQ.data ?? []) as Note[]) : [];
   const byId = new Map(all.map((l) => [l.id, l]));
+  // Busca nas anotações: texto da nota e título da aula, sem diferenciar acento nem maiúscula.
+  const terms = normalize(q).split(/\s+/).filter(Boolean);
+  const notes = (tab === "anotacoes" ? ((notesQ.data ?? []) as Note[]) : [])
+    .filter((n) => byId.has(n.lesson_id))
+    .filter((n) => { const hay = normalize(`${n.body} ${byId.get(n.lesson_id)!.title}`); return terms.every((t) => hay.includes(t)); })
+    .slice(0, 50);
   const completed = tracks.filter((t) => statuses.get(t.id)?.certified);
   const inProgress = tracks.filter((t) => !statuses.get(t.id)?.certified && progress(t, done).done > 0);
   const badgesTotal = tracks.length + 2;
@@ -174,12 +180,23 @@ export default async function Meu({ searchParams }: { searchParams: Promise<{ ab
       {tab === "anotacoes" && (
         <div className="mpanel">
           <h2 className="mpanel-h">Suas anotações</h2>
-          {notesCount > 50 && <p className="muted mpanel-sub">Mostrando as 50 mais recentes.</p>}
+          {notesCount > 0 && (
+            <form className="msearch" action="/meu" role="search">
+              <input type="hidden" name="aba" value="anotacoes" />
+              <Ico name="search" size={18} />
+              <input name="q" type="search" defaultValue={q} placeholder="Buscar nas anotações" aria-label="Buscar nas anotações" autoComplete="off" maxLength={100} />
+              <button className="btn btn-s btn-sm" type="submit">Buscar</button>
+            </form>
+          )}
+          {q ? (
+            <p className="muted mpanel-sub" role="status">
+              {notes.length ? `${notes.length === 50 ? "50+" : notes.length} ${notes.length === 1 ? "anotação encontrada" : "anotações encontradas"}` : "Nenhuma anotação encontrada"} para “{q}”. <Link className="mlink" href="/meu?aba=anotacoes" scroll={false}>Limpar busca</Link>
+            </p>
+          ) : notesCount > 50 && <p className="muted mpanel-sub">Mostrando as 50 mais recentes.</p>}
           {notes.length ? (
             <ul className="mnotes">
               {notes.map((n) => {
-                const l = byId.get(n.lesson_id);
-                if (!l) return null;
+                const l = byId.get(n.lesson_id)!;
                 return (
                   <li key={n.id}>
                     <Link className="mnote" href={`/aula/${l.trackIds[0]}/${l.id}`}>
@@ -190,7 +207,7 @@ export default async function Meu({ searchParams }: { searchParams: Promise<{ ab
                 );
               })}
             </ul>
-          ) : (
+          ) : q ? null : (
             <div className="empty"><span className="empty-ico" aria-hidden="true"><Ico name="pen" size={28} /></span><p className="muted">Você ainda não fez anotações. Use a aba Anotações durante uma aula.</p></div>
           )}
         </div>

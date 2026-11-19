@@ -20,6 +20,8 @@ type Props = {
   materials: { id: string; title: string; description: string | null; url: string }[];
   notes: { id: string; body: string; created_at: string }[];
   questions: { id: string; body: string; answer: string | null; created_at: string; answered_at: string | null; answer_seen_at: string | null }[];
+  keyPoints: string[];
+  serverAt: number | null;
   initialTab?: "duvidas";
 };
 
@@ -71,7 +73,7 @@ export function LessonView(p: Props) {
       </nav>
 
       {l.youtube_id ? (
-        <VideoCover youtubeId={l.youtube_id} title={l.title} moduleTitle={l.moduleTitle} trackName={track.name} position={p.position} seconds={l.duration_seconds} start={start} playing={playing} onPlay={() => setPlayingFor(l.id)} />
+        <VideoCover lessonId={l.id} youtubeId={l.youtube_id} title={l.title} moduleTitle={l.moduleTitle} trackName={track.name} position={p.position} seconds={l.duration_seconds} start={start} serverAt={p.serverAt} playing={playing} onPlay={() => setPlayingFor(l.id)} />
       ) : (
         <div className="doit soon">
           <span className="pill a"><Ico name="video" size={14} />Vídeo em breve</span>
@@ -116,6 +118,12 @@ export function LessonView(p: Props) {
           <>
             {!l.youtube_id ? null : l.summary ? <p style={{ whiteSpace: "pre-line" }}>{l.summary}</p>
               : <p className="muted">Assista à aula e depois repita o passo a passo no seu Kentro.</p>}
+            {p.keyPoints.length > 0 && (
+              <section className="kpts" aria-labelledby="pontos-chave">
+                <h2 id="pontos-chave"><Ico name="bulb" size={18} />Pontos-chave</h2>
+                <ul>{p.keyPoints.map((k, i) => <li key={`${i}-${k}`}><Ico name="check" size={14} strokeWidth={3} /><span>{k}</span></li>)}</ul>
+              </section>
+            )}
             <section className="doit" aria-labelledby="faca-agora">
               <h2 id="faca-agora"><Ico name="wrench" size={18} />Faça agora no seu Kentro</h2>
               <ol className="dosteps">{steps.map((s, i) => <li key={`${i}-${s}`}><span>{s}</span></li>)}</ol>
