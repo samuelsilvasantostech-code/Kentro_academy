@@ -1,9 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useId, useMemo, useState } from "react";
 import { Ico } from "@/components/ico";
+import { CrystalGlyph } from "@/components/crystal/CrystalGlyph";
 import { CATS, COVERS, type ArtId, type CatId } from "@/lib/category";
 import { duration, minutes, normalize } from "@/lib/format";
 import { topicIcon } from "@/lib/topic";
@@ -72,10 +72,10 @@ export function Explorer({ tracks, lessons, headingLevel = 2, title, more }: { t
           {shownTracks.map((t, i) => (
             <li key={t.id} style={{ ["--i" as string]: i }}>
               <Link className="tcard3" href={`/trilha/${t.id}`}>
-                <span className={`tposter tc-${t.cat}`}>
-                  <Image src={COVERS[t.art].src} alt="" fill sizes="(max-width: 640px) 50vw, 220px" />
-                  <span className="tp-logo" aria-hidden>Kentr<i />{" "}<small>Academy</small></span>
-                  <span className="tp-mod" aria-hidden><small>Módulo</small>{COVERS[t.art].label}</span>
+                <span className={`tposter tc-${t.cat}`} aria-hidden>
+                  <CrystalGlyph className="tp-gem" tilt={COVERS[t.art].tilt} />
+                  <span className="tp-ico"><Ico name={COVERS[t.art].icon} size={18} /></span>
+                  <span className="tp-mod">{COVERS[t.art].label}</span>
                 </span>
                 <span className="tc-body">
                   <span className="sr-only">{CATS.find((c) => c.id === t.cat)?.label}: </span>

@@ -9,7 +9,7 @@ import { StageSvgs, STAGE_CSS, stageVars } from "./stage";
 const FlowScene3D = dynamic(() => import("./FlowScene3D"), { ssr: false });
 const HubScene3D = dynamic(() => import("./HubScene3D"), { ssr: false });
 
-function useMedia(query: string) {
+export function useMedia(query: string) {
   return useSyncExternalStore(
     (cb) => {
       const m = window.matchMedia(query);
@@ -34,10 +34,10 @@ function detectWebGL() {
   return webglCache;
 }
 const noop = () => () => {};
-const useWebGL = () => useSyncExternalStore(noop, detectWebGL, () => false);
+export const useWebGL = () => useSyncExternalStore(noop, detectWebGL, () => false);
 
 /** Se a cena 3D falhar (contexto perdido, erro de shader), o SVG assume sem derrubar a página. */
-class Boundary extends Component<{ fallback: ReactNode; children: ReactNode }, { failed: boolean }> {
+export class Boundary extends Component<{ fallback: ReactNode; children: ReactNode }, { failed: boolean }> {
   state = { failed: false };
   static getDerivedStateFromError() {
     return { failed: true };

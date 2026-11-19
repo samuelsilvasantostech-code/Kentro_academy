@@ -1,3 +1,4 @@
+import type { IcoName } from "@/components/ico";
 import { normalize } from "@/lib/format";
 
 /**
@@ -17,16 +18,16 @@ export const CATS: { id: CatId; label: string }[] = [
 ];
 
 /**
- * Capa de cada tipo de trilha (estilo dos módulos da Academy antiga): foto em public/capas e nome curto do selo.
- * Fotos do Unsplash (licença livre, sem crédito obrigatório); origem em public/capas/CREDITOS.md.
+ * Capa de cada tipo de trilha: todas no mesmo padrão (fundo preto, cristal roxo e ícone do assunto),
+ * com o nome curto do assunto e um ângulo de órbita diferente para os cards não ficarem idênticos.
  */
-export const COVERS: Record<ArtId, { src: string; label: string }> = {
-  headset: { src: "/capas/headset.webp", label: "Atendimento" },
-  painel: { src: "/capas/painel.webp", label: "Gestão" },
-  funil: { src: "/capas/funil.webp", label: "CRM" },
-  engrenagem: { src: "/capas/engrenagem.webp", label: "URA e automações" },
-  conexao: { src: "/capas/conexao.webp", label: "Integrações" },
-  camadas: { src: "/capas/camadas.webp", label: "Implantação" },
+export const COVERS: Record<ArtId, { icon: IcoName; label: string; tilt: number }> = {
+  headset: { icon: "headset", label: "Atendimento", tilt: -14 },
+  painel: { icon: "chart", label: "Gestão", tilt: 10 },
+  funil: { icon: "target", label: "CRM", tilt: -6 },
+  engrenagem: { icon: "flow", label: "URA e automações", tilt: 16 },
+  conexao: { icon: "ext", label: "Integrações", tilt: -20 },
+  camadas: { icon: "layers", label: "Implantação", tilt: 4 },
 };
 
 const RULES: [RegExp, CatId, ArtId][] = [
