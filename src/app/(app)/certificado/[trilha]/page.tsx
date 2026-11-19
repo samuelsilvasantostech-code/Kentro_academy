@@ -6,6 +6,7 @@ import { getTrackStatuses } from "../completion";
 import { Ico } from "@/components/ico";
 import { PrintButton } from "./print-button";
 import { nextTrack } from "@/lib/next-track";
+import { CertSeal } from "@/components/crystal/CertSeal";
 
 export const metadata: Metadata = { title: "Certificado" };
 
@@ -62,8 +63,16 @@ export default async function Certificado({ params }: { params: Promise<{ trilha
         <a className="btn btn-s" href={linkedin} target="_blank" rel="noopener noreferrer">Adicionar ao LinkedIn<span className="sr-only"> (abre em nova aba)</span></a>
         <PrintButton />
       </div>
+      <section className="cert-hero" aria-labelledby="cert-hero-t">
+        <CertSeal />
+        <div className="cert-hero-tx">
+          <p className="cert-hero-k">Trilha concluída</p>
+          <h2 id="cert-hero-t">Parabéns, {name.split(/\s+/)[0]}!</h2>
+          <p className="muted">Você concluiu <b>{t.name}</b> em {dateBR(st.issuedAt)}. Seu certificado está logo abaixo: imprima, salve em PDF ou adicione ao LinkedIn.</p>
+        </div>
+      </section>
       {st.hasNew && <p className="muted cert-note">Esta trilha ganhou conteúdo novo depois da sua conclusão. Seu certificado continua valendo.</p>}
-      <article className="cert-sheet" style={{ "--acc": t.color } as React.CSSProperties} aria-label={`Certificado de ${name}`}>
+      <article className="cert-sheet" aria-label={`Certificado de ${name}`}>
         <div className="cert-in">
           <div className="cert-logo">Kentro<b>Academy</b></div>
           <div className="cert-body">

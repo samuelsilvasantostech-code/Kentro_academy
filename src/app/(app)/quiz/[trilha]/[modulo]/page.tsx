@@ -33,7 +33,7 @@ export default async function Quiz({ params }: { params: Promise<{ trilha: strin
         <span><Ico name="help" size={15} />{questions.length} pergunta{questions.length > 1 ? "s" : ""}</span>
         <span><Ico name="target" size={15} />Você precisa de 70% para concluir o módulo</span>
       </div>
-      <QuizForm moduleId={m.id} trackId={t.id} questions={questions} reviewHref={m.lessons[0] ? `/aula/${t.id}/${m.lessons[0].id}` : undefined} />
+      <QuizForm moduleId={m.id} trackId={t.id} questions={questions} lessons={m.lessons.map((l) => ({ id: l.id, title: l.title, href: `/aula/${t.id}/${l.id}` }))} />
     </div>
   );
 }

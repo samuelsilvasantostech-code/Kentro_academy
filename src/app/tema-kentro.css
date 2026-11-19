@@ -533,3 +533,94 @@ main:focus{outline:0}
   .tabs [role=tab]{flex:none;white-space:nowrap}
 }
 @media print{.lesson-bar{position:static}}
+
+/* ===================== Órbita — fase 4: quiz e conquistas ===================== */
+.tnum{font-variant-numeric:tabular-nums}
+/* quiz: uma pergunta por tela */
+.qstep{display:grid;gap:16px;margin-top:22px}
+.qsegs{display:flex;gap:6px}
+.qsegs i{flex:1;height:6px;border-radius:999px;background:var(--trilho);transition:background-color var(--t-medio)}
+.qsegs i.on{background:var(--lavanda)}
+.qsegs i.cur{background:var(--violeta);box-shadow:0 0 0 3px rgba(128,0,255,.22)}
+.qq-one{margin-top:0;padding:28px;border-left-width:1px;gap:18px}
+.qq-one .qq-t{font-size:24px;line-height:1.3}
+.qq-t:focus{outline:0}
+.qopt-l{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;flex:none;background:var(--rebaixo);color:var(--tinta-2);font-weight:700;font-size:14px;transition:background-color var(--t-rapido),color var(--t-rapido)}
+.qopt:has(input:checked) .qopt-l{background:var(--violeta);color:#fff}
+.qopt{min-height:60px}
+.qnav{display:flex;gap:10px;align-items:center}
+.qnav-go{margin-left:auto;min-width:170px;justify-content:center}
+.qnav-hint{font-size:13px;text-align:right}
+@media (prefers-reduced-motion:no-preference){
+  .qq-one{animation:q-in .28s var(--ease-in) both}
+  @keyframes q-in{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
+}
+@media (max-width:640px){
+  .qz{padding-bottom:84px}
+  .qq-one{padding:20px 16px}
+  .qq-one .qq-t{font-size:20px}
+  .qnav{position:fixed;z-index:29;left:10px;right:10px;bottom:calc(108px + env(safe-area-inset-bottom));padding:8px;border:1px solid var(--linha);border-radius:18px;background:rgba(20,18,28,.94);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+  .qnav .btn{min-height:48px}
+  .qnav-back{flex:0 0 48px;padding:0}
+  .qnav-back>span{display:none}
+  .qnav-go{flex:1;min-width:0}
+  .qnav-hint{text-align:left}
+}
+
+/* quiz: resultado */
+.qres{margin-top:22px;padding:28px;gap:16px}
+.qres-top{display:flex;align-items:center;gap:18px}
+.qres-ring{--c:var(--decisao-tx);position:relative;width:76px;height:76px;border-radius:50%;flex:none;display:grid;place-items:center;color:var(--c);background:conic-gradient(var(--c) calc(var(--p)*1%),var(--trilho) 0)}
+.qres-ring::before{content:"";position:absolute;inset:7px;border-radius:50%;background:var(--superficie)}
+.qres-ring .ico{position:relative}
+.qres.is-pass .qres-ring{--c:var(--ok-tx)}
+.qres-h{font-size:22px}
+.qres-wait{font-size:13px}
+.qrev{width:100%;display:grid;gap:8px;scroll-margin-top:90px}
+.qrev-k{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--tinta-3)}
+.qrev ol{list-style:none;display:grid;gap:6px}
+.qrev a{display:flex;align-items:center;gap:12px;min-height:48px;padding:8px 14px;border:1px solid var(--linha);border-radius:12px;background:var(--superficie-2);color:var(--tinta);transition:border-color var(--t-rapido)}
+.qrev a:hover{border-color:var(--violeta-tx)}
+.qrev a .ico{color:var(--violeta-tx);flex:none}
+.qrev-n{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;flex:none;background:var(--rebaixo);font-size:13px;font-weight:700;color:var(--tinta-2)}
+.qrev-t{flex:1;min-width:0}
+.qrv-h{font-size:20px;margin-top:34px}
+.qrv{list-style:none}
+.qrv>li{margin-top:14px}
+.qrv-opts{list-style:none;display:grid;gap:8px}
+.qrv-o{display:flex;align-items:center;gap:12px;padding:10px 14px;border:2px solid var(--linha-2);border-radius:14px}
+.qrv-o.right{border-color:var(--ok-tx);background:color-mix(in srgb,var(--ok) 12%,var(--superficie))}
+.qrv-o.right .qopt-tag{color:var(--ok-tx)}
+.qrv-o.wrong{border-color:var(--erro);background:color-mix(in srgb,var(--erro) 7%,var(--superficie))}
+.qrv-o.wrong .qopt-tag{color:var(--erro-tx)}
+.qrv-o .qopt-tag{color:var(--tinta-2)}
+.qfb a{color:var(--violeta-tx);text-decoration:underline;text-underline-offset:3px}
+@media (max-width:640px){
+  .qres{padding:20px}
+  .qrv-o{flex-wrap:wrap}
+  .qrv-o .qopt-tag{flex-basis:100%;margin-left:44px;padding-left:0}
+}
+
+/* certificado: sempre roxo + selo de conquista no topo (3D com versão fixa em SVG) */
+.cert-sheet{--acc:#8000FF}
+@media screen{.cert-logo b,.cert-track,.cert-seal{color:var(--violeta-tx)}}
+.cert-hero{display:grid;grid-template-columns:168px 1fr;align-items:center;gap:24px;padding:24px 28px;margin-bottom:20px;border:1px solid color-mix(in srgb,var(--violeta-tx) 40%,var(--linha));border-radius:var(--r-painel);background:linear-gradient(120deg,color-mix(in srgb,var(--violeta) 18%,var(--superficie)),var(--superficie) 70%)}
+.cert-hero-tx{display:grid;gap:6px}
+.cert-hero-tx h2{font-size:28px}
+.cert-hero-tx b{color:var(--tinta)}
+.cert-hero-k{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--sinal-tx)}
+.kseal{position:relative;width:168px;height:168px}
+.kseal-svg{position:absolute;inset:8%;width:84%;height:84%;transition:opacity .6s var(--ease-in)}
+.kseal-gl{position:absolute;inset:-6%;opacity:0;transition:opacity .8s var(--ease-in)}
+.kseal.is-3d .kseal-svg{opacity:0}
+.kseal.is-3d .kseal-gl{opacity:1}
+@media (prefers-reduced-motion:no-preference){
+  .kseal:not(.is-3d) .kseal-svg{animation:seal-in .7s var(--ease-in) both}
+  @keyframes seal-in{from{opacity:0;transform:scale(.7) rotate(-20deg)}to{opacity:1;transform:none}}
+}
+@media (max-width:640px){
+  .cert-hero{grid-template-columns:1fr;justify-items:center;text-align:center;padding:20px 16px;gap:10px}
+  .kseal{width:140px;height:140px}
+  .cert-hero-tx h2{font-size:24px}
+}
+@media print{.cert-hero{display:none}}

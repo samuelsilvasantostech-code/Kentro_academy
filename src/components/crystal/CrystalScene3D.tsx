@@ -4,30 +4,11 @@ import { useMemo, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { usePointerRef } from "@/components/flow/scene-utils";
+import { gemGeometry } from "./gem";
 
 const PARTICLES = 48;
 // Pseudoaleatório fixo: a poeira fica igual a cada montagem e o render continua puro.
 const rand = (i: number) => { const x = Math.sin(i * 12.9898) * 43758.5453; return x - Math.floor(x); };
-
-/**
- * Gema low-poly: coroa (cone baixo truncado) + pavilhão (cone longo), 8 lados, sombreamento facetado.
- * Gerada por código: nenhum arquivo de modelo para baixar.
- */
-function gemGeometry() {
-  const sides = 8;
-  const crown = new THREE.CylinderGeometry(0.62, 1, 0.42, sides, 1);
-  crown.translate(0, 0.21, 0);
-  const pav = new THREE.ConeGeometry(1, 1.55, sides, 1);
-  pav.rotateX(Math.PI);
-  pav.translate(0, -0.775, 0);
-  const g = new THREE.BufferGeometry();
-  const a = crown.toNonIndexed(), b = pav.toNonIndexed();
-  const pos = new Float32Array([...a.attributes.position.array, ...b.attributes.position.array]);
-  g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-  g.computeVertexNormals();
-  crown.dispose(); pav.dispose(); a.dispose(); b.dispose();
-  return g;
-}
 
 function Crystal({ active }: { active: boolean }) {
   const root = useRef<THREE.Group>(null);
