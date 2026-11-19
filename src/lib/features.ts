@@ -10,3 +10,10 @@ export const hasLearningFeatures = cache(async () => {
   const { error } = await supabase.from("video_progress").select("lesson_id").limit(1);
   return !error;
 });
+
+/** A migração 0008 (texto explicativo da aula) já foi aplicada? Sem ela, o artigo e o campo no admin ficam escondidos. */
+export const hasLessonTexts = cache(async () => {
+  const supabase = await createClient();
+  const { error } = await supabase.from("lesson_texts").select("lesson_id").limit(1);
+  return !error;
+});

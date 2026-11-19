@@ -3,11 +3,12 @@ import Image from "next/image";
 import { redirect } from "next/navigation";
 import { allLessons, getCatalog, getMe, isRequired, lessonsOf, nextOf, progress } from "@/lib/catalog";
 import { createClient } from "@/lib/supabase/server";
-import { duration, firstName, minutes, thumb } from "@/lib/format";
-import { topicIcon } from "@/lib/topic";
+import { duration, firstName, minutes } from "@/lib/format";
 import { COVERS } from "@/lib/category";
+import { Cover } from "@/components/cover";
+import { coverOf } from "@/lib/covers";
 import { Chev } from "@/components/cards";
-import { CrystalHero } from "@/components/crystal/CrystalHero";
+import { BubbleHero } from "@/components/bubble/BubbleHero";
 import { Ico } from "@/components/ico";
 import { PointerGlow } from "@/components/pointer-glow";
 import { nextTrack } from "@/lib/next-track";
@@ -42,8 +43,10 @@ export default async function Home() {
   const last = L.find((l) => l.id === profile.last_lesson_id);
   const l = last && !done.has(last.id) ? last : nextOf(t, done);
   const p = progress(t, done);
-  const img = thumb(l.youtube_id);
+  const pos = L.findIndex((x) => x.id === l.id) + 1;
   const certified = statuses.get(t.id)?.certified && p.pct === 100;
+  // Linhas acesas no balão da logo: uma a cada terço da trilha.
+  const lit = certified ? 3 : Math.max(1, Math.ceil((p.pct / 100) * 3));
 
   // Resumo: trilhas já começadas (e a atual). Mesma regra do progresso: só aulas com vídeo contam.
   const started = tracks.filter((x) => x.id === t.id || progress(x, done).done > 0);
@@ -72,44 +75,66 @@ export default async function Home() {
   return (
     <div className="kh">
       <PointerGlow />
-      <section className="kdash" aria-labelledby="hero-h">
-        <div className="kdash-main">
+      <section className="kx" aria-labelledby="hero-h">
+        <div className="kx-bg" aria-hidden>
+          <Image className="kx-img" src="/hero/bolhas.jpg" alt="" fill priority sizes="100vw" />
+          <span className="kx-grid" />
+        </div>
+        <div className="kx-main">
           <p className="khero-hi">{profile.full_name ? `Olá, ${firstName(profile.full_name)}` : "Seu espaço de aprendizado"}</p>
-          <h1 id="hero-h">{p.done ? "Continue de onde parou" : "Comece por aqui"}</h1>
-          <p className="kdash-sub">{hint}</p>
-
-          <article className="kcont kglow">
-            <Link className="kcont-thumb" href={`/aula/${t.id}/${l.id}`} tabIndex={-1} aria-hidden>
-              {img ? <Image src={img} alt="" fill priority sizes="(max-width: 700px) 100vw, 300px" /> : <span className="kcont-ph"><Ico name={topicIcon(l.title, l.moduleTitle)} size={34} /></span>}
-              <span className="kcont-play"><Ico name="play" size={22} /></span>
-              {l.duration_seconds > 0 && <span className="kcont-dur">{duration(l.duration_seconds)}</span>}
-            </Link>
-            <div className="kcont-info">
-              <span className="kpill">{certified ? "Concluída" : p.done ? "Em andamento" : "Sua trilha"}</span>
-              <h2 className="kcont-t">{t.name}</h2>
-              <p className="kcont-l"><span className="dim">Aula atual:</span> {l.title}</p>
-              <div className="kprog">
-                <span className="pbar" role="progressbar" aria-valuenow={p.pct} aria-valuemin={0} aria-valuemax={100} aria-label={`Progresso em ${t.name}`}><i style={{ width: `${p.pct}%` }} /></span>
-                <b>{p.pct}%</b>
-              </div>
-              <div className="kcont-foot">
-                <span className="kmeta"><Ico name="video" size={16} />{p.done} de {p.total} aulas</span>
-                {certified
-                  ? <Link className="btn btn-p" href={`/certificado/${t.id}`}><Ico name="award" size={14} />Ver certificado</Link>
-                  : <Link className="btn btn-p" href={`/aula/${t.id}/${l.id}`}><Ico name="play" size={14} />{p.done ? "Continuar aula" : "Começar aula"}</Link>}
-              </div>
-            </div>
-          </article>
+          <p className="kx-k">{certified ? "Trilha concluída" : p.done ? "Continue de onde parou" : "Comece por aqui"}</p>
+          <h1 id="hero-h" className="kx-t">{certified ? t.name : l.title}</h1>
+          <p className="kx-meta">
+            <Link href={`/trilha/${t.id}`}>{t.name}</Link>
+            {!certified && pos > 0 && <span>Aula {pos} de {L.length}</span>}
+            {!certified && l.duration_seconds > 0 && <span><Ico name="clock" size={14} />{duration(l.duration_seconds)}</span>}
+          </p>
+          <div className="kx-prog">
+            <span className="kx-prog-l"><span>Progresso na trilha</span><b className="tnum">{p.pct}%</b></span>
+            <span className="pbar" role="progressbar" aria-valuenow={p.pct} aria-valuemin={0} aria-valuemax={100} aria-label={`Progresso em ${t.name}`}><i style={{ width: `${p.pct}%` }} /></span>
+          </div>
+          <p className="kx-hint">{hint}</p>
+          <div className="kx-cta">
+            {certified
+              ? <Link className="btn btn-p btn-lg" href={`/certificado/${t.id}`}><Ico name="award" size={16} />Ver certificado</Link>
+              : <Link className="btn btn-p btn-lg" href={`/aula/${t.id}/${l.id}`}><Ico name="play" size={16} />{p.done ? "Continuar aula" : "Começar aula"}</Link>}
+            <Link className="btn btn-ghost btn-lg" href={`/trilha/${t.id}`}>Ver trilha</Link>
+          </div>
         </div>
+        <div className="kx-stage"><BubbleHero lit={lit} /></div>
+        <ul className="khud kx-hud" aria-label="Seu progresso geral">
+          <li><span className="khud-k">Progresso</span><b>{overall}%</b><span className="khud-d">{started.length === 1 ? "da trilha atual" : `de ${started.length} trilhas`}</span></li>
+          <li><span className="khud-k">Aulas</span><b>{lessonsDone}</b><span className="khud-d">{lessonsDone === 1 ? "concluída" : "concluídas"}</span></li>
+          {certs > 0
+            ? <li><span className="khud-k">Certificados</span><b>{certs}</b><span className="khud-d">{certs === 1 ? "emitido" : "emitidos"}</span></li>
+            : <li className="is-goal"><span className="khud-k">Meta</span><b>1º</b><span className="khud-d">certificado</span></li>}
+        </ul>
+      </section>
 
-        <div className="kdash-side">
-          <CrystalHero />
-          <ul className="khud" aria-label="Seu progresso geral">
-            <li><span className="khud-k">Progresso</span><b>{overall}%</b><span className="khud-d">{started.length === 1 ? "da trilha atual" : `de ${started.length} trilhas`}</span></li>
-            <li><span className="khud-k">Aulas</span><b>{lessonsDone}</b><span className="khud-d">{lessonsDone === 1 ? "concluída" : "concluídas"}</span></li>
-            <li><span className="khud-k">Certificados</span><b>{certs}</b><span className="khud-d">{certs === 1 ? "emitido" : "emitidos"}</span></li>
-          </ul>
+      <section className="ksec" aria-labelledby="trk-h">
+        <div className="sec-h">
+          <h2 id="trk-h">Suas trilhas</h2>
+          <Link className="mlink" href="/trilhas">Ver todas<span className="sr-only"> as trilhas</span></Link>
         </div>
+        <ul className="kposts">
+          {items.map((x, i) => (
+            <li key={x.id} style={{ "--i": i } as React.CSSProperties}>
+              <Link className={`kpost${x.pct === 100 ? " is-done" : ""}`} href={`/trilha/${x.id}`}>
+                <Cover brand img={coverOf(x.id)} icon={COVERS[x.art].icon} tilt={COVERS[x.art].tilt} sizes="(max-width: 700px) 60vw, (max-width: 1100px) 33vw, 220px" />
+                {x.tag && <span className={`kpost-tag${x.tag === "Concluída" ? " is-ok" : ""}`}>{x.tag}</span>}
+                <span className="kpost-foot">
+                  <span className="kpost-cat">{COVERS[x.art].label}</span>
+                  <b>{x.name}</b>
+                  <span className="kpost-meta">{x.count} {x.count === 1 ? "aula" : "aulas"} · {minutes(x.seconds)}</span>
+                  <span className="kpost-prog">
+                    <span className="pbar" aria-hidden><i style={{ width: `${x.pct}%` }} /></span>
+                    <span className="tnum">{x.pct}%<span className="sr-only"> concluído</span></span>
+                  </span>
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
       </section>
 
       {replies.length > 0 && (
@@ -126,29 +151,6 @@ export default async function Home() {
           </ul>
         </section>
       )}
-
-      <section className="ksec" aria-labelledby="trk-h">
-        <div className="sec-h">
-          <h2 id="trk-h">Suas trilhas</h2>
-          <Link className="mlink" href="/trilhas">Ver todas<span className="sr-only"> as trilhas</span></Link>
-        </div>
-        <ul className="ktrks">
-          {items.map((x, i) => (
-            <li key={x.id} style={{ "--i": i } as React.CSSProperties}>
-              <Link className={`ktrk kglow${x.pct === 100 ? " is-done" : ""}`} href={`/trilha/${x.id}`}>
-                <span className="ktrk-ring" style={{ "--p": x.pct } as React.CSSProperties} aria-hidden><span>{x.pct}%</span></span>
-                <span className="ktrk-tx">
-                  <span className="ktrk-cat"><Ico name={COVERS[x.art].icon} size={13} />{COVERS[x.art].label}</span>
-                  <b>{x.name}</b>
-                  <span className="ktrk-meta">{x.count} {x.count === 1 ? "aula" : "aulas"} · {minutes(x.seconds)}<span className="sr-only">, {x.pct}% concluído</span></span>
-                </span>
-                {x.tag && <span className={`ktrk-tag${x.tag === "Concluída" ? " is-ok" : ""}`}>{x.tag}</span>}
-                <span className="ktrk-go" aria-hidden><Ico name="arrowR" size={16} /></span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </section>
 
       {!!news?.length && (
         <section className="ksec" aria-labelledby="news-h">

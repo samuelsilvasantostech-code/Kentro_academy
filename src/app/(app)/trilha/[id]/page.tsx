@@ -73,6 +73,7 @@ export default async function Trilha({ params, searchParams }: { params: Promise
 
       <section className="th2" aria-labelledby="th2-t">
         <Cover img={coverOf(t.id)} icon={cv.icon} tilt={cv.tilt} sizes="100vw" priority className="th2-bg" />
+        <span className="th2-stripes" aria-hidden />
         <div className="th2-in">
           <div className="th2-copy">
             <p className="th2-cat"><Ico name={cv.icon} size={14} />{cv.label}<span aria-hidden>·</span>{t.audience}</p>

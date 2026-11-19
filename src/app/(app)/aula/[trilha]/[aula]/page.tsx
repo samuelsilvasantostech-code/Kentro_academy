@@ -32,7 +32,8 @@ export default async function Aula({ params, searchParams }: P) {
 
   const supabase = await createClient();
   // Pontos-chave e posição do vídeo vêm em consultas próprias: antes da migração 0007 dão erro e são ignoradas.
-  const [{ data: chapters }, { data: materials }, { data: notes }, { data: questions }, { data: quizRows }, , kp, vp] = await Promise.all([
+  // O texto da aula (migração 0008) também: o RLS só entrega rascunho para admin.
+  const [{ data: chapters }, { data: materials }, { data: notes }, { data: questions }, { data: quizRows }, , kp, vp, tx] = await Promise.all([
     supabase.from("chapters").select("start_seconds, title").eq("lesson_id", l.id).order("start_seconds"),
     supabase.from("materials").select("id, title, description, url").eq("lesson_id", l.id).order("position"),
     supabase.from("notes").select("id, body, created_at").eq("lesson_id", l.id).eq("user_id", user.id).order("created_at", { ascending: false }),
@@ -41,7 +42,9 @@ export default async function Aula({ params, searchParams }: P) {
     supabase.from("profiles").update({ last_track_id: t.id, last_lesson_id: l.id }).eq("id", user.id),
     supabase.from("lessons").select("key_points").eq("id", l.id).maybeSingle(),
     supabase.from("video_progress").select("seconds").eq("user_id", user.id).eq("lesson_id", l.id).maybeSingle(),
+    supabase.from("lesson_texts").select("body, published").eq("lesson_id", l.id).maybeSingle(),
   ]);
+  const article = tx.data?.body?.trim() ? { md: tx.data.body as string, draft: !tx.data.published } : null;
   const keyPoints = (kp.data?.key_points as string[] | undefined) ?? [];
   const serverAt = typeof vp.data?.seconds === "number" ? vp.data.seconds : null;
   const quizModules = new Set((quizRows ?? []).map((r) => r.module_id as string));
@@ -63,6 +66,7 @@ export default async function Aula({ params, searchParams }: P) {
         questions={questions ?? []}
         keyPoints={keyPoints}
         serverAt={serverAt}
+        article={article}
         initialTab={aba === "duvidas" ? "duvidas" : undefined}
       />
       <aside className="side" aria-label="Conteúdo da trilha">

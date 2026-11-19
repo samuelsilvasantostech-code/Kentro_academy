@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState, useTransition, type KeyboardEvent } from "react";
+import { useEffect, useMemo, useState, useTransition, type KeyboardEvent } from "react";
 import type { TrackLesson } from "@/lib/catalog";
 import { duration, mmss } from "@/lib/format";
 import { Ico } from "@/components/ico";
+import { ArticleBody, parseArticle } from "@/lib/article";
 import { VideoCover } from "./video-cover";
 import { askQuestion, completeLesson, deleteNote, markAnswersSeen, saveNote, undoLesson } from "../../../actions";
 
@@ -22,10 +23,12 @@ type Props = {
   questions: { id: string; body: string; answer: string | null; created_at: string; answered_at: string | null; answer_seen_at: string | null }[];
   keyPoints: string[];
   serverAt: number | null;
+  /** Texto explicativo (migração 0008). draft = ainda não publicado; só o admin recebe. */
+  article: { md: string; draft: boolean } | null;
   initialTab?: "duvidas";
 };
 
-const TABS = { resumo: "Resumo", capitulos: "Capítulos", materiais: "Materiais", anotacoes: "Anotações", duvidas: "Dúvidas" } as const;
+const TABS = { resumo: "Aula", capitulos: "Capítulos", materiais: "Materiais", anotacoes: "Anotações", duvidas: "Dúvidas" } as const;
 type Tab = keyof typeof TABS;
 const date = (s: string) => new Date(s).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
 const PASSOS_PADRAO = ["Abra o Kentro em outra aba.", "Vá até o menu mostrado no vídeo.", "Repita o passo a passo com um caso real da sua empresa.", "Volte aqui e marque a aula como concluída."];
@@ -61,6 +64,7 @@ export function LessonView(p: Props) {
     document.getElementById(`tab-${next}`)?.focus();
   };
   const steps = l.steps.length ? l.steps : PASSOS_PADRAO;
+  const art = useMemo(() => (p.article ? parseArticle(p.article.md) : null), [p.article]);
 
   return (
     <div className="lesson">
@@ -116,7 +120,23 @@ export function LessonView(p: Props) {
       <div className="tabc" role="tabpanel" id={`painel-${tab}`} aria-labelledby={`tab-${tab}`}>
         {tab === "resumo" && (
           <>
-            {!l.youtube_id ? null : l.summary ? <p style={{ whiteSpace: "pre-line" }}>{l.summary}</p>
+            {art ? (
+              <article className="lart" aria-labelledby="lart-h">
+                {p.article?.draft && <p className="lart-draft"><Ico name="pen" size={15} />Rascunho: só administradores veem este texto. Publique no admin depois de revisar.</p>}
+                <header className="lart-h">
+                  <span className="lart-k">Texto da aula · {Math.max(1, Math.round(art.words / 200))} min de leitura</span>
+                  <h2 id="lart-h">{l.title}</h2>
+                  {l.summary && <p className="lart-lead">{l.summary}</p>}
+                </header>
+                {art.toc.length > 1 && (
+                  <nav className="lart-toc" aria-label="Nesta aula">
+                    <b>Nesta aula</b>
+                    <ol>{art.toc.map((t) => <li key={t.id}><a href={`#${t.id}`}>{t.title}</a></li>)}</ol>
+                  </nav>
+                )}
+                <div className="lart-body"><ArticleBody a={art} /></div>
+              </article>
+            ) : !l.youtube_id ? null : l.summary ? <p style={{ whiteSpace: "pre-line" }}>{l.summary}</p>
               : <p className="muted">Assista à aula e depois repita o passo a passo no seu Kentro.</p>}
             {p.keyPoints.length > 0 && (
               <section className="kpts" aria-labelledby="pontos-chave">

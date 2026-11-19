@@ -9,6 +9,7 @@ import { Field, SelectField } from "./field";
 import { FormMessage } from "./form-message";
 import { SubmitButton } from "./submit-button";
 import { YoutubePreview } from "./youtube-preview";
+import { ArticleBody, parseArticle } from "@/lib/article";
 
 type Props = {
   initial?: AdminLessonDetail;
@@ -17,9 +18,11 @@ type Props = {
   presetModule?: string;
   /** Migração 0007 aplicada: mostra o campo de pontos-chave. */
   keyPoints?: boolean;
+  /** Migração 0008 aplicada: mostra o texto da aula. */
+  lessonText?: boolean;
 };
 
-export function LessonForm({ initial, tracks = [], presetModule, keyPoints = false }: Props) {
+export function LessonForm({ initial, tracks = [], presetModule, keyPoints = false, lessonText = false }: Props) {
   const [state, action] = useActionState(saveLesson, undefined);
   const router = useRouter();
   const editing = !!initial;
@@ -32,6 +35,8 @@ export function LessonForm({ initial, tracks = [], presetModule, keyPoints = fal
   const [moduleId, setModuleId] = useState(presetTrack ? (presetModule ?? "") : "");
   const modules = tracks.find((t) => t.id === trackId)?.modules ?? [];
   const hasVideo = youtube.trim() !== "";
+  const [body, setBody] = useState(initial?.text.body ?? "");
+  const [preview, setPreview] = useState(false);
 
   useEffect(() => {
     if (!editing && state?.ok && state.id) router.push(`/admin/aulas/${state.id}?nova=1`);
@@ -108,6 +113,25 @@ export function LessonForm({ initial, tracks = [], presetModule, keyPoints = fal
           placeholder="Manual de etiquetas | https://exemplo.com/manual.pdf | Passo a passo em PDF"
         />
       </div>
+
+      {lessonText && (
+        <div className="adm-card">
+          <h2>Texto da aula</h2>
+          <p className="dim">Aparece abaixo do vídeo, como um artigo. Use <code>## Título</code> para seções, <code>- item</code> para listas, <code>**negrito**</code>, <code>`Menu &gt; Opção`</code> e <code>&gt; [!dica]</code>, <code>&gt; [!atencao]</code> ou <code>&gt; [!importante]</code> para destaques.</p>
+          <div className="adm-tabs-mini" role="group" aria-label="Modo do texto">
+            <button type="button" className={preview ? "" : "on"} aria-pressed={!preview} onClick={() => setPreview(false)}>Escrever</button>
+            <button type="button" className={preview ? "on" : ""} aria-pressed={preview} onClick={() => setPreview(true)}>Prévia</button>
+          </div>
+          <div hidden={preview}>
+            <Field name="body_md" label="Texto" note="(opcional)" multiline rows={18} value={body} onChange={(e) => setBody(e.target.value)} error={err.body_md} />
+          </div>
+          {preview && <div className="lart adm-lart"><div className="lart-body">{body.trim() ? <ArticleBody a={parseArticle(body)} /> : <p className="dim">Nada escrito ainda.</p>}</div></div>}
+          <label className="adm-check">
+            <input type="checkbox" name="body_pub" defaultChecked={initial?.text.published ?? false} />
+            <span>Publicar o texto para os alunos <span className="dim">(desmarcado, só administradores veem, com o aviso de rascunho)</span></span>
+          </label>
+        </div>
+      )}
 
       <FormMessage state={state} />
       <div className="adm-btns">

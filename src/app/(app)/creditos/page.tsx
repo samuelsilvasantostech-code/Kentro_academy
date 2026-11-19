@@ -11,11 +11,15 @@ export default function Creditos() {
       <header className="cat-h">
         <div>
           <p className="cat-k">Créditos</p>
-          <h1>Fotos das capas</h1>
+          <h1>Fotos e imagens</h1>
           <p className="cat-sub">As capas das trilhas e dos módulos usam fotos do Unsplash e do Pexels, com licença livre. Obrigado a quem as fotografou.</p>
         </div>
       </header>
       <ul className="credl">
+        <li>
+          <span className="credl-img"><Image src="/hero/bolhas.jpg" alt="Render 3D abstrato de bolhas roxas e verdes" fill sizes="120px" /></span>
+          <span><b>and machines / Unsplash</b><span className="dim">Fundo do início: render 3D abstrato de bolhas</span><a href="https://unsplash.com/photos/a-close-up-of-a-purple-and-green-object-2cA_qedQhVU" target="_blank" rel="noopener noreferrer">Ver original</a></span>
+        </li>
         {list.map((c) => (
           <li key={c.key}>
             <span className="credl-img"><Image src={c.src} alt={c.alt} fill sizes="120px" /></span>

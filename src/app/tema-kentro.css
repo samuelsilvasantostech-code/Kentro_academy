@@ -833,14 +833,7 @@ h1{font-weight:700} h2,h3,h4{font-weight:650}
 
 /* logo: cristal + "Kentro" / "ACADEMY" */
 .logo{display:inline-flex;align-items:center;gap:10px;color:#fff;font-stretch:100%}
-.logo-svg{flex:none;filter:drop-shadow(0 4px 14px rgba(128,0,255,.45));transition:transform .4s var(--ease-in)}
-.logo:hover .logo-svg{transform:rotate(-8deg) scale(1.05)}
-.logo-tx{display:grid;line-height:1}
-.logo-k{font-family:var(--font-d);font-size:19px;font-weight:700;letter-spacing:-.04em;color:#fff}
-.logo-a{display:flex;align-items:center;font-family:var(--font-m);font-size:10.5px;font-weight:600;letter-spacing:.32em;text-transform:uppercase;color:var(--violeta-tx);margin-top:4px}
-.logo .adm-tag{font-family:var(--font-b);letter-spacing:0;text-transform:none;font-size:12px;padding:1px 8px;margin-left:8px;background:#8000FF}
-.klogin-copy .logo-k,.auth-stack .logo-k{font-size:22px}
-
+.logo:hover .logo .adm-tag{font-family:var(--font-b);letter-spacing:0;text-transform:none;font-size:12px;padding:1px 8px;margin-left:8px;background:#8000FF}
 /* capa (foto com véu ou cristal) */
 .kcov{position:absolute;inset:0;display:block;overflow:hidden;background:radial-gradient(circle at 75% 40%,rgba(128,0,255,.45),transparent 55%),linear-gradient(140deg,#1B0E33,#0B0910 70%)}
 .kcov img{object-fit:cover;transition:transform .7s var(--ease-in)}
@@ -964,9 +957,7 @@ h1{font-weight:700} h2,h3,h4{font-weight:650}
   .mcardx>.mod-h{padding:10px 12px 10px 10px;gap:12px}
   .mcardx h3{font-size:15.5px}
   .mcardx .meta{font-size:12px}
-  .logo-k{font-size:17px}
-  .logo-a{font-size:9.5px;letter-spacing:.26em}
-}
+    }
 .credl{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
 .credl li{display:flex;gap:14px;align-items:center;padding:10px;border:1px solid var(--linha);border-radius:16px;background:var(--superficie)}
 .credl-img{position:relative;flex:none;width:96px;aspect-ratio:4/3;border-radius:10px;overflow:hidden}
@@ -975,3 +966,160 @@ h1{font-weight:700} h2,h3,h4{font-weight:650}
 .credl a{color:var(--violeta-tx);font-weight:600}
 .cat-cred{font-size:13px;text-align:center}.cat-cred a{text-decoration:underline;text-underline-offset:3px}
 .th2-map .thero-flow{grid-area:auto}
+
+/* ===================== Órbita — fase 8: texto da aula (artigo abaixo do vídeo) ===================== */
+.lart{display:grid;gap:22px;max-width:760px}
+.lart-draft{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--decisao-tx);border:1px dashed rgba(245,165,36,.5);border-radius:12px;padding:10px 14px;background:rgba(245,165,36,.06)}
+.lart-h{display:grid;gap:8px;padding-bottom:18px;border-bottom:1px solid var(--linha)}
+.lart-k{font-family:var(--font-m);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--violeta-tx)}
+.lart-h h2{font-size:clamp(24px,2.4vw,30px);line-height:1.15}
+.lart-lead{font-size:17px;line-height:1.65;color:var(--tinta-2)}
+.lart-toc{border:1px solid var(--linha);border-left:3px solid #8000FF;border-radius:4px 14px 14px 4px;padding:14px 18px;background:var(--superficie)}
+.lart-toc b{display:block;font-family:var(--font-m);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--tinta-3);margin-bottom:8px}
+.lart-toc ol{margin:0;padding-left:20px;display:grid;gap:6px;font-size:15px}
+.lart-toc li::marker{color:var(--violeta-tx);font-family:var(--font-m);font-size:13px}
+.lart-toc a{color:var(--tinta)}
+.lart-toc a:hover{color:#E2CCFF;text-decoration:underline;text-underline-offset:3px}
+.lart-body{font-size:16.5px;line-height:1.75;color:rgba(255,255,255,.86)}
+.lart-body>*+*{margin-top:16px}
+.lart-body h2{font-size:22px;line-height:1.25;color:#fff;margin-top:34px;scroll-margin-top:96px;display:flex;gap:12px;align-items:baseline}
+.lart-body h2::before{content:"";flex:none;width:10px;height:10px;border-radius:2px;background:#8000FF;transform:rotate(45deg) translateY(-2px);box-shadow:0 0 12px rgba(128,0,255,.8)}
+.lart-body h3{font-size:18px;color:#E2CCFF;margin-top:24px}
+.lart-body strong{color:#fff;font-weight:650}
+.lart-body ul,.lart-body ol{padding-left:22px;display:grid;gap:8px}
+.lart-body li::marker{color:var(--violeta-tx)}
+.lart-body kbd{font-family:var(--font-m);font-size:.86em;padding:2px 7px;border-radius:6px;background:var(--rebaixo);border:1px solid var(--linha-2);color:#E2CCFF;white-space:nowrap}
+.lart-body hr{border:0;height:1px;background:var(--linha);margin:28px 0}
+.lart-call{border-radius:14px;padding:14px 18px;border:1px solid rgba(185,138,255,.3);background:linear-gradient(135deg,rgba(128,0,255,.14),rgba(128,0,255,.03));font-size:15.5px;line-height:1.65}
+.lart-call p+p{margin-top:8px}
+.lart-call-t{display:block;font-family:var(--font-d);font-size:15px;color:#E2CCFF;margin-bottom:4px}
+.lart-call.is-atencao{border-color:rgba(245,165,36,.4);background:rgba(245,165,36,.07)}
+.lart-call.is-atencao .lart-call-t{color:var(--decisao-tx)}
+.lart-call.is-importante{border-color:#8000FF;box-shadow:inset 3px 0 0 #8000FF}
+.lart~.kpts,.lart~.doit{max-width:760px}
+.adm-tabs-mini{display:inline-flex;gap:4px;padding:4px;border-radius:12px;background:var(--rebaixo);border:1px solid var(--linha);margin:6px 0 10px}
+.adm-tabs-mini button{min-height:36px;padding:0 14px;border-radius:9px;font-weight:600;font-size:14px;color:var(--tinta-2)}
+.adm-tabs-mini button.on{background:#8000FF;color:#fff}
+.adm-lart{border:1px solid var(--linha);border-radius:14px;padding:18px 20px;margin-bottom:14px;max-width:none}
+@media (max-width:700px){
+  .lart-body{font-size:16px}
+  .lart-body h2{font-size:20px}
+}
+
+/* ===================== Kentro — logo oficial e verde da marca ===================== */
+/* O esquema do Academy original: preto, roxo elétrico e o verde do balão do "o" da logo. */
+:root{--verde:#2CF8B0;--verde-tx:#5FFFC6;--verde-fundo:rgba(44,248,176,.12)}
+.logo{display:inline-flex;align-items:center;color:#fff}
+.logo-lock{display:inline-grid;justify-items:end;line-height:1}
+.logo-wm{display:block;color:#fff;overflow:visible}
+.logo-a{display:flex;align-items:center;font-family:var(--font-d);font-size:11px;font-weight:700;letter-spacing:.02em;color:#fff;margin-top:2px;margin-right:2px}
+.logo .adm-tag{order:-1;font-family:var(--font-b);font-size:11.5px;padding:1px 7px;margin:0 8px 0 0;background:#8000FF;color:#fff}
+.logo:hover .logo-wm{filter:drop-shadow(0 0 10px rgba(44,248,176,.35))}
+.klogin-copy .logo-wm,.auth-stack .logo-wm{height:30px;width:auto}
+/* acentos verdes: rótulos de seção, progresso e "concluído" */
+.cat-k,.lart-k,.kdash-k,.ccard-cat{color:var(--verde-tx)}
+.pbar i,.bar i,.mbar i{background:linear-gradient(90deg,#8000FF,var(--verde))}
+.ccard-prog .tnum,.th2-prog .tnum{color:var(--verde-tx)}
+.th2-gains .ico{background:var(--verde-fundo);color:var(--verde-tx)}
+.cat-how-n{background:linear-gradient(135deg,#8000FF,#5A00C8);box-shadow:0 0 0 5px rgba(44,248,176,.14)}
+.th2-cat{border-color:rgba(44,248,176,.35);color:var(--verde-tx);background:rgba(11,9,16,.6)}
+/* marca nas capas, como os cartazes do Academy original */
+.kcov-brand{position:absolute;z-index:1;left:14px;top:12px;display:inline-grid;justify-items:end;line-height:1;color:#fff;filter:drop-shadow(0 2px 8px rgba(0,0,0,.6))}
+.kcov-brand b{font-family:var(--font-d);font-size:8.5px;font-weight:700;margin-top:1px}
+.ccard-cat{background:#0B0910;border:1px solid rgba(44,248,176,.35);border-radius:6px;padding:4px 8px;text-shadow:none}
+/* faixas diagonais roxo/verde do banner original, no hero da trilha */
+.th2-stripes{position:absolute;right:-40px;top:-10px;width:44%;height:120%;pointer-events:none;z-index:0;opacity:.55;background:linear-gradient(115deg,transparent 0 30%,rgba(128,0,255,.55) 30% 44%,transparent 44% 52%,rgba(44,248,176,.4) 52% 58%,transparent 58%);mask-image:linear-gradient(90deg,transparent,#000 40%)}
+@media (max-width:1100px){.th2-stripes{display:none}}
+@media (max-width:700px){.logo-wm{height:22px;width:auto}.logo-a{font-size:10px}}
+.th2-in{position:relative;z-index:1}
+.logo .logo-wm{color:#fff}
+/* Início: trilhas como cartazes verticais (como no Academy original) */
+.kposts{list-style:none;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:16px}
+.kpost{position:relative;display:block;aspect-ratio:3/4.4;border-radius:18px;overflow:hidden;border:1px solid var(--linha);color:#fff;isolation:isolate;transition:border-color .25s,box-shadow .25s,transform .3s var(--ease-in)}
+.kpost .kcov{z-index:-1}
+.kpost .kcov.has-img::after{background:linear-gradient(180deg,rgba(11,9,16,.35) 0%,transparent 25%,rgba(11,9,16,.55) 55%,rgba(11,9,16,.97) 100%),linear-gradient(160deg,rgba(80,0,170,.35),transparent 55%)}
+.kpost:hover,.kpost:focus-visible{border-color:rgba(44,248,176,.5);box-shadow:0 24px 46px -22px rgba(128,0,255,.7)}
+.kpost:hover .kcov img{transform:scale(1.06)}
+.kpost-tag{position:absolute;right:10px;top:10px;font-size:12px;font-weight:700;background:#8000FF;border-radius:7px;padding:3px 8px}
+.kpost-tag.is-ok{background:#0B0910;color:var(--verde-tx);border:1px solid rgba(44,248,176,.4)}
+.kpost-foot{position:absolute;left:0;right:0;bottom:0;display:grid;gap:5px;padding:14px}
+.kpost-cat{justify-self:start;font-family:var(--font-m);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--verde-tx);background:#0B0910;border:1px solid rgba(44,248,176,.35);border-radius:6px;padding:2px 7px}
+.kpost-foot b{font-family:var(--font-d);font-size:17px;line-height:1.2;letter-spacing:-.03em}
+.kpost-meta{font-size:12.5px;color:rgba(255,255,255,.72)}
+.kpost-prog{display:flex;align-items:center;gap:8px;margin-top:2px}
+.kpost-prog .pbar{flex:1;height:5px}
+.kpost-prog .tnum{font-size:12px;font-weight:700;color:var(--verde-tx)}
+@media (prefers-reduced-motion:no-preference){.kpost:hover,.kpost:focus-visible{transform:translateY(-4px)}.kposts>li{animation:k-in .5s ease-out both;animation-delay:calc(var(--i,0) * 60ms)}}
+@media (max-width:1100px){.kposts{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:700px){
+  .kposts{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-inline:16px;margin-inline:-16px;padding:4px 16px 8px}
+  .kposts>li{flex:0 0 62%;scroll-snap-align:start}
+}
+
+/* ===== Início — herói com o balão da logo em 3D ===== */
+.kx{position:relative;isolation:isolate;overflow:hidden;border:1px solid rgba(185,138,255,.16);border-radius:30px;background:#07050B;
+  display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);grid-template-rows:1fr auto;min-height:clamp(520px,72svh,720px)}
+.kx-bg{position:absolute;inset:0;z-index:-1;pointer-events:none}
+.kx-img{object-fit:cover;object-position:70% 40%;opacity:.42}
+.kx-bg::before{content:"";position:absolute;inset:0;z-index:1;background:
+  linear-gradient(90deg,#07050B 0%,rgba(7,5,11,.92) 30%,rgba(7,5,11,.45) 62%,rgba(7,5,11,.25) 100%),
+  radial-gradient(60% 70% at 72% 42%,rgba(128,0,255,.32),transparent 70%),
+  radial-gradient(40% 40% at 92% 96%,rgba(44,248,176,.16),transparent 70%),
+  linear-gradient(0deg,#07050B 0%,transparent 35%)}
+.kx-grid{position:absolute;inset:auto 0 0;height:46%;z-index:1;opacity:.5;
+  background-image:linear-gradient(rgba(185,138,255,.16) 1px,transparent 1px),linear-gradient(90deg,rgba(185,138,255,.16) 1px,transparent 1px);
+  background-size:56px 56px;transform:perspective(520px) rotateX(58deg);transform-origin:50% 100%;
+  -webkit-mask-image:linear-gradient(0deg,transparent,#000 30%,transparent 95%);mask-image:linear-gradient(0deg,transparent,#000 30%,transparent 95%)}
+.kx-main{position:relative;z-index:2;align-self:center;display:grid;justify-items:start;padding:48px 0 32px 52px;max-width:620px}
+.kx .khero-hi{font-family:var(--font-m);font-size:13px;letter-spacing:.04em;color:#E2CCFF;margin-bottom:22px}
+.kx .khero-hi::before{background:var(--verde);box-shadow:0 0 0 5px rgba(44,248,176,.16)}
+.kx-k{font-family:var(--font-m);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--verde-tx);margin-bottom:10px}
+.kx-t{font-size:clamp(32px,3.6vw,54px);font-weight:800;letter-spacing:-.035em;line-height:1.04;color:#fff;text-wrap:balance;
+  background:linear-gradient(100deg,#fff 40%,#C9A8FF 75%,#73ECBC);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.kx-meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;margin-top:16px;color:var(--tinta-2);font-size:15px}
+.kx-meta a{color:#E2CCFF;font-weight:650;text-decoration:underline;text-decoration-color:rgba(185,138,255,.35);text-underline-offset:4px}
+.kx-meta a:hover{text-decoration-color:currentColor}
+.kx-meta span{display:inline-flex;align-items:center;gap:6px}
+.kx-meta span::before{content:"";width:4px;height:4px;border-radius:50%;background:var(--tinta-3);margin-right:4px}
+.kx-meta span .ico{color:var(--tinta-3)}
+.kx-prog{width:min(100%,420px);display:grid;gap:8px;margin-top:26px}
+.kx-prog-l{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;color:var(--tinta-3)}
+.kx-prog-l b{font-family:var(--font-d);font-size:20px;color:var(--verde-tx)}
+.kx-prog .pbar{height:8px;background:rgba(255,255,255,.08)}
+.kx-hint{margin-top:12px;font-size:14px;color:var(--tinta-2)}
+.kx-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.kx-cta .btn-p{min-height:52px;padding-inline:26px;box-shadow:0 10px 34px -8px rgba(128,0,255,.7)}
+.kx-cta .btn-ghost{min-height:52px;padding-inline:22px;border:1px solid rgba(185,138,255,.3);color:#E2CCFF;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.kx-cta .btn-ghost:hover{border-color:#C9A8FF}
+.kx-stage{position:relative;z-index:1;min-height:340px;margin-right:-4%}
+.kbubble{position:absolute;inset:-6% -2% -6% 0}
+.kbubble-svg{position:absolute;inset:10%;width:80%;height:80%;transition:opacity .6s var(--ease-in);filter:drop-shadow(0 30px 60px rgba(44,248,176,.18))}
+.kbubble-gl{position:absolute;inset:0;opacity:0;transition:opacity .8s var(--ease-in)}
+.kbubble.is-3d .kbubble-svg{opacity:0}
+.kbubble.is-3d .kbubble-gl{opacity:1}
+@media (prefers-reduced-motion:no-preference){.kbubble:not(.is-3d) .kbubble-svg{animation:k-float 6s ease-in-out infinite}}
+@media print{.kbubble-gl{display:none}.kbubble-svg{opacity:1!important}}
+.kx-hud{grid-column:1/-1;position:relative;z-index:2;margin:0 24px 24px;background:rgba(14,10,24,.55);border-color:rgba(185,138,255,.16)}
+.kx-hud li.is-goal b,.kx-hud li.is-goal .khud-k{color:var(--verde-tx)}
+@media (prefers-reduced-motion:no-preference){.kx-main>*{animation:k-in .55s ease-out both}.kx-main>:nth-child(2){animation-delay:.05s}.kx-main>:nth-child(3){animation-delay:.1s}.kx-main>:nth-child(4){animation-delay:.15s}.kx-main>:nth-child(5){animation-delay:.2s}.kx-main>:nth-child(n+6){animation-delay:.25s}}
+@media (max-width:1000px){
+  .kx{grid-template-columns:1fr;grid-template-rows:auto auto auto;min-height:0}
+  .kx-main{padding:36px 28px 0;max-width:none}
+  .kx-stage{order:-1;min-height:260px;margin:0}
+  .kx-img{object-position:50% 20%}
+  .kx-bg::before{background:linear-gradient(180deg,rgba(7,5,11,.3) 0%,rgba(7,5,11,.85) 38%,#07050B 70%),radial-gradient(70% 40% at 50% 18%,rgba(128,0,255,.35),transparent 70%)}
+  .kx-hud{margin:24px 16px 16px}
+}
+@media (max-width:700px){
+  .kx{border-radius:24px}
+  .kx-main{padding:4px 18px 0}
+  .kx-stage{min-height:210px}
+  .kx-t{font-size:30px}
+  .kx-cta{width:100%}
+  .kx-cta .btn{flex:1 1 auto;justify-content:center}
+  .kx-hud{margin:22px 12px 12px}
+  .kposts{scrollbar-width:none}
+  .kposts::-webkit-scrollbar{display:none}
+  .kposts>li{flex-basis:72%}
+  .bnav a{white-space:nowrap}
+}

@@ -19,6 +19,8 @@ import {
  *   summary       opcional, até 2000
  *   steps         "Faça agora no seu Kentro": um passo por linha
  *   key_points    pontos-chave, um por linha, até 8 (só vem no form com a migração 0007; ausente = não mexe)
+ *   body_md       texto da aula em markdown simples, até 30000 (só vem no form com a migração 0008; ausente = não mexe)
+ *   body_pub      "on" = texto publicado para os alunos; ausente = rascunho
  *   chapters      uma linha por capítulo: "mm:ss Título"
  *   materials     uma linha por material: "Título | https://link | descrição opcional"
  *   module_id     uuid do módulo (obrigatório só na criação; na edição use linkLesson/unlinkLesson)
@@ -40,6 +42,7 @@ export async function saveLesson(_prev: FormState, form: FormData): Promise<Form
   const summary = f.get("summary", text(form.get("summary"), { max: 2000 }));
   const steps = f.get("steps", parseLines(form.get("steps"), { max: 20, maxLen: 300 }));
   const keyPoints = form.has("key_points") ? f.get("key_points", parseLines(form.get("key_points"), { max: 8, maxLen: 200 })) : undefined;
+  const body = form.has("body_md") ? f.get("body_md", text(form.get("body_md"), { max: 30000 })) : undefined;
   const chapters = f.get("chapters", parseChapters(form.get("chapters")));
   const materials = f.get("materials", parseMaterials(form.get("materials")));
   if (f.failed) return fail("Confira os campos destacados.", form, f.errors);
@@ -71,6 +74,17 @@ export async function saveLesson(_prev: FormState, form: FormData): Promise<Form
       logDbError("saveLesson.key_points", kpErr);
       catalogChanged();
       return done("Aula salva, mas os pontos-chave não foram gravados. Abra a aula e salve de novo.", data as string);
+    }
+  }
+  if (body !== undefined) {
+    const lessonId = data as string;
+    const { error: txErr } = body
+      ? await supabase.from("lesson_texts").upsert({ lesson_id: lessonId, body, published: form.get("body_pub") === "on", updated_at: new Date().toISOString() })
+      : await supabase.from("lesson_texts").delete().eq("lesson_id", lessonId);
+    if (txErr) {
+      logDbError("saveLesson.text", txErr);
+      catalogChanged();
+      return done("Aula salva, mas o texto não foi gravado. Abra a aula e salve de novo.", lessonId);
     }
   }
   catalogChanged();

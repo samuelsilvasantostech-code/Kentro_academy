@@ -25,7 +25,7 @@ function TrackCard({ c, rec, i }: { c: Card; rec: boolean; i: number }) {
     <li style={{ "--i": i } as React.CSSProperties}>
       <Link className="ccard kglow" href={`/trilha/${t.id}`}>
         <span className="ccard-top">
-          <Cover img={coverOf(t.id)} icon={cv.icon} tilt={cv.tilt} sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 460px" />
+          <Cover brand img={coverOf(t.id)} icon={cv.icon} tilt={cv.tilt} sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 460px" />
           <span className="ccard-cat"><Ico name={cv.icon} size={13} />{cv.label}</span>
           {tag && <span className={`ccard-tag${c.certified ? " is-ok" : ""}`}>{tag}</span>}
         </span>
