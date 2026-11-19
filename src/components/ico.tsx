@@ -39,6 +39,10 @@ const PATHS = {
   nivel1: <><path d="M6 20v-5" /><path d="M12 20v-9M18 20V5" opacity=".3" /></>,
   nivel2: <><path d="M6 20v-5M12 20v-9" /><path d="M18 20V5" opacity=".3" /></>,
   nivel3: <path d="M6 20v-5M12 20v-9M18 20V5" />,
+  user: <><circle cx="12" cy="8" r="4" /><path d="M4 20c1-4 4-6 8-6s7 2 8 6" /></>,
+  inbox: <><path d="M4 13l2.5-7h11L20 13v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z" /><path d="M4 13h4.5l1 2h5l1-2H20" /></>,
+  eye: <><path d="M2.5 12S6 5 12 5s9.5 7 9.5 7-3.5 7-9.5 7-9.5-7-9.5-7z" /><circle cx="12" cy="12" r="3" /></>,
+  sleep: <><circle cx="12" cy="12" r="9" /><path d="M9 10h3l-3 4h3M14 8h2l-2 2.5h2" /></>,
 } as const;
 
 export type IcoName = keyof typeof PATHS;

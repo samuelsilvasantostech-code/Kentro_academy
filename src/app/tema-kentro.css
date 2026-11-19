@@ -624,3 +624,95 @@ main:focus{outline:0}
   .cert-hero-tx h2{font-size:24px}
 }
 @media print{.cert-hero{display:none}}
+
+/* ===================== Órbita — fase 5: Meus cursos e Admin ===================== */
+/* Meus cursos: abas (links com aria-current; cada aba é uma URL) */
+.mtabs{display:flex;gap:4px;margin-top:28px;border-bottom:1px solid var(--linha);overflow-x:auto;scrollbar-width:none}
+.mtabs::-webkit-scrollbar{display:none}
+.mtabs a{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 14px;color:var(--tinta-2);font-weight:600;font-size:15px;white-space:nowrap;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color var(--t-rapido),border-color var(--t-rapido)}
+.mtabs a:hover{color:var(--tinta)}
+.mtabs a[aria-current=page]{color:var(--tinta);border-bottom-color:var(--violeta)}
+.mtabs a[aria-current=page] .ico{color:var(--violeta-tx)}
+.mtabs-n{font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--tinta-2);background:var(--superficie-2);border-radius:999px;padding:1px 8px}
+.mtabs a[aria-current=page] .mtabs-n{background:var(--violeta-suave);color:var(--sinal-tx)}
+.mpanel{display:grid;gap:14px;padding-top:24px}
+.mpanel>section{display:grid;gap:12px}
+.mpanel>section+section{margin-top:18px}
+.page-narrow .mpanel-h,.mpanel-h{font-size:18px;font-weight:700;color:var(--tinta);letter-spacing:-.02em}
+.mpanel-sub{font-size:14px;margin-top:-6px}
+.mpanel .empty{margin:0;max-width:none}
+@media (prefers-reduced-motion:no-preference){.mpanel{animation:fade-in .3s ease-out both}}
+
+/* cursos em andamento e concluídos */
+.mcourses{list-style:none;display:grid;gap:10px}
+.mcourse{display:flex;align-items:center;gap:16px;padding:18px 20px;background:var(--superficie);border:1px solid var(--linha);border-radius:18px;transition:border-color var(--t-rapido)}
+.mcourse:hover{border-color:var(--linha-2)}
+.mcourse-main{flex:1;min-width:0;display:grid;gap:6px}
+.mcourse-t{font-size:17px;font-weight:700;color:var(--tinta);overflow-wrap:anywhere}
+.mcourse-t:hover{text-decoration:underline;text-underline-offset:3px}
+.mcourse-prog{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700;color:var(--sinal-tx)}
+.mcourse-prog .pbar{flex:1;max-width:320px}
+.mcourse-meta{font-size:13px;color:var(--tinta-2)}
+.mcourse-next{font-size:14px;color:var(--tinta);overflow-wrap:anywhere}
+.mcourse-go{flex:none}
+.mcourse-ico{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;flex:none;background:var(--violeta-suave);color:var(--lavanda)}
+@media (max-width:640px){
+  .mcourse{flex-wrap:wrap;padding:16px}
+  .mcourse-go{flex:1 1 100%;justify-content:center}
+  .mcourse.is-done .mcourse-main{flex:1 1 calc(100% - 60px)}
+}
+
+/* selos */
+.mbadges{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+.mbadge{position:relative;display:grid;justify-items:center;align-content:start;gap:6px;text-align:center;padding:18px 14px 16px;background:var(--superficie);border:1px solid var(--linha);border-radius:18px}
+.mbadge.is-on{border-color:color-mix(in srgb,var(--violeta-tx) 45%,var(--linha));background:linear-gradient(180deg,color-mix(in srgb,var(--violeta) 14%,var(--superficie)),var(--superficie) 70%)}
+.mbadge-gem{width:76px;height:76px;margin-bottom:4px}
+.mbadge:not(.is-on) .mbadge-gem{filter:grayscale(1) brightness(.8);opacity:.55}
+.mbadge b{font-size:15px;line-height:1.3;overflow-wrap:anywhere}
+.mbadge-st{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--sinal-tx)}
+.mbadge-st.is-lock{color:var(--tinta-3)}
+.mbadge-hint{font-size:13px}
+.mbadge .pbar{width:80%;margin-top:4px}
+.mbadge-a{margin-top:6px;font-size:13px;font-weight:650;color:var(--violeta-tx);min-height:32px;display:inline-flex;align-items:center}
+.mbadge-a::after{content:"";position:absolute;inset:0;border-radius:18px}
+.mbadge-a:hover{text-decoration:underline}
+.mbadge:has(.mbadge-a:focus-visible){outline:3px solid var(--anel);outline-offset:3px}
+.mbadge-a:focus-visible{outline:0}
+@media (prefers-reduced-motion:no-preference){.mbadge.is-on .mbadge-gem{animation:k-float 6s ease-in-out infinite}}
+@media (max-width:640px){.mbadges{grid-template-columns:repeat(2,1fr);gap:10px}.mbadge-gem{width:64px;height:64px}}
+
+/* anotações: título da aula numa linha, texto embaixo */
+.mnotes{list-style:none;display:grid;gap:10px}
+.mnote{display:grid;gap:8px;padding:16px 18px;background:var(--superficie);border:1px solid var(--linha);border-radius:16px;color:var(--tinta);transition:border-color var(--t-rapido)}
+.mnote:hover{border-color:var(--violeta-tx)}
+.mnote-h{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.mnote-h b{font-size:14px;color:var(--sinal-tx)}
+.mnote-h time{font-size:12px;color:var(--tinta-3);white-space:nowrap}
+.mnote-b{font-size:15px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--tinta-2)}
+
+/* Admin: fila de ações no topo do painel */
+.pn-todo{gap:14px}
+.pn-todo-h{display:flex;align-items:center;gap:10px}
+.pn-todo-n{font-size:13px;font-weight:700;min-width:24px;height:24px;padding:0 8px;border-radius:999px;display:grid;place-items:center;background:var(--violeta-suave);color:var(--sinal-tx)}
+.pn-todo-list{list-style:none;display:grid;gap:8px}
+.pn-todo-i{display:flex;align-items:center;gap:14px;padding:12px 14px;border:1px solid var(--linha);border-radius:14px;background:var(--superficie-2)}
+.pn-todo-ico{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;flex:none;background:var(--violeta-suave);color:var(--lavanda)}
+.pn-todo-i.is-alert{border-color:color-mix(in srgb,var(--decisao) 40%,var(--linha))}
+.pn-todo-i.is-alert .pn-todo-ico{background:color-mix(in srgb,var(--decisao) 18%,transparent);color:var(--decisao-tx)}
+.pn-todo-tx{flex:1;min-width:0;display:grid;gap:2px}
+.pn-todo-tx b{font-size:15px}
+.pn-todo-tx span{font-size:13px;color:var(--tinta-2);overflow-wrap:anywhere}
+.pn-todo-i .btn{flex:none}
+.pn-todo-ok{display:flex;align-items:center;gap:10px;color:var(--tinta-2)}
+.pn-todo-ok .ico{color:var(--ok-tx);flex:none}
+#pn-alunos{scroll-margin-top:120px}
+@media (max-width:640px){
+  .pn-todo-i{flex-wrap:wrap}
+  .pn-todo-tx{flex:1 1 calc(100% - 52px)}
+  .pn-todo-i .btn{flex:1 1 100%;justify-content:center}
+}
+@media (max-width:640px){
+  .mtabs{display:grid;grid-template-columns:repeat(4,1fr);gap:0;overflow:visible}
+  .mtabs a{flex-direction:column;justify-content:center;gap:4px;min-height:60px;padding:6px 2px;font-size:13px}
+  .mtabs-n{display:none}
+}

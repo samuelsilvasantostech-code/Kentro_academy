@@ -39,8 +39,8 @@ export default async function Certificado({ params }: { params: Promise<{ trilha
       <div className="empty">
         <span className="empty-ico" aria-hidden="true"><Ico name="pen" size={28} /></span>
         <h1>Complete seu nome para emitir o certificado</h1>
-        <p className="muted">Seu perfil está sem nome. Preencha em Meu aprendizado e volte aqui.</p>
-        <Link className="btn btn-p" href="/meu#nome"><Ico name="pen" />Preencher meu nome</Link>
+        <p className="muted">Seu perfil está sem nome. Preencha em Meus cursos, na aba Perfil, e volte aqui.</p>
+        <Link className="btn btn-p" href="/meu?aba=perfil"><Ico name="pen" />Preencher meu nome</Link>
       </div>
     );
   }

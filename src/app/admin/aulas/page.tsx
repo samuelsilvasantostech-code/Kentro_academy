@@ -7,12 +7,13 @@ import { Ico } from "@/components/ico";
 
 export const metadata: Metadata = { title: "Aulas" };
 
-export default async function AulasPage({ searchParams }: { searchParams: Promise<{ trilha?: string; q?: string }> }) {
-  const { trilha = "", q = "" } = await searchParams;
+export default async function AulasPage({ searchParams }: { searchParams: Promise<{ trilha?: string; q?: string; status?: string }> }) {
+  const { trilha = "", q = "", status = "" } = await searchParams;
   const [lessons, tracks] = await Promise.all([getAdminLessons(), getAdminTracks()]);
   const term = q.trim().toLowerCase();
   const shown = lessons.filter((l) => {
     if (trilha === "sem-modulo" ? l.links.length > 0 : trilha && !l.links.some((k) => k.trackId === trilha)) return false;
+    if (status === "rascunho" && l.published) return false;
     return !term || l.title.toLowerCase().includes(term);
   });
 
@@ -36,8 +37,15 @@ export default async function AulasPage({ searchParams }: { searchParams: Promis
             {tracks.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
           </select>
         </div>
+        <div className="adm-field">
+          <label htmlFor="f-s">Situação</label>
+          <select id="f-s" className="input" name="status" defaultValue={status}>
+            <option value="">Todas</option>
+            <option value="rascunho">Só rascunhos</option>
+          </select>
+        </div>
         <button className="btn btn-s">Filtrar</button>
-        {(q || trilha) && <Link className="btn btn-s" href="/admin/aulas">Limpar</Link>}
+        {(q || trilha || status) && <Link className="btn btn-s" href="/admin/aulas">Limpar</Link>}
       </form>
 
       {shown.length === 0 ? (

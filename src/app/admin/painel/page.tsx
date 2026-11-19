@@ -1,6 +1,8 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { getMetrics } from "@/lib/admin/metrics";
+import { getAdminLessons, getAdminTracks } from "@/lib/admin/queries";
+import { Ico, type IcoName } from "@/components/ico";
 
 export const metadata: Metadata = { title: "Painel" };
 
@@ -12,14 +14,31 @@ const ago = (iso: string | null, now: number) => {
   return d <= 0 ? "Hoje" : d === 1 ? "Ontem" : d < 30 ? `Há ${d} dias` : day.format(new Date(iso));
 };
 const pl = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
+type Todo = { icon: IcoName; tone: "alert" | "info"; title: string; desc: string; href: string; cta: string };
 
 export default async function Painel({ searchParams }: { searchParams: Promise<{ empresa?: string }> }) {
   const { empresa } = await searchParams;
-  const m = await getMetrics();
+  const [m, tracks, lessons] = await Promise.all([getMetrics(), getAdminTracks(), getAdminLessons()]);
   const now = Date.parse(m.generatedAt);
   const t = m.totals;
   const students = empresa ? m.students.filter((s) => s.company === empresa) : m.students;
   const idle = students.filter((s) => s.lessons > 0 && s.lastActive && now - Date.parse(s.lastActive) > 14 * DAY).length;
+  const idleAll = m.students.filter((s) => s.lessons > 0 && s.lastActive && now - Date.parse(s.lastActive) > 14 * DAY).length;
+
+  // Fila de ações: o que a equipe pode resolver agora, do mais urgente para o menos urgente.
+  const noQuiz = tracks.filter((tr) => tr.published).flatMap((tr) => tr.modules.filter((md) => md.quizCount === 0 && md.lessons.some((l) => l.published)).map((md) => ({ ...md, track: tr.name })));
+  const draftTracks = tracks.filter((tr) => !tr.published);
+  const draftLessons = lessons.filter((l) => !l.published).length;
+  const loose = lessons.filter((l) => l.links.length === 0).length;
+  const hardQuiz = m.quizzes.filter((q) => q.attempts >= 5 && q.firstTryRate < 50);
+  const todo: Todo[] = [];
+  if (t.pendingQuestions) todo.push({ icon: "chat", tone: "alert", title: pl(t.pendingQuestions, "dúvida sem resposta", "dúvidas sem resposta"), desc: "Alunos esperando retorno. Responda pela fila de dúvidas.", href: "/admin/duvidas", cta: "Responder" });
+  if (hardQuiz.length) todo.push({ icon: "target", tone: "info", title: pl(hardQuiz.length, "quiz difícil demais", "quizzes difíceis demais"), desc: `Menos da metade passa de primeira em ${hardQuiz.slice(0, 2).map((q) => q.moduleTitle).join(" e ")}. Revise as perguntas ou a aula.`, href: `/admin/quizzes/${hardQuiz[0].moduleId}`, cta: "Revisar" });
+  if (noQuiz.length) todo.push({ icon: "help", tone: "info", title: pl(noQuiz.length, "módulo publicado sem quiz", "módulos publicados sem quiz"), desc: `O aluno conclui esses módulos só assistindo às aulas. Um quiz ajuda a fixar o conteúdo. Ex.: ${noQuiz.slice(0, 2).map((x) => `${x.title} (${x.track})`).join("; ")}${noQuiz.length > 2 ? "…" : ""}`, href: `/admin/quizzes/${noQuiz[0].id}`, cta: noQuiz.length > 1 ? "Criar o primeiro" : "Criar quiz" });
+  if (draftLessons) todo.push({ icon: "pen", tone: "info", title: pl(draftLessons, "aula em rascunho", "aulas em rascunho"), desc: "Os alunos não veem rascunhos. Publique quando estiverem prontas.", href: "/admin/aulas?status=rascunho", cta: "Ver rascunhos" });
+  if (draftTracks.length) todo.push({ icon: "layers", tone: "info", title: pl(draftTracks.length, "trilha em rascunho", "trilhas em rascunho"), desc: draftTracks.slice(0, 3).map((x) => x.name).join(", "), href: `/admin/trilhas/${draftTracks[0].id}`, cta: draftTracks.length > 1 ? "Abrir a primeira" : "Abrir" });
+  if (loose) todo.push({ icon: "inbox", tone: "info", title: pl(loose, "aula fora de qualquer módulo", "aulas fora de qualquer módulo"), desc: "Aulas soltas não aparecem em nenhuma trilha.", href: "/admin/aulas?trilha=sem-modulo", cta: "Organizar" });
+  if (idleAll) todo.push({ icon: "sleep", tone: "info", title: pl(idleAll, "aluno parado há mais de 14 dias", "alunos parados há mais de 14 dias"), desc: "Começaram uma trilha e não concluem aula nem quiz há duas semanas.", href: "#pn-alunos", cta: "Ver alunos" });
 
   return (
     <>
@@ -29,6 +48,26 @@ export default async function Painel({ searchParams }: { searchParams: Promise<{
           <p className="muted">Uso da Academy pelos alunos. Atividade conta aula concluída e quiz feito; o sistema não registra acesso nem tempo assistido.</p>
         </div>
       </div>
+
+      <section className="adm-card pn-todo" aria-labelledby="pn-todo">
+        <div className="pn-todo-h">
+          <h2 id="pn-todo">O que fazer agora</h2>
+          {todo.length > 0 && <span className="pn-todo-n">{todo.length}</span>}
+        </div>
+        {todo.length ? (
+          <ul className="pn-todo-list">
+            {todo.map((x) => (
+              <li key={x.title} className={`pn-todo-i is-${x.tone}`}>
+                <span className="pn-todo-ico" aria-hidden><Ico name={x.icon} size={18} /></span>
+                <div className="pn-todo-tx"><b>{x.title}</b><span>{x.desc}</span></div>
+                <Link className="btn btn-s btn-sm" href={x.href}>{x.cta}<span className="sr-only">: {x.title}</span></Link>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="pn-todo-ok"><Ico name="check" size={18} strokeWidth={3} />Tudo em dia: nenhuma dúvida esperando e nada pendente no conteúdo.</p>
+        )}
+      </section>
 
       <section aria-label="Resumo" className="pn-kpis">
         <div className="pn-kpi"><b>{t.students}</b><span>{t.students === 1 ? "aluno" : "alunos"}</span><small>{t.newIn30 ? `${t.newIn30} ${t.newIn30 === 1 ? "novo" : "novos"} em 30 dias` : "Nenhum novo em 30 dias"}</small></div>
