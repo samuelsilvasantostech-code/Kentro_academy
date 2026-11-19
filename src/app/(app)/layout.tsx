@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { MenuCloser } from "@/components/menu-closer";
 import Form from "next/form";
 import { getMe } from "@/lib/catalog";
 import { initials } from "@/lib/format";
@@ -9,6 +10,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const { profile, user } = await getMe();
   return (
     <>
+      <a className="skip" href="#conteudo">Pular para o conteúdo</a>
       <header className="top">
         <div className="wrap">
           <Link className="logo" href="/" aria-label="Kentro Academy, início"><span className="logo-mark" aria-hidden><i /></span><span>Kentro <b>Academy</b></span></Link>
@@ -30,8 +32,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           </details>
         </div>
       </header>
-      <main><div className="wrap">{children}</div></main>
+      <main id="conteudo" tabIndex={-1}><div className="wrap">{children}</div></main>
       <BottomNav />
+      <MenuCloser />
     </>
   );
 }

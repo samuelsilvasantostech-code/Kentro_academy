@@ -14,6 +14,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const pending = await getPendingCount();
   return (
     <div className="adm">
+      <a className="skip" href="#conteudo">Pular para o conteúdo</a>
       <header className="adm-top">
         <div className="adm-top-in">
           <div className="adm-bar">
@@ -23,7 +24,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <AdminNav pending={pending} />
         </div>
       </header>
-      <main className="adm-main"><div className="wrap" style={{ display: "grid", gap: 24 }}>{children}</div></main>
+      <main id="conteudo" tabIndex={-1} className="adm-main"><div className="wrap" style={{ display: "grid", gap: 24 }}>{children}</div></main>
     </div>
   );
 }

@@ -148,7 +148,7 @@ export function edgeControls(a: Point, b: Point, orientation: Orientation): [Poi
     : [{ x: a.x, y: a.y + dy / 2 }, { x: b.x, y: b.y - dy / 2 }];
 }
 
-export const PALCO = "#0E0E12";
-export const SINAL = "#22D797";
+export const PALCO = "#0A0910";
+export const SINAL = "#B98AFF";
 export const DECISAO = "#FFC857";
 export const VIOLETA = "#6D28F5";
