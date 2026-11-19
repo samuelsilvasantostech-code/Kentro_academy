@@ -22,7 +22,7 @@ export function AdminNav({ pending }: { pending: number }) {
           <Link key={href} href={href} className="adm-tab" aria-current={current ? "page" : undefined}>
             {label}
             {href === "/admin/duvidas" && pending > 0 && (
-              <span className="adm-count" aria-label={`${pending} sem resposta`}>{pending}</span>
+              <span className="adm-count" aria-label={`${pending} ${pending === 1 ? "dúvida sem resposta" : "dúvidas sem resposta"}`}>{pending}</span>
             )}
           </Link>
         );

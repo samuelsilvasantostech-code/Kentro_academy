@@ -9,6 +9,7 @@ import { Chev } from "@/components/cards";
 import { HeroArt } from "@/components/art";
 import { Explorer } from "@/components/explorer";
 import { Ico } from "@/components/ico";
+import { nextTrack } from "@/lib/next-track";
 import { getTrackStatuses } from "./certificado/completion";
 import { exploreData } from "./explore-data";
 
@@ -19,11 +20,7 @@ export default async function Home() {
   if (!profile.role_track) redirect("/comecar");
 
   const rec = tracks.find((t) => t.id === profile.role_track) ?? tracks[0];
-  const t = tracks.find((x) => x.id === profile.last_track_id) ?? rec;
-  const L = lessonsOf(t);
-  const last = L.find((l) => l.id === profile.last_lesson_id);
-  const l = last && !done.has(last.id) ? last : nextOf(t, done);
-  const p = progress(t, done);
+  const cur = tracks.find((x) => x.id === profile.last_track_id) ?? rec;
   const supabase = await createClient();
   // Certificados, novidades e respostas de dúvidas saem juntos, não em fila.
   const [statuses, { data: news }, { data: answered }] = await Promise.all([
@@ -38,6 +35,14 @@ export default async function Home() {
       .order("answered_at", { ascending: false })
       .limit(5),
   ]);
+  // Trilha atual já certificada: o card passa a sugerir a próxima sem certificado (se houver).
+  const isCert = (id: string) => !!statuses.get(id)?.certified;
+  const moved = isCert(cur.id) ? nextTrack(tracks, cur.id, isCert) : null;
+  const t = moved ?? cur;
+  const L = lessonsOf(t);
+  const last = L.find((l) => l.id === profile.last_lesson_id);
+  const l = last && !done.has(last.id) ? last : nextOf(t, done);
+  const p = progress(t, done);
   const img = thumb(l.youtube_id);
 
   // Resumo: trilhas já começadas (e a atual). Mesma regra do progresso: só aulas com vídeo contam.
@@ -77,6 +82,7 @@ export default async function Home() {
           <h2 id="cont-h">{p.done ? "Continue de onde parou" : "Comece por aqui"}</h2>
           <p className="sec-hint">
             {done.size === 0 ? "São poucos minutos por aula."
+              : moved ? `Você concluiu ${cur.name}. Siga para a próxima trilha.`
               : certified ? `Você concluiu ${t.name}.`
               : p.pct === 100 ? "Falta só o quiz para o seu certificado."
               : `${p.total - p.done} ${p.total - p.done === 1 ? "aula falta" : "aulas faltam"} para o certificado.`}
@@ -98,8 +104,10 @@ export default async function Home() {
                 <b>{p.pct}%</b>
               </div>
               <div className="kcont-foot">
-                <span className="kmeta"><Ico name="video" size={16} />{p.done} de {p.total} aulas concluídas</span>
-                <Link className="btn btn-p" href={`/aula/${t.id}/${l.id}`}><Ico name="play" size={14} />{p.done ? "Continuar aula" : "Começar aula"}</Link>
+                <span className="kmeta"><Ico name="video" size={16} />{p.done} de {p.total} {p.total === 1 ? "aula com vídeo concluída" : "aulas com vídeo concluídas"}</span>
+                {certified
+                  ? <Link className="btn btn-p" href={`/certificado/${t.id}`}><Ico name="award" size={14} />Ver certificado</Link>
+                  : <Link className="btn btn-p" href={`/aula/${t.id}/${l.id}`}><Ico name="play" size={14} />{p.done ? "Continuar aula" : "Começar aula"}</Link>}
               </div>
             </div>
           </article>

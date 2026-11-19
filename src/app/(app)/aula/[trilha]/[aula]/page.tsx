@@ -69,7 +69,7 @@ export default async function Aula({ params, searchParams }: P) {
         <div className="side-top">
           <b>{t.name}</b>
           <div className="bar" role="progressbar" aria-label="Progresso na trilha" aria-valuemin={0} aria-valuemax={100} aria-valuenow={p.pct}><i style={{ width: `${p.pct}%` }} /></div>
-          <span className="side-prog">{p.done} de {p.total} aulas concluídas, {p.pct}%</span>
+          <span className="side-prog">{p.done} de {p.total} {p.total === 1 ? "aula com vídeo concluída" : "aulas com vídeo concluídas"}, {p.pct}%</span>
         </div>
         <div className="side-list">
           {t.modules.map((m, mi) => (

@@ -33,9 +33,9 @@ export default async function Painel({ searchParams }: { searchParams: Promise<{
       <section aria-label="Resumo" className="pn-kpis">
         <div className="pn-kpi"><b>{t.students}</b><span>{t.students === 1 ? "aluno" : "alunos"}</span><small>{t.newIn30 ? `${t.newIn30} ${t.newIn30 === 1 ? "novo" : "novos"} em 30 dias` : "Nenhum novo em 30 dias"}</small></div>
         <div className="pn-kpi"><b>{t.active7}</b><span>ativos em 7 dias</span><small>{t.active30} em 30 dias</small></div>
-        <div className="pn-kpi"><b>{t.lessonsDone}</b><span>aulas concluídas</span><small>Somando todos os alunos</small></div>
+        <div className="pn-kpi"><b>{t.lessonsDone}</b><span>{t.lessonsDone === 1 ? "aula concluída" : "aulas concluídas"}</span><small>Somando todos os alunos</small></div>
         <div className="pn-kpi"><b>{t.certificates}</b><span>{t.certificates === 1 ? "certificado" : "certificados"}</span><small>Trilhas concluídas</small></div>
-        <Link className="pn-kpi pn-link" href="/admin/duvidas"><b>{t.pendingQuestions}</b><span>dúvidas sem resposta</span><small>{t.pendingQuestions ? "Abrir a fila" : "Fila vazia"}</small></Link>
+        <Link className="pn-kpi pn-link" href="/admin/duvidas"><b>{t.pendingQuestions}</b><span>{t.pendingQuestions === 1 ? "dúvida sem resposta" : "dúvidas sem resposta"}</span><small>{t.pendingQuestions ? "Abrir a fila" : "Fila vazia"}</small></Link>
       </section>
 
       <section className="adm-card" aria-labelledby="pn-trilhas">

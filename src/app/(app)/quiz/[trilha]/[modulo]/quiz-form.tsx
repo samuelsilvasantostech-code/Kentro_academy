@@ -123,7 +123,7 @@ export function QuizForm({ moduleId, trackId, questions, reviewHref }: { moduleI
               onClick={() => run(async () => { const r = await submitQuiz(moduleId, answers); if (r?.tooFast) { setWait(true); setFailed(false); return; } setWait(false); setResult(r); setFailed(!r); })}>
               {pending ? "Corrigindo…" : "Ver resultado"}
             </button>
-            {wait && <p className="expl" role="alert">Aguarde alguns segundos antes de tentar de novo.</p>}
+            {wait && <p className="expl" role="alert">Para evitar envios repetidos, há um intervalo de 20 segundos entre as tentativas. Espere um pouco e clique em “Ver resultado” de novo.</p>}
             {failed && <p className="err" role="alert">Não foi possível corrigir o quiz. Verifique sua conexão e envie de novo.</p>}
           </>
         )}

@@ -415,3 +415,15 @@ h1,h2,h3,h4{font-family:var(--font-b);font-weight:700;letter-spacing:-.025em;col
 .pn-tag{margin-left:8px;font-size:12px;font-weight:600;padding:1px 8px;border-radius:var(--r-pilula);background:var(--superficie-2);color:var(--tinta-2)}
 .pn-list{list-style:none;display:grid;gap:12px}
 .pn-list li{display:grid;gap:2px}
+
+/* QA 19/11: legibilidade do certificado na tela (impressão segue com a cor escura em globals.css) */
+@media screen{.cert-logo b,.cert-track,.cert-seal{color:color-mix(in srgb,var(--acc) 70%,#fff)}}
+/* QA 19/11: cabeçalho da dúvida com espaço entre nome, empresa, data e aula */
+.adm-qmeta{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px}
+/* QA 19/11: abas do admin sem barra de rolagem e cabendo em 375px */
+.adm-tabs{scrollbar-width:none}
+.adm-tabs::-webkit-scrollbar{display:none}
+@media (max-width:640px){
+  .adm-tabs{flex-wrap:wrap;gap:0 2px;overflow-x:visible}
+  .adm-tab{padding:10px 10px;font-size:14px}
+}

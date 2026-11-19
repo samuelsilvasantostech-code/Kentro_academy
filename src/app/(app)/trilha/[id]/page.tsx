@@ -57,7 +57,7 @@ export default async function Trilha({ params, searchParams }: { params: Promise
           <div className="tico" style={{ background: "var(--rebaixo)", width: 56, height: 56, fontSize: 28 }}>{t.icon}</div>
           <h1>{t.name}</h1>
           <p className="muted" style={{ fontSize: 17 }}>{t.pitch}</p>
-          <div className="meta" style={{ fontSize: 14 }}><span><IcPessoa />{t.audience}</span><span><IcAulas />{p.count} aulas</span><span><IcTempo />{minutes(p.seconds)}</span><span><IcCert />Certificado</span></div>
+          <div className="meta" style={{ fontSize: 14 }}><span><IcPessoa />{t.audience}</span><span><IcAulas />{p.count} {p.count === 1 ? "aula" : "aulas"}</span><span><IcTempo />{minutes(p.seconds)}</span><span><IcCert />Certificado</span></div>
           <div className="thero-cta">
             {nx && <Link className="btn btn-p" href={`/aula/${t.id}/${nx.id}`}>{p.done ? "Continuar" : "Começar trilha"}</Link>}
             {earned && <Link className="btn btn-s" href={`/certificado/${t.id}`}><IcCert />Ver certificado</Link>}
@@ -98,7 +98,7 @@ export default async function Trilha({ params, searchParams }: { params: Promise
         {p.count > 0 && <div className="timeline">
           {t.modules.map((m, mi) => {
             const d = m.lessons.filter((l) => done.has(l.id)).length;
-            const all = d === m.lessons.length;
+            const all = m.lessons.length > 0 && d === m.lessons.length;
             const secs = m.lessons.reduce((a, l) => a + l.duration_seconds, 0);
             const nq = quizCount.get(m.id) ?? 0;
             return (
@@ -107,7 +107,7 @@ export default async function Trilha({ params, searchParams }: { params: Promise
                   <span className="mod-n">{all ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M5 12.5l4.5 4.5L19 7.5" /></svg> : mi + 1}</span>
                   <div style={{ flex: 1 }}>
                     <h3>{m.title}</h3>
-                    <div className="meta"><span>{m.lessons.length} aulas</span><span>{minutes(secs)}</span><span>{d}/{m.lessons.length} concluídas</span>{quizPassed.has(m.id) && <span style={{ color: "var(--sinal-tx)" }}>Quiz feito</span>}</div>
+                    <div className="meta"><span>{m.lessons.length} {m.lessons.length === 1 ? "aula" : "aulas"}</span><span>{minutes(secs)}</span><span>{d}/{m.lessons.length} concluídas</span>{quizPassed.has(m.id) && <span style={{ color: "var(--sinal-tx)" }}>Quiz feito</span>}</div>
                   </div>
                   <svg className="chev dim" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="m6 9 6 6 6-6" /></svg>
                 </summary>

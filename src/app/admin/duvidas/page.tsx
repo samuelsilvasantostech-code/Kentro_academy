@@ -34,7 +34,7 @@ export default async function DuvidasPage({ searchParams }: { searchParams: Prom
             const href = studentLink.get(q.lesson.id);
             return (
               <li key={q.id} className="adm-card">
-                <div>
+                <div className="adm-qmeta">
                   <b>{q.student.full_name}</b>
                   {q.student.company && <span className="adm-sub">{q.student.company}</span>}
                   <span className="adm-sub">Enviada em {fmt.format(new Date(q.created_at))}</span>
