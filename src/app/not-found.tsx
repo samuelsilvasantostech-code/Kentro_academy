@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { Ico } from "@/components/ico";
+import { Logo } from "@/components/logo";
 
 // Neutro de propósito: o layout do /admin define "Admin" no título, e o aluno não deve ver isso num 404.
 export const metadata: Metadata = { title: "Página não encontrada" };
@@ -9,7 +10,7 @@ export default function NotFound() {
   return (
     <div className="state full">
       <div className="state-in">
-        <div className="logo">Kentro<b>Academy</b></div>
+        <div className="logo"><Logo /></div>
         {/* O fluxo interrompido: o conector não chega ao último nó. */}
         <svg className="nf-flow" viewBox="0 0 220 56" fill="none" aria-hidden="true" focusable="false">
           <circle cx="24" cy="28" r="10" className="nf-on" />

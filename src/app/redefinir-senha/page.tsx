@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { NewPasswordForm } from "./new-password-form";
+import { Logo } from "@/components/logo";
 
 export const metadata: Metadata = { title: "Nova senha" };
 
@@ -14,7 +15,7 @@ export default async function RedefinirSenhaPage() {
     <div className="auth solo">
       <section className="auth-form">
         <div className="auth-stack">
-          <Link className="logo" href="/"><span className="logo-mark" aria-hidden><i /></span><span>Kentro <b>Academy</b></span></Link>
+          <Link className="logo" href="/"><Logo /></Link>
           <NewPasswordForm />
         </div>
       </section>

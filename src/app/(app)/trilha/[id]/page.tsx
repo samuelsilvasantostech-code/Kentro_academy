@@ -5,9 +5,12 @@ import { createClient } from "@/lib/supabase/server";
 import { duration, minutes } from "@/lib/format";
 import { getTrackStatuses } from "../../certificado/completion";
 import { FlowStage, buildFlow } from "@/components/flow";
-import { IcAulas, IcCert, IcPessoa, IcTempo } from "@/components/cards";
 import { nextTrack } from "@/lib/next-track";
 import { Ico } from "@/components/ico";
+import { Cover } from "@/components/cover";
+import { coverOf } from "@/lib/covers";
+import { COVERS, trackKind } from "@/lib/category";
+import { trackCopy } from "@/lib/track-copy";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -52,9 +55,14 @@ export default async function Trilha({ params, searchParams }: { params: Promise
   // Só o módulo onde o aluno está fica aberto (o da próxima aula; se a trilha acabou, nenhum).
   const openModule = nx && lessonsLeft > 0 ? nx.moduleIndex : -1;
 
+  const copy = trackCopy(t);
+  const { art } = trackKind(t);
+  const cv = COVERS[art];
+  const first = p.done === 0;
+
   return (
     <>
-      <div className="crumb"><Link href="/trilhas">Trilhas</Link> › <span>{t.name}</span></div>
+      <nav className="bc" aria-label="Você está em"><ol><li><Link href="/trilhas">Trilhas</Link></li><li><span aria-current="page">{t.name}</span></li></ol></nav>
       {concluida && st?.completed && <p className="ok-msg" style={{ marginBottom: 16 }}>Trilha concluída! Parabéns.</p>}
       {nextT && (
         <aside className="khelp next-track" style={{ marginBottom: 20 }}>
@@ -62,20 +70,50 @@ export default async function Trilha({ params, searchParams }: { params: Promise
           <Link className="btn btn-p" href={`/trilha/${nextT.id}`}>Ver a próxima trilha<Ico name="arrowR" /></Link>
         </aside>
       )}
-      <section className="thero">
-        <div className="thero-head">
-          <div className="tico" style={{ background: "var(--rebaixo)", width: 56, height: 56, fontSize: 28 }}>{t.icon}</div>
-          <h1>{t.name}</h1>
-          <p className="muted" style={{ fontSize: 17 }}>{t.pitch}</p>
-          <div className="meta" style={{ fontSize: 14 }}><span><IcPessoa />{t.audience}</span><span><IcAulas />{p.count} {p.count === 1 ? "aula" : "aulas"}</span><span><IcTempo />{minutes(p.seconds)}</span><span><IcCert />Certificado</span></div>
-          <div className="thero-cta">
-            {nx && <Link className="btn btn-p" href={`/aula/${t.id}/${nx.id}`}>{p.done ? "Continuar" : "Começar trilha"}</Link>}
-            {earned && <Link className="btn btn-s" href={`/certificado/${t.id}`}><IcCert />Ver certificado</Link>}
-            {st?.hasNew && <span className="pill a" style={{ alignSelf: "center" }}>Novo conteúdo nesta trilha</span>}
-            {nx && p.done > 0 && p.pct < 100 && <span className="muted" style={{ alignSelf: "center", fontSize: 14 }}>Próxima: {nx.title}</span>}
+
+      <section className="th2" aria-labelledby="th2-t">
+        <Cover img={coverOf(t.id)} icon={cv.icon} tilt={cv.tilt} sizes="100vw" priority className="th2-bg" />
+        <div className="th2-in">
+          <div className="th2-copy">
+            <p className="th2-cat"><Ico name={cv.icon} size={14} />{cv.label}<span aria-hidden>·</span>{t.audience}</p>
+            <h1 id="th2-t">{t.name}</h1>
+            <p className="th2-head">{copy.headline}</p>
+            <p className="th2-lead">{copy.lead}</p>
+            <ul className="th2-stats" aria-label="Sobre a trilha">
+              <li><Ico name="layers" size={16} /><b>{t.modules.length}</b> {t.modules.length === 1 ? "módulo" : "módulos"}</li>
+              <li><Ico name="video" size={16} /><b>{p.count}</b> aulas</li>
+              <li><Ico name="clock" size={16} /><b>{minutes(p.seconds)}</b></li>
+              <li><Ico name="award" size={16} />Certificado</li>
+            </ul>
+            <div className="th2-cta">
+              {nx && lessonsLeft > 0 && (
+                <Link className="btn btn-p btn-lg th2-go" href={`/aula/${t.id}/${nx.id}`}>
+                  <Ico name="play" size={16} />{first ? "Começar agora" : "Continuar trilha"}
+                </Link>
+              )}
+              {earned ? <Link className="btn btn-s btn-lg" href={`/certificado/${t.id}`}><Ico name="award" size={16} />Ver certificado</Link>
+                : <a className="btn btn-ghost btn-lg" href="#conteudo">Ver o conteúdo</a>}
+            </div>
+            {nx && lessonsLeft > 0 && (
+              <p className="th2-next"><span className="dim">{first ? "Primeira aula:" : "Próxima aula:"}</span> {nx.title}{nx.duration_seconds > 0 ? ` · ${duration(nx.duration_seconds)}` : ""}</p>
+            )}
+            {st?.hasNew && <span className="pill a">Novo conteúdo nesta trilha</span>}
           </div>
+
+          <aside className="th2-card" aria-labelledby="th2-gain">
+            <h2 id="th2-gain">Ao final você vai conseguir</h2>
+            <ul className="th2-gains">{copy.gains.map((g) => <li key={g}><Ico name="check" size={15} strokeWidth={3} /><span>{g}</span></li>)}</ul>
+            <div className="th2-prog">
+              <div className="kprog"><span className="pbar" role="progressbar" aria-label="Progresso na trilha" aria-valuemin={0} aria-valuemax={100} aria-valuenow={p.pct}><i style={{ width: `${p.pct}%` }} /></span><b>{p.pct}%</b></div>
+              <p>{first ? `São ${p.count} aulas curtas. Seu progresso fica salvo e você continua de onde parou.` : leftText}</p>
+            </div>
+          </aside>
         </div>
-        {flow.nodes.length > 0 && (
+      </section>
+
+      {flow.nodes.length > 0 && (
+        <section className="th2-map" aria-labelledby="th2-map-h">
+          <div className="sec-h"><h2 id="th2-map-h">Seu caminho</h2><p className="sec-hint">Cada ponto é uma aula; os losangos são quizzes. O brilho mostra onde você está.</p></div>
           <div className="thero-flow">
             <FlowStage flow={flow} />
             <ul className="flow-legend" aria-hidden>
@@ -85,21 +123,11 @@ export default async function Trilha({ params, searchParams }: { params: Promise
               <li><i className="lg-cert" />Certificado</li>
             </ul>
           </div>
-        )}
-        <div className="side-box thero-side">
-          {t.outcomes.length > 0 && <>
-            <b>Ao final você vai conseguir</b>
-            <ul className="outc">{t.outcomes.map((o) => <li key={o}>{o}</li>)}</ul>
-          </>}
-          <div className="thero-prog">
-            <div className="kprog"><span className="pbar" role="progressbar" aria-label="Progresso na trilha" aria-valuemin={0} aria-valuemax={100} aria-valuenow={p.pct}><i style={{ width: `${p.pct}%` }} /></span><b>{p.pct}%</b></div>
-            <p>{leftText}</p>
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      <section className="sec">
-        <h2>Conteúdo da trilha</h2>
+      <section className="sec" id="conteudo">
+        <div className="sec-h"><h2>Conteúdo da trilha</h2><p className="sec-hint">{t.modules.length} {t.modules.length === 1 ? "módulo" : "módulos"}. Toque em um módulo para ver as aulas.</p></div>
         {!p.count && (
           <div className="empty" style={{ marginTop: 16 }}>
             
@@ -115,10 +143,12 @@ export default async function Trilha({ params, searchParams }: { params: Promise
             const secs = m.lessons.reduce((a, l) => a + l.duration_seconds, 0);
             const nq = quizCount.get(m.id) ?? 0;
             return (
-              <details key={m.id} className={`mod ${all ? "done" : ""}`} open={mi === openModule || (openModule < 0 && mi === 0 && !all)}>
+              <details key={m.id} className={`mod mcardx ${all ? "done" : ""}${nx?.moduleIndex === mi && lessonsLeft > 0 ? " is-here" : ""}`} open={mi === openModule || (openModule < 0 && mi === 0 && !all)}>
                 <summary className="mod-h">
+                  <Cover img={coverOf(t.id, mi)} icon={cv.icon} tilt={(mi % 3) * 10 - 10} sizes="(max-width: 700px) 30vw, 200px" className="mod-cov" />
                   <span className="mod-n">{all ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M5 12.5l4.5 4.5L19 7.5" /></svg> : mi + 1}</span>
-                  <div style={{ flex: 1 }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <span className="mod-k">Módulo {mi + 1}{nx?.moduleIndex === mi && lessonsLeft > 0 ? " · você está aqui" : ""}</span>
                     <h3>{m.title}</h3>
                     <div className="meta"><span>{m.lessons.length} {m.lessons.length === 1 ? "aula" : "aulas"}</span><span>{minutes(secs)}</span><span>{d}/{m.lessons.length} concluídas</span>{quizPassed.has(m.id) && <span style={{ color: "var(--sinal-tx)" }}>Quiz feito</span>}</div>
                   </div>

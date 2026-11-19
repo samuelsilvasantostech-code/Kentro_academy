@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ResetRequestForm } from "./reset-form";
+import { Logo } from "@/components/logo";
 
 export const metadata: Metadata = { title: "Esqueci a senha" };
 
@@ -9,7 +10,7 @@ export default function EsqueciPage() {
     <div className="auth solo">
       <section className="auth-form">
         <div className="auth-stack">
-          <Link className="logo" href="/entrar"><span className="logo-mark" aria-hidden><i /></span><span>Kentro <b>Academy</b></span></Link>
+          <Link className="logo" href="/entrar"><Logo /></Link>
           <ResetRequestForm />
         </div>
       </section>

@@ -1,0 +1,137 @@
+{
+  "atendente": {
+    "alt": "Atendente sorridente com headset em sua estação de trabalho, com colegas atendendo ao fundo",
+    "credit": "Foto: BaljkanN4 / Unsplash",
+    "page": "https://unsplash.com/photos/a-smiling-woman-wearing-a-headset-at-a-computer-wnpf3Q5pkXA"
+  },
+  "atendente-0": {
+    "alt": "Headset ao lado de um notebook sobre a mesa, pronto para começar o atendimento",
+    "credit": "Foto: Petr Macháček / Unsplash",
+    "page": "https://unsplash.com/photos/black-and-brown-headset-near-laptop-computer-BeVGrXEktIk"
+  },
+  "atendente-1": {
+    "alt": "Mãos digitando uma mensagem no celular durante uma conversa",
+    "credit": "Foto: freestocks / Unsplash",
+    "page": "https://unsplash.com/photos/selective-focus-photography-of-person-using-smartphone-mw6Onwg4frY"
+  },
+  "atendente-2": {
+    "alt": "Headset sobre pastas e relatórios com gráficos de acompanhamento de clientes",
+    "credit": "Foto: Pavel Danilyuk / Pexels",
+    "page": "https://www.pexels.com/photo/a-close-up-shot-of-a-headset-on-documents-7658191/"
+  },
+  "gestor": {
+    "alt": "Gestor em pé conduzindo uma reunião com a equipe em volta da mesa",
+    "credit": "Foto: MART PRODUCTION / Pexels",
+    "page": "https://www.pexels.com/photo/boss-talking-to-employees-7644004/"
+  },
+  "gestor-0": {
+    "alt": "Supervisor orientando duas atendentes com headset em suas mesas",
+    "credit": "Foto: Pavel Danilyuk / Pexels",
+    "page": "https://www.pexels.com/photo/people-working-at-call-center-7658435/"
+  },
+  "gestor-1": {
+    "alt": "Notebook exibindo um painel de indicadores com gráficos e números",
+    "credit": "Foto: Carlos Muza / Unsplash",
+    "page": "https://unsplash.com/photos/laptop-computer-on-glass-top-table-hpjSkU2UYSU"
+  },
+  "gestor-2": {
+    "alt": "Equipe organizando tarefas com notas adesivas coloridas em uma parede de vidro",
+    "credit": "Foto: Vitaly Gariev / Unsplash",
+    "page": "https://unsplash.com/photos/team-collaborating-with-sticky-notes-on-glass-wall-TSyD0nGc0Bs"
+  },
+  "crm": {
+    "alt": "Equipe comemorando uma venda em escritório iluminado à noite",
+    "credit": "Foto: Vitaly Gariev / Unsplash",
+    "page": "https://www.pexels.com/photo/night-office-celebration-in-a-modern-workplace-36713445/"
+  },
+  "crm-0": {
+    "alt": "Quadro com colunas e post-its em parede escura, como um funil de etapas",
+    "credit": "Foto: cottonbro studio / Unsplash",
+    "page": "https://www.pexels.com/photo/sticky-notes-on-the-task-board-wall-6804093/"
+  },
+  "crm-1": {
+    "alt": "Vendedora ao telefone diante do tablet em fim de expediente",
+    "credit": "Foto: Tima Miroshnichenko / Unsplash",
+    "page": "https://www.pexels.com/photo/a-woman-in-a-striped-blazer-talking-on-the-phone-5685956/"
+  },
+  "crm-2": {
+    "alt": "Engrenagens metálicas encaixadas sob luz azul e vermelha",
+    "credit": "Foto: Rafael Minguet Delgado / Unsplash",
+    "page": "https://www.pexels.com/photo/abstract-close-up-of-metallic-gears-in-blue-light-39415893/"
+  },
+  "automacao": {
+    "alt": "Braço robótico sobre fundo preto",
+    "credit": "Foto: Pavel Danilyuk / Unsplash",
+    "page": "https://www.pexels.com/photo/robot-on-a-black-background-8438865/"
+  },
+  "automacao-0": {
+    "alt": "Mão desenhando um diagrama com setas usando marcador roxo",
+    "credit": "Foto: ThisIsEngineering / Unsplash",
+    "page": "https://www.pexels.com/photo/person-drawing-on-white-paper-3861462/"
+  },
+  "automacao-1": {
+    "alt": "Mesa telefônica antiga com chaves de direcionamento de chamadas",
+    "credit": "Foto: Oussama Bergaoui / Unsplash",
+    "page": "https://www.pexels.com/photo/vintage-blue-and-brown-telephone-2267635/"
+  },
+  "automacao-2": {
+    "alt": "Fichário rotativo de contatos com divisórias em ordem alfabética",
+    "credit": "Foto: BOOM Photography / Unsplash",
+    "page": "https://www.pexels.com/photo/close-up-of-paper-cards-12585541/"
+  },
+  "automacao-3": {
+    "alt": "Pessoa olhando o celular iluminado no escuro",
+    "credit": "Foto: Towfiqu barbhuiya / Unsplash",
+    "page": "https://www.pexels.com/photo/person-using-a-smartphone-11391948/"
+  },
+  "automacao-4": {
+    "alt": "Atendentes com headset trabalhando no computador",
+    "credit": "Foto: Kampus Production / Unsplash",
+    "page": "https://www.pexels.com/photo/woman-in-yellow-dress-shirt-using-computer-8204317/"
+  },
+  "automacao-5": {
+    "alt": "Cabos de fibra óptica conectados a um painel de rede",
+    "credit": "Foto: Brett Sayles / Unsplash",
+    "page": "https://www.pexels.com/photo/modern-fiber-optic-device-with-colorful-plastic-connectors-4280702/"
+  },
+  "implantacao": {
+    "alt": "Vista de cima de uma pessoa em uma estação com três monitores, em ambiente escuro",
+    "credit": "Foto: Max Duzij / Unsplash",
+    "page": "https://unsplash.com/photos/qAjJk-un3BI"
+  },
+  "implantacao-0": {
+    "alt": "Cabos de rede conectados às portas numeradas de um patch panel",
+    "credit": "Foto: Jordan Harrison / Unsplash",
+    "page": "https://unsplash.com/photos/blue-utp-cord-40XgDxBfYXM"
+  },
+  "implantacao-1": {
+    "alt": "Mãos digitando mensagem no celular em ambiente escuro",
+    "credit": "Foto: Gilles Lambert / Unsplash",
+    "page": "https://unsplash.com/photos/silhouette-photo-of-person-holding-smartphone-pb_lF8VWaPU"
+  },
+  "implantacao-2": {
+    "alt": "Mesa de controle com faders e botões iluminados, simbolizando ajustes e configurações",
+    "credit": "Foto: James Kovin / Unsplash",
+    "page": "https://unsplash.com/photos/black-and-green-audio-mixer-F2h_WbKnX4o"
+  },
+  "implantacao-3": {
+    "alt": "Peças de dominó enfileiradas em curva, prontas para cair em sequência",
+    "credit": "Foto: Sasun Bughdaryan / Unsplash",
+    "page": "https://unsplash.com/photos/white-dominoes-arranged-in-a-curve-on-a-reflective-surface-zuKdiKktdfg"
+  },
+  "implantacao-4": {
+    "alt": "Notebook entreaberto com tela colorida brilhando sobre mesa escura",
+    "credit": "Foto: Joshua Woroniecki / Unsplash",
+    "page": "https://unsplash.com/photos/lzh3hPtJz9c"
+  },
+  "integracoes": {
+    "alt": "Tela de notebook exibindo código colorido sob luz azul e roxa",
+    "credit": "Foto: Mohammad Rahmani / Unsplash",
+    "page": "https://unsplash.com/photos/laptop-screen-displaying-colorful-code-8qEB0fTe9Vw"
+  },
+  "integracoes-0": {
+    "alt": "Mão encaixando uma peça vermelha em um quebra-cabeça, em ambiente escuro",
+    "credit": "Foto: Ryoji Iwata / Unsplash",
+    "page": "https://unsplash.com/photos/person-holding-red-jigsaw-puzzle-5siQcvSxCP8"
+  }
+}

@@ -5,6 +5,7 @@ import { getMe } from "@/lib/catalog";
 import { initials } from "@/lib/format";
 import { NavLinks, BottomNav } from "@/components/nav-links";
 import { signOut } from "../entrar/actions";
+import { Logo } from "@/components/logo";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const { profile, user } = await getMe();
@@ -13,7 +14,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <a className="skip" href="#conteudo">Pular para o conteúdo</a>
       <header className="top">
         <div className="wrap">
-          <Link className="logo" href="/" aria-label="Kentro Academy, início"><span className="logo-mark" aria-hidden><i /></span><span>Kentro <b>Academy</b></span></Link>
+          <Link className="logo" href="/" aria-label="Kentro Academy, início"><Logo /></Link>
           <NavLinks />
           <Form className="search" action="/buscar" role="search">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>

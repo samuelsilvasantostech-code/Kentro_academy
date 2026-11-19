@@ -5,6 +5,7 @@ import { getAdmin } from "@/lib/admin/require-admin";
 import { getPendingCount } from "@/lib/admin/queries";
 import { AdminNav } from "./_components/admin-nav";
 import { BackLink } from "./_components/back-link";
+import { Logo } from "@/components/logo";
 
 export const metadata: Metadata = { title: { default: "Admin", template: "%s · Admin · Kentro Academy" }, robots: { index: false } };
 
@@ -18,7 +19,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       <header className="adm-top">
         <div className="adm-top-in">
           <div className="adm-bar">
-            <Link className="logo" href="/admin">Kentro<b>Academy</b><span className="adm-tag">Admin</span></Link>
+            <Link className="logo" href="/admin"><Logo tag="Admin" /></Link>
             <BackLink href="/">Voltar para a Academy</BackLink>
           </div>
           <AdminNav pending={pending} />

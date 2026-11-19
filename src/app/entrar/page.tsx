@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { HeroArt } from "@/components/art";
 import { Ico } from "@/components/ico";
 import { AuthForm } from "./auth-form";
+import { Logo } from "@/components/logo";
 
 export const metadata: Metadata = { title: "Entrar" };
 
@@ -13,7 +14,7 @@ export default async function EntrarPage({ searchParams }: { searchParams: Promi
     <div className="klogin">
       <div className="klogin-in">
         <section className="klogin-copy">
-          <div className="logo"><span className="logo-mark" aria-hidden><i /></span><span>Kentro <b>Academy</b></span></div>
+          <div className="logo"><Logo /></div>
           <h1>Domine o Kentro<br /><span>no seu ritmo.</span></h1>
           <p>Trilhas curtas para cada função, do primeiro atendimento às automações. Aprenda na prática e continue de onde parou.</p>
           <ul className="klogin-pts">
