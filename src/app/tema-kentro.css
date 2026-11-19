@@ -716,3 +716,92 @@ main:focus{outline:0}
   .mtabs a{flex-direction:column;justify-content:center;gap:4px;min-height:60px;padding:6px 2px;font-size:13px}
   .mtabs-n{display:none}
 }
+
+/* ===================== Órbita — fase 6A: início em formato de painel ===================== */
+/* Hero = saudação + "continuar" à esquerda; cristal 3D e números do aluno à direita. Fundo com grade de pontos. */
+.kdash{position:relative;overflow:hidden;border:1px solid var(--linha);border-radius:28px;display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:8px;
+  background:
+    radial-gradient(circle at 82% 38%,rgba(128,0,255,.30),transparent 42%),
+    radial-gradient(circle at 0% 100%,rgba(53,10,118,.5),transparent 45%),
+    linear-gradient(180deg,var(--superficie-2),var(--superficie));
+  box-shadow:0 34px 70px -40px rgba(128,0,255,.6)}
+.kdash::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:radial-gradient(rgba(201,168,255,.16) 1px,transparent 1.4px);background-size:22px 22px;
+  -webkit-mask-image:linear-gradient(115deg,transparent 30%,#000 75%);mask-image:linear-gradient(115deg,transparent 30%,#000 75%)}
+.kdash-main{position:relative;z-index:2;padding:36px 0 36px 40px;display:grid;align-content:start;justify-items:start}
+.kdash h1{font-size:clamp(30px,3.2vw,42px);font-weight:790;letter-spacing:-.03em;line-height:1.08}
+.kdash-sub{color:var(--tinta-2);font-size:15px;margin:8px 0 22px}
+.kdash .khero-hi{margin-bottom:10px}
+.kdash .kcont{width:100%;background:rgba(20,16,30,.78);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.kcont-t{font-size:21px;letter-spacing:-.03em}
+.kdash-side{position:relative;z-index:1;display:grid;grid-template-rows:1fr auto;padding:0 28px 28px 0}
+.kdash .kcrystal{height:auto;min-height:250px}
+.khud{list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1px solid var(--linha);border-radius:18px;background:rgba(14,11,22,.7);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.khud li{display:grid;gap:2px;padding:14px 16px}
+.khud li+li{border-left:1px solid var(--linha)}
+.khud-k{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--tinta-3)}
+.khud b{font-family:var(--font-d);font-size:26px;font-weight:760;letter-spacing:-.03em;line-height:1.1;color:#fff}
+.khud li:first-child b{color:#E2CCFF}
+.khud-d{font-size:12px;color:var(--tinta-3)}
+.khero-hi::before{animation:k-live 2.4s ease-in-out infinite}
+@keyframes k-live{50%{box-shadow:0 0 0 9px rgba(185,138,255,0)}}
+
+/* brilho que segue o cursor (posição vem de PointerGlow) */
+.kglow{position:relative;isolation:isolate}
+.kglow::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .3s;
+  background:radial-gradient(320px circle at var(--mx,50%) var(--my,50%),rgba(128,0,255,.20),transparent 60%)}
+.kglow:hover::before{opacity:1}
+
+/* trilhas: cartões compactos com anel de progresso */
+.ktrks{list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.ktrk{height:100%;min-height:96px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:6px 14px;padding:16px 16px 16px 18px;border:1px solid var(--linha);border-radius:18px;background:var(--superficie);color:inherit;overflow:hidden;transition:border-color .2s,transform .25s var(--ease-in),box-shadow .25s}
+.ktrk:hover,.ktrk:focus-visible{border-color:rgba(185,138,255,.5);box-shadow:0 18px 36px -20px rgba(128,0,255,.6)}
+.ktrk-ring{--p:0;width:54px;height:54px;border-radius:50%;display:grid;place-items:center;
+  background:conic-gradient(var(--lavanda) calc(var(--p) * 1%),var(--trilho) 0)}
+.ktrk-ring span{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--superficie);font-size:12px;font-weight:750;color:#E2CCFF;font-variant-numeric:tabular-nums}
+.ktrk-tx{display:grid;gap:3px;min-width:0}
+.ktrk-cat{display:inline-flex;align-items:center;gap:6px;font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--violeta-tx)}
+.ktrk b{font-size:15.5px;letter-spacing:-.02em;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ktrk-meta{font-size:12.5px;color:var(--tinta-3)}
+.ktrk-tag{grid-column:2;justify-self:start;font-size:12px;font-weight:700;color:#E2CCFF;background:rgba(128,0,255,.2);border-radius:7px;padding:2px 8px}
+.ktrk-tag.is-ok{background:rgba(185,138,255,.12);color:var(--violeta-tx)}
+.ktrk-go{grid-column:3;grid-row:1 / span 2;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--linha);color:var(--tinta-3);transition:background-color .2s,color .2s,border-color .2s,transform .25s var(--ease-in)}
+.ktrk:hover .ktrk-go{background:#8000FF;border-color:#8000FF;color:#fff}
+.ktrk:hover b{color:#E2CCFF}
+.ktrk.is-done .ktrk-ring span{color:var(--violeta-tx)}
+@media (prefers-reduced-motion:no-preference){
+  .ktrk:hover,.ktrk:focus-visible{transform:translateY(-3px)}
+  .ktrk:hover .ktrk-go{transform:translateX(3px)}
+  .ktrks>li,.kdash-main>*,.khud li{animation:k-in .5s ease-out both}
+  .ktrks>li{animation-delay:calc(var(--i,0) * 55ms + .1s)}
+  .kdash-main>:nth-child(2){animation-delay:.05s}
+  .kdash-main>:nth-child(3){animation-delay:.1s}
+  .kdash-main>:nth-child(4){animation-delay:.15s}
+  .khud li:nth-child(2){animation-delay:.1s}
+  .khud li:nth-child(3){animation-delay:.2s}
+}
+@media (prefers-reduced-motion:reduce){.khero-hi::before{animation:none}}
+
+@media (max-width:1060px){
+  .ktrks{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:900px){
+  .kdash{grid-template-columns:1fr}
+  .kdash-main{padding:30px 28px 0}
+  .kdash-side{padding:0 28px 28px;grid-template-rows:auto auto}
+  .kdash .kcrystal{min-height:0;height:220px}
+}
+@media (max-width:700px){
+  .kdash{border-radius:24px}
+  .kdash-main{padding:24px 16px 0}
+  .kdash h1{font-size:30px}
+  .kdash-sub{font-size:14px;margin:6px 0 16px}
+  .kdash-side{padding:6px 16px 16px}
+  .kdash .kcrystal{display:none}
+  .khud li{padding:12px}
+  .khud b{font-size:22px}
+  .khud-k{font-size:12px;letter-spacing:.02em}
+  .ktrks{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(270px,84%);overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-inline:16px;scrollbar-width:none;margin:0 -16px;padding:2px 16px 6px}
+  .ktrks::-webkit-scrollbar{display:none}
+  .ktrks>li{scroll-snap-align:start}
+}
