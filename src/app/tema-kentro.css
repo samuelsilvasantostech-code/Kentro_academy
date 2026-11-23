@@ -1123,3 +1123,17 @@ h1{font-weight:700} h2,h3,h4{font-weight:650}
   .kposts>li{flex-basis:72%}
   .bnav a{white-space:nowrap}
 }
+
+/* Balão do início (versão SVG): animação leve. Sem deslocamento quando o sistema pede menos movimento, só brilho. */
+.kbubble-svg .kb-glow{transform-origin:center;transform-box:fill-box;animation:kb-breathe 5s ease-in-out infinite}
+.kbubble-svg .kb-line{transform-origin:left center;transform-box:fill-box;animation:kb-type 2.4s ease-in-out infinite;animation-delay:var(--d,0s)}
+@media (prefers-reduced-motion:no-preference){
+  .kbubble-svg .kb-body{transform-origin:center;transform-box:fill-box;animation:kb-sway 7s ease-in-out infinite}
+}
+@media (prefers-reduced-motion:reduce){
+  .kbubble-svg .kb-line{animation-name:kb-blink}
+}
+@keyframes kb-breathe{0%,100%{opacity:.75;transform:scale(.96)}50%{opacity:1;transform:scale(1.04)}}
+@keyframes kb-type{0%,60%,100%{transform:scaleX(1);filter:none}25%{transform:scaleX(.82);filter:brightness(1.35)}}
+@keyframes kb-blink{0%,60%,100%{filter:none}25%{filter:brightness(1.35)}}
+@keyframes kb-sway{0%,100%{transform:rotate(-2.5deg) translateY(0)}50%{transform:rotate(2.5deg) translateY(-6px)}}
