@@ -4,7 +4,6 @@ import { getCatalog, getMe, nextOf, progress } from "@/lib/catalog";
 import { createClient } from "@/lib/supabase/server";
 import { duration, minutes } from "@/lib/format";
 import { getTrackStatuses } from "../../certificado/completion";
-import { FlowStage, buildFlow } from "@/components/flow";
 import { nextTrack } from "@/lib/next-track";
 import { Ico } from "@/components/ico";
 import { Cover } from "@/components/cover";
@@ -40,7 +39,6 @@ export default async function Trilha({ params, searchParams }: { params: Promise
   const quizCount = new Map<string, number>();
   (qrows ?? []).forEach((r) => quizCount.set(r.module_id, (quizCount.get(r.module_id) ?? 0) + 1));
   const quizzes = t.modules.filter((m) => quizCount.get(m.id));
-  const flow = buildFlow(t, done, quizPassed, new Set(quizzes.map((m) => m.id)));
   const st = statuses.get(t.id);
   const earned = !!st?.certified;
   const nextT = earned ? nextTrack(tracks, t.id, (x) => !!statuses.get(x)?.certified) : null;
@@ -112,20 +110,6 @@ export default async function Trilha({ params, searchParams }: { params: Promise
         </div>
       </section>
 
-      {flow.nodes.length > 0 && (
-        <section className="th2-map" aria-labelledby="th2-map-h">
-          <div className="sec-h"><h2 id="th2-map-h">Seu caminho</h2><p className="sec-hint">Cada ponto é uma aula; os losangos são quizzes. O brilho mostra onde você está.</p></div>
-          <div className="thero-flow">
-            <FlowStage flow={flow} />
-            <ul className="flow-legend" aria-hidden>
-              <li><i className="lg-done" />Concluído</li>
-              <li><i className="lg-next" />Próximo passo</li>
-              <li><i className="lg-quiz" />Quiz</li>
-              <li><i className="lg-cert" />Certificado</li>
-            </ul>
-          </div>
-        </section>
-      )}
 
       <section className="sec" id="conteudo">
         <div className="sec-h"><h2>Conteúdo da trilha</h2><p className="sec-hint">{t.modules.length} {t.modules.length === 1 ? "módulo" : "módulos"}. Toque em um módulo para ver as aulas.</p></div>

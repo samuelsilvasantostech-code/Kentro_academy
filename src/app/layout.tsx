@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Sora } from "next/font/google";
 import "./globals.css";
-import "./tema-kentro.css"; // tema claro alternativo: ./claro.css
+import "./tema-kentro.css";
 
 // Tipografia da marca: Sora nos títulos (geométrica, cara de produto de tecnologia),
 // Geist no texto corrido (legível em telas pequenas) e Geist Mono em rótulos, números e códigos.

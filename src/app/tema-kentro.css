@@ -7,7 +7,6 @@
    - --sinal = progresso/concluído (lavanda). Verde (--ok) só para "resposta certa"/sucesso, sempre com ícone.
    - --decisao (âmbar) só para alerta: quiz pendente e dúvidas sem resposta.
    - Texto nunca abaixo de --tinta-3; borda de campo (--linha-campo) ≥ 3:1.
-   O tema claro anterior continua em claro.css (basta trocar o import em layout.tsx).
    ===================================================================== */
 :root,:root[data-theme=dark]{
   /* fundos em camadas */
@@ -129,13 +128,6 @@ h1,h2,h3,h4{font-family:var(--font-b);font-weight:700;letter-spacing:-.025em;col
 .khero-sub{max-width:470px;color:var(--tinta-2);font-size:16px;line-height:1.65;margin:16px 0 26px}
 .khero-act{display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap}
 
-.kcrystal{position:relative;z-index:1;height:320px;align-self:stretch}
-.kcrystal-svg{position:absolute;inset:8% 6%;width:88%;height:84%;transition:opacity .6s var(--ease-in)}
-.kcrystal-gl{position:absolute;inset:0;opacity:0;transition:opacity .8s var(--ease-in)}
-.kcrystal.is-3d .kcrystal-svg{opacity:0}
-.kcrystal.is-3d .kcrystal-gl{opacity:1}
-@media (prefers-reduced-motion:no-preference){.kcrystal:not(.is-3d) .kcrystal-svg{animation:k-float 6s ease-in-out infinite}}
-@media print{.kcrystal-gl{display:none}.kcrystal-svg{opacity:1!important}}
 
 /* arte 3D em CSS (login) */
 .hart{position:relative;z-index:1;height:300px;perspective:950px}
@@ -357,7 +349,6 @@ h1,h2,h3,h4{font-family:var(--font-b);font-weight:700;letter-spacing:-.025em;col
 @media (max-width:980px){
   .khero{grid-template-columns:1fr}
   .khero-copy{padding:36px 32px 0}
-  .kcrystal{height:260px;margin-top:-12px}
   .tgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
   .knews{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(260px,78%);overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin:0 -16px;padding:2px 16px}
   .knews::-webkit-scrollbar{display:none}
@@ -372,7 +363,6 @@ h1,h2,h3,h4{font-family:var(--font-b);font-weight:700;letter-spacing:-.025em;col
   .khero-copy{padding:28px 22px 0}
   .khero h1{font-size:34px}
   .khero-sub{font-size:14.5px;margin:12px 0 18px}
-  .kcrystal{height:210px;margin:-8px 0 0}
   .xp-bar{display:grid}
   .xp-chips{margin:0 -16px;padding:3px 16px}
   .kcont{grid-template-columns:1fr;gap:14px}
@@ -611,11 +601,8 @@ main:focus{outline:0}
 .cert-hero-k{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--sinal-tx)}
 .kseal{position:relative;width:168px;height:168px}
 .kseal-svg{position:absolute;inset:8%;width:84%;height:84%;transition:opacity .6s var(--ease-in)}
-.kseal-gl{position:absolute;inset:-6%;opacity:0;transition:opacity .8s var(--ease-in)}
-.kseal.is-3d .kseal-svg{opacity:0}
-.kseal.is-3d .kseal-gl{opacity:1}
 @media (prefers-reduced-motion:no-preference){
-  .kseal:not(.is-3d) .kseal-svg{animation:seal-in .7s var(--ease-in) both}
+  .kseal-svg{animation:seal-in .7s var(--ease-in) both}
   @keyframes seal-in{from{opacity:0;transform:scale(.7) rotate(-20deg)}to{opacity:1;transform:none}}
 }
 @media (max-width:640px){
@@ -735,7 +722,6 @@ main:focus{outline:0}
 .kdash .kcont{width:100%;background:rgba(20,16,30,.78);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 .kcont-t{font-size:21px;letter-spacing:-.03em}
 .kdash-side{position:relative;z-index:1;display:grid;grid-template-rows:1fr auto;padding:0 28px 28px 0}
-.kdash .kcrystal{height:auto;min-height:250px}
 .khud{list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1px solid var(--linha);border-radius:18px;background:rgba(14,11,22,.7);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 .khud li{display:grid;gap:2px;padding:14px 16px}
 .khud li+li{border-left:1px solid var(--linha)}
@@ -789,7 +775,6 @@ main:focus{outline:0}
   .kdash{grid-template-columns:1fr}
   .kdash-main{padding:30px 28px 0}
   .kdash-side{padding:0 28px 28px;grid-template-rows:auto auto}
-  .kdash .kcrystal{min-height:0;height:220px}
 }
 @media (max-width:700px){
   .kdash{border-radius:24px}
@@ -797,7 +782,6 @@ main:focus{outline:0}
   .kdash h1{font-size:30px}
   .kdash-sub{font-size:14px;margin:6px 0 16px}
   .kdash-side{padding:6px 16px 16px}
-  .kdash .kcrystal{display:none}
   .khud li{padding:12px}
   .khud b{font-size:22px}
   .khud-k{font-size:12px;letter-spacing:.02em}
@@ -1094,11 +1078,7 @@ h1{font-weight:700} h2,h3,h4{font-weight:650}
 .kx-stage{position:relative;z-index:1;min-height:340px;margin-right:-4%}
 .kbubble{position:absolute;inset:-6% -2% -6% 0}
 .kbubble-svg{position:absolute;inset:10%;width:80%;height:80%;transition:opacity .6s var(--ease-in);filter:drop-shadow(0 30px 60px rgba(44,248,176,.18))}
-.kbubble-gl{position:absolute;inset:0;opacity:0;transition:opacity .8s var(--ease-in)}
-.kbubble.is-3d .kbubble-svg{opacity:0}
-.kbubble.is-3d .kbubble-gl{opacity:1}
-@media (prefers-reduced-motion:no-preference){.kbubble:not(.is-3d) .kbubble-svg{animation:k-float 6s ease-in-out infinite}}
-@media print{.kbubble-gl{display:none}.kbubble-svg{opacity:1!important}}
+@media (prefers-reduced-motion:no-preference){.kbubble-svg{animation:k-float 6s ease-in-out infinite}}
 .kx-hud{grid-column:1/-1;position:relative;z-index:2;margin:0 24px 24px;background:rgba(14,10,24,.55);border-color:rgba(185,138,255,.16)}
 .kx-hud li.is-goal b,.kx-hud li.is-goal .khud-k{color:var(--verde-tx)}
 @media (prefers-reduced-motion:no-preference){.kx-main>*{animation:k-in .55s ease-out both}.kx-main>:nth-child(2){animation-delay:.05s}.kx-main>:nth-child(3){animation-delay:.1s}.kx-main>:nth-child(4){animation-delay:.15s}.kx-main>:nth-child(5){animation-delay:.2s}.kx-main>:nth-child(n+6){animation-delay:.25s}}
@@ -1134,8 +1114,8 @@ h1{font-weight:700} h2,h3,h4{font-weight:650}
   .kbubble-svg .kb-line{animation-name:kb-blink}
 }
 @keyframes kb-breathe{0%,100%{opacity:.75;transform:scale(.96)}50%{opacity:1;transform:scale(1.04)}}
-@keyframes kb-type{0%,60%,100%{transform:scaleX(1);filter:none}25%{transform:scaleX(.82);filter:brightness(1.35)}}
-@keyframes kb-blink{0%,60%,100%{filter:none}25%{filter:brightness(1.35)}}
+@keyframes kb-type{0%,60%,100%{transform:scaleX(1);opacity:1}25%{transform:scaleX(.82);opacity:.7}}
+@keyframes kb-blink{0%,60%,100%{opacity:1}25%{opacity:.7}}
 @keyframes kb-sway{0%,100%{transform:rotate(-2.5deg) translateY(0)}50%{transform:rotate(2.5deg) translateY(-6px)}}
 
 /* Início: herói de ponta a ponta (sem cartão), o fundo some na página */
@@ -1148,3 +1128,25 @@ h1{font-weight:700} h2,h3,h4{font-weight:650}
 .kx-hud{margin:0 0 28px}
 @media (max-width:1000px){.kx-main{padding:28px 0 0}.kx-hud{margin:24px 0 16px}.kbubble{inset:-8% 0}}
 @media (max-width:700px){.kx{margin-top:-24px}.kx-main{padding:4px 0 0}.kx-hud{margin:22px 0 12px}}
+
+/* =====================================================================
+   Desempenho (23/11): o hover pesava por desfoque atrás de camadas
+   (backdrop-filter), sombras animadas e filter dentro de animações.
+   Fundos ficam quase opacos no lugar do desfoque; a sombra troca sem
+   transição (só o transform anima, que roda na GPU).
+   ===================================================================== */
+.top{background:rgba(10,9,16,.95)}
+.khud{background:rgba(14,11,22,.9)}
+.kx-hud{background:rgba(14,10,24,.88)}
+.kcov-ico{background:rgba(11,9,16,.78)}
+.th2-stats li{background:rgba(11,9,16,.8)}
+.th2-card{background:rgba(14,11,22,.94)}
+.kx-cta .btn-ghost{background:rgba(20,14,34,.85)}
+.top,.khud,.kx-hud,.kcov-ico,.th2-stats li,.th2-card,.kx-cta .btn-ghost,.bnav,.lesson-bar,.qnav{-webkit-backdrop-filter:none;backdrop-filter:none}
+.tcard3,.ccard,.kpost{transition:border-color .25s,transform .3s var(--ease-in)}
+.btn{transition:transform .2s,background-color .2s,border-color .2s,color .2s}
+.kbubble-svg{filter:none}
+.hart-orb{filter:none}
+/* pulso infinito em box-shadow (repinta a cada quadro) desligado */
+.khero-hi::before{animation:none}
+

@@ -1,12 +1,6 @@
-"use client";
-
-import dynamic from "next/dynamic";
 import { useId } from "react";
-import { Lazy3D } from "./Lazy3D";
 
-const SealScene3D = dynamic(() => import("./SealScene3D"), { ssr: false });
-
-/** Medalha roxa com o cristal ao centro, em SVG: versão fixa do selo 3D. */
+/** Medalha roxa com o cristal ao centro, em SVG. */
 function SealGlyph({ className }: { className?: string }) {
   const g = `sg${useId().replace(/:/g, "")}`;
   const studs = Array.from({ length: 24 }, (_, i) => {
@@ -43,7 +37,7 @@ function SealGlyph({ className }: { className?: string }) {
   );
 }
 
-/** Selo de conquista no topo do certificado: SVG no servidor, 3D carregado depois (ver Lazy3D). */
+/** Selo de conquista no topo do certificado (SVG puro, renderizado no servidor). */
 export function CertSeal() {
-  return <Lazy3D base="kseal" fallback={<SealGlyph className="kseal-svg" />} Scene={SealScene3D} />;
+  return <div className="kseal" aria-hidden><SealGlyph className="kseal-svg" /></div>;
 }
