@@ -1137,3 +1137,14 @@ h1{font-weight:700} h2,h3,h4{font-weight:650}
 @keyframes kb-type{0%,60%,100%{transform:scaleX(1);filter:none}25%{transform:scaleX(.82);filter:brightness(1.35)}}
 @keyframes kb-blink{0%,60%,100%{filter:none}25%{filter:brightness(1.35)}}
 @keyframes kb-sway{0%,100%{transform:rotate(-2.5deg) translateY(0)}50%{transform:rotate(2.5deg) translateY(-6px)}}
+
+/* Início: herói de ponta a ponta (sem cartão), o fundo some na página */
+.kx{border:0;border-radius:0;margin:-32px calc(50% - 50vw) 0;padding-inline:calc(50vw - 50%);background:transparent}
+.kx-bg{background:#07050B;-webkit-mask-image:linear-gradient(180deg,#000 75%,transparent);mask-image:linear-gradient(180deg,#000 75%,transparent)}
+.kx-bg::after{content:"";position:absolute;inset:auto 0 0;height:30%;z-index:1;background:linear-gradient(0deg,var(--papel),transparent)}
+.kx-main{padding-left:0}
+.kx-stage{margin-right:0}
+.kbubble{inset:-12% -18% -12% -6%}
+.kx-hud{margin:0 0 28px}
+@media (max-width:1000px){.kx-main{padding:28px 0 0}.kx-hud{margin:24px 0 16px}.kbubble{inset:-8% 0}}
+@media (max-width:700px){.kx{margin-top:-24px}.kx-main{padding:4px 0 0}.kx-hud{margin:22px 0 12px}}
