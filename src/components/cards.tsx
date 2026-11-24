@@ -11,7 +11,7 @@ export const Chev = () => (
 );
 
 /** Aula em uma linha: marcador de concluída, título, trilha/módulo, duração e seta. */
-export function LessonRow({ lesson, trackId, meta, done }: { lesson: Lesson; trackId: string; meta: string[]; done?: boolean }) {
+export function LessonRow({ lesson, trackId, meta, done, extra }: { lesson: Lesson; trackId: string; meta: string[]; done?: boolean; extra?: React.ReactNode }) {
   return (
     <li>
       <Link href={`/aula/${trackId}/${lesson.id}`}>
@@ -21,6 +21,7 @@ export function LessonRow({ lesson, trackId, meta, done }: { lesson: Lesson; tra
         <span className="ml-main">
           <b>{lesson.title}{done && <span className="sr-only"> (concluída)</span>}</b>
           <span className="mmeta">{meta.filter(Boolean).map((m, i) => <span key={i}>{m}</span>)}</span>
+          {extra}
         </span>
         <span className="ml-time">{lesson.duration_seconds ? duration(lesson.duration_seconds) : "Leitura"}</span>
         <Chev />

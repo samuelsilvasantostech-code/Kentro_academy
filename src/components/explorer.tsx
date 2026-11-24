@@ -5,7 +5,8 @@ import { useId, useMemo, useState } from "react";
 import { Ico } from "@/components/ico";
 import { CrystalGlyph } from "@/components/crystal/CrystalGlyph";
 import { CATS, COVERS, type ArtId, type CatId } from "@/lib/category";
-import { duration, minutes, normalize } from "@/lib/format";
+import { duration, minutes } from "@/lib/format";
+import { queryGroups, queryWords, stem } from "@/lib/search";
 import { topicIcon } from "@/lib/topic";
 
 export type TrackItem = {
@@ -24,7 +25,8 @@ export type TrackItem = {
 };
 export type LessonItem = { id: string; title: string; trackId: string; trackName: string; moduleTitle: string; seconds: number; done: boolean; cat: CatId; text: string };
 
-const matches = (text: string, words: string[]) => words.every((w) => text.includes(w));
+/** Cada conceito da busca (palavra ou sinônimo) precisa aparecer; palavras de ligação ("como") e plural são ignorados. */
+const matches = (text: string, groups: string[][]) => groups.every((g) => g.some((w) => text.includes(w)));
 
 /**
  * Busca + filtros + cards de trilha. Filtra no navegador o catálogo real (vem do servidor);
@@ -34,7 +36,7 @@ export function Explorer({ tracks, lessons, headingLevel = 2, title, more }: { t
   const [q, setQ] = useState("");
   const [cat, setCat] = useState<CatId | "tudo">("tudo");
   const statusId = useId();
-  const words = useMemo(() => normalize(q).trim().split(/\s+/).filter(Boolean), [q]);
+  const words = useMemo(() => queryGroups(queryWords(q)).map((g) => g.map((w) => stem(w.replace(/\*$/, "")))), [q]);
   const cats = CATS.filter((c) => tracks.some((t) => t.cat === c.id));
 
   const shownTracks = tracks.filter((t) => (cat === "tudo" || t.cat === cat) && matches(t.text, words));

@@ -20,9 +20,11 @@ type Props = {
   keyPoints?: boolean;
   /** Migração 0008 aplicada: mostra o texto da aula. */
   lessonText?: boolean;
+  /** Migração 0009 aplicada: mostra o campo de transcrição (só para a busca). */
+  transcript?: boolean;
 };
 
-export function LessonForm({ initial, tracks = [], presetModule, keyPoints = false, lessonText = false }: Props) {
+export function LessonForm({ initial, tracks = [], presetModule, keyPoints = false, lessonText = false, transcript = false }: Props) {
   const [state, action] = useActionState(saveLesson, undefined);
   const router = useRouter();
   const editing = !!initial;
@@ -130,6 +132,17 @@ export function LessonForm({ initial, tracks = [], presetModule, keyPoints = fal
             <input type="checkbox" name="body_pub" defaultChecked={initial?.text.published ?? false} />
             <span>Publicar o texto para os alunos <span className="dim">(desmarcado, só administradores veem, com o aviso de rascunho)</span></span>
           </label>
+        </div>
+      )}
+
+      {transcript && (
+        <div className="adm-card">
+          <h2>Transcrição (só para a busca, o aluno não vê)</h2>
+          <Field
+            name="transcript" label="Transcrição do vídeo" note="(opcional)" multiline rows={10} error={err.transcript}
+            defaultValue={v("transcript", initial?.transcript ?? "")}
+            hint="Texto corrido da fala do vídeo. Serve para o aluno achar a aula pela busca; nunca é mostrado. Pode ter erros de reconhecimento. Evite nomes de clientes, telefones e e-mails."
+          />
         </div>
       )}
 

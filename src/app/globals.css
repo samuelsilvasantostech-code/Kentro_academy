@@ -750,3 +750,6 @@ h1{font-size:30px} h2{font-size:20px} h3{font-size:16px}
 }
 
 .vc-flow{bottom:22%;width:min(44%,400px)}
+.res-snip{display:block;margin-top:4px;font-size:13px;line-height:1.5;color:var(--tinta-2)}
+.res-snip mark{background:color-mix(in srgb,var(--sinal) 22%,transparent);color:inherit;border-radius:3px;padding:0 2px}
+.res-where{display:block;margin-top:2px;font-size:12px;color:var(--tinta-3)}

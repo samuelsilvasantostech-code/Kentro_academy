@@ -88,6 +88,8 @@ export type AdminLessonDetail = {
   key_points: string[];
   /** Texto da aula (migração 0008; vazio enquanto ela não existir). */
   text: { body: string; published: boolean };
+  /** Transcrição só para a busca (migração 0009; vazia enquanto ela não existir). */
+  transcript: string;
 };
 
 /** Uma aula completa para o formulário de edição (use chaptersToText/materialsToText/formatDuration de validate.ts). */
@@ -107,13 +109,15 @@ export async function getAdminLesson(id: string): Promise<AdminLessonDetail | nu
   };
   const { module_lessons, chapters, materials, ...rest } = d;
   // Consulta à parte: antes da migração 0007 a coluna não existe e o erro é ignorado.
-  const [{ data: kp }, { data: tx }] = await Promise.all([
+  const [{ data: kp }, { data: tx }, { data: tr }] = await Promise.all([
     supabase.from("lessons").select("key_points").eq("id", id).maybeSingle(),
     supabase.from("lesson_texts").select("body, published").eq("lesson_id", id).maybeSingle(),
+    supabase.from("lesson_transcripts").select("body").eq("lesson_id", id).maybeSingle(),
   ]);
   return {
     ...rest,
     text: { body: (tx?.body as string | undefined) ?? "", published: !!tx?.published },
+    transcript: (tr?.body as string | undefined) ?? "",
     key_points: (kp?.key_points as string[] | undefined) ?? [],
     chapters: [...chapters].sort((a, b) => a.start_seconds - b.start_seconds),
     materials: [...materials].sort((a, b) => a.position - b.position).map(({ title, url, description }) => ({ title, url, description })),

@@ -21,6 +21,7 @@ import {
  *   key_points    pontos-chave, um por linha, até 8 (só vem no form com a migração 0007; ausente = não mexe)
  *   body_md       texto da aula em markdown simples, até 30000 (só vem no form com a migração 0008; ausente = não mexe)
  *   body_pub      "on" = texto publicado para os alunos; ausente = rascunho
+ *   transcript    transcrição só para a busca, até 200000 (só vem no form com a migração 0009; ausente = não mexe, vazio = apaga)
  *   chapters      uma linha por capítulo: "mm:ss Título"
  *   materials     uma linha por material: "Título | https://link | descrição opcional"
  *   module_id     uuid do módulo (obrigatório só na criação; na edição use linkLesson/unlinkLesson)
@@ -43,6 +44,7 @@ export async function saveLesson(_prev: FormState, form: FormData): Promise<Form
   const steps = f.get("steps", parseLines(form.get("steps"), { max: 20, maxLen: 300 }));
   const keyPoints = form.has("key_points") ? f.get("key_points", parseLines(form.get("key_points"), { max: 8, maxLen: 200 })) : undefined;
   const body = form.has("body_md") ? f.get("body_md", text(form.get("body_md"), { max: 30000 })) : undefined;
+  const transcript = form.has("transcript") ? f.get("transcript", text(form.get("transcript"), { max: 200000 })) : undefined;
   const chapters = f.get("chapters", parseChapters(form.get("chapters")));
   const materials = f.get("materials", parseMaterials(form.get("materials")));
   if (f.failed) return fail("Confira os campos destacados.", form, f.errors);
@@ -85,6 +87,17 @@ export async function saveLesson(_prev: FormState, form: FormData): Promise<Form
       logDbError("saveLesson.text", txErr);
       catalogChanged();
       return done("Aula salva, mas o texto não foi gravado. Abra a aula e salve de novo.", lessonId);
+    }
+  }
+  if (transcript !== undefined) {
+    const lessonId = data as string;
+    const { error: trErr } = transcript
+      ? await supabase.from("lesson_transcripts").upsert({ lesson_id: lessonId, body: transcript, updated_at: new Date().toISOString() })
+      : await supabase.from("lesson_transcripts").delete().eq("lesson_id", lessonId);
+    if (trErr) {
+      logDbError("saveLesson.transcript", trErr);
+      catalogChanged();
+      return done("Aula salva, mas a transcrição não foi gravada. Abra a aula e salve de novo.", lessonId);
     }
   }
   catalogChanged();

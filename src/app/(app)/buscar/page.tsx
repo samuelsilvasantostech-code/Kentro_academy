@@ -2,20 +2,53 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Form from "next/form";
 import { allLessons, getCatalog, getMe } from "@/lib/catalog";
-import { normalize } from "@/lib/format";
+import { createClient } from "@/lib/supabase/server";
+import { queryGroups, queryWords, searchInMemory, snippet, WHERE_LABEL, type Hit, type MatchWhere } from "@/lib/search";
 import { LessonRow } from "@/components/cards";
 import { Ico } from "@/components/ico";
 
 export const metadata: Metadata = { title: "Buscar" };
 const SUGESTOES = ["etiqueta", "whatsapp oficial", "funil", "relatório", "gatilho", "contato", "webchat"];
 
+type Client = Awaited<ReturnType<typeof createClient>>;
+
+/** Textos publicados das aulas (RLS: só publicado). Antes da migração 0008 a tabela não existe: devolve vazio. */
+async function publishedTexts(supabase: Client, ids?: string[]): Promise<Map<string, string>> {
+  let query = supabase.from("lesson_texts").select("lesson_id, body").eq("published", true);
+  if (ids) query = query.in("lesson_id", ids);
+  const { data, error } = await query;
+  return new Map(error ? [] : (data ?? []).map((r) => [r.lesson_id as string, r.body as string]));
+}
+
+/** Busca no banco (RPC search_lessons, migração 0009). Null = RPC ausente ou com erro: usa a busca em memória. */
+async function searchRpc(supabase: Client, q: string, words: string[]): Promise<Hit[] | null> {
+  const { data, error } = await supabase.rpc("search_lessons", { q: q.slice(0, 120), groups: queryGroups(words) });
+  if (error) return null;
+  return (data as { lesson_id: string; matched: MatchWhere }[]).map((r) => ({ id: r.lesson_id, matched: r.matched }));
+}
+
 export default async function Buscar({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
   const q = ((await searchParams).q ?? "").trim();
   const [{ done }, tracks] = await Promise.all([getMe(), getCatalog()]);
-  const words = normalize(q).split(/\s+/).filter(Boolean);
-  const results = words.length
-    ? allLessons(tracks).filter((l) => { const hay = normalize(`${l.title} ${l.moduleTitle} ${l.summary ?? ""} ${l.steps.join(" ")}`); return words.every((w) => hay.includes(w)); })
-    : [];
+  const words = queryWords(q);
+  const lessons = allLessons(tracks);
+  const byId = new Map(lessons.map((l) => [l.id, l]));
+  const supabase = await createClient();
+
+  let hits: Hit[] = [];
+  let texts = new Map<string, string>();
+  if (words.length) {
+    const rpc = await searchRpc(supabase, q, words);
+    if (rpc) {
+      hits = rpc;
+      const ids = rpc.filter((h) => h.matched === "text").map((h) => h.id);
+      if (ids.length) texts = await publishedTexts(supabase, ids);
+    } else {
+      texts = await publishedTexts(supabase);
+      hits = searchInMemory(lessons.map((l) => ({ ...l, text: texts.get(l.id) })), q);
+    }
+  }
+  const results = hits.flatMap((h) => { const l = byId.get(h.id); return l ? [{ lesson: l, matched: h.matched }] : []; });
 
   return (
     <div className="page-narrow">
@@ -36,7 +69,17 @@ export default async function Buscar({ searchParams }: { searchParams: Promise<{
           <p className="muted res-n" role="status">{results.length} aula{results.length === 1 ? "" : "s"} para <b>“{q}”</b></p>
           {results.length > 0 && (
             <ul className="mlist">
-              {results.map((l) => <LessonRow key={l.id} lesson={l} trackId={l.trackIds[0]} meta={[tracks.find((t) => t.id === l.trackIds[0])?.name ?? "", l.moduleTitle]} done={done.has(l.id)} />)}
+              {results.map(({ lesson: l, matched }) => {
+                const body = matched === "text" ? texts.get(l.id) : undefined;
+                const parts = body ? snippet(body, words) : null;
+                return (
+                  <LessonRow key={l.id} lesson={l} trackId={l.trackIds[0]} meta={[tracks.find((t) => t.id === l.trackIds[0])?.name ?? "", l.moduleTitle]} done={done.has(l.id)}
+                    extra={<>
+                      <span className="res-where">{WHERE_LABEL[matched]}</span>
+                      {parts && <span className="res-snip">{parts.map((p, i) => p.hit ? <mark key={i}>{p.text}</mark> : p.text)}</span>}
+                    </>} />
+                );
+              })}
             </ul>
           )}
           {!results.length && (
