@@ -1078,7 +1078,7 @@ h1{font-weight:700} h2,h3,h4{font-weight:650}
 .kx-stage{position:relative;z-index:1;min-height:340px;margin-right:-4%}
 .kbubble{position:absolute;inset:-6% -2% -6% 0}
 .kbubble-svg{position:absolute;inset:10%;width:80%;height:80%;transition:opacity .6s var(--ease-in);filter:drop-shadow(0 30px 60px rgba(44,248,176,.18))}
-@media (prefers-reduced-motion:no-preference){.kbubble-svg{animation:kb-drift 10s ease-in-out infinite}}
+@media (prefers-reduced-motion:no-preference){.kbubble-svg{animation:kb-orbit 24s linear infinite}}
 .kx-hud{grid-column:1/-1;position:relative;z-index:2;margin:0 24px 24px;background:rgba(14,10,24,.55);border-color:rgba(185,138,255,.16)}
 .kx-hud li.is-goal b,.kx-hud li.is-goal .khud-k{color:var(--verde-tx)}
 @media (prefers-reduced-motion:no-preference){.kx-main>*{animation:k-in .55s ease-out both}.kx-main>:nth-child(2){animation-delay:.05s}.kx-main>:nth-child(3){animation-delay:.1s}.kx-main>:nth-child(4){animation-delay:.15s}.kx-main>:nth-child(5){animation-delay:.2s}.kx-main>:nth-child(n+6){animation-delay:.25s}}
@@ -1108,7 +1108,7 @@ h1{font-weight:700} h2,h3,h4{font-weight:650}
 .kbubble-svg .kb-glow{transform-origin:center;transform-box:fill-box;animation:kb-breathe 8s ease-in-out infinite}
 .kbubble-svg .kb-line{transform-origin:left center;transform-box:fill-box;animation:kb-type 4.2s ease-in-out infinite;animation-delay:var(--d,0s)}
 @media (prefers-reduced-motion:no-preference){
-  .kbubble-svg .kb-body{transform-origin:center;transform-box:fill-box;animation:kb-sway 12s ease-in-out infinite}
+  .kbubble-svg .kb-body{transform-origin:center;transform-box:fill-box;animation:kb-sway 16s ease-in-out infinite}
 }
 @media (prefers-reduced-motion:reduce){
   .kbubble-svg .kb-line{animation-name:kb-blink}
@@ -1116,8 +1116,10 @@ h1{font-weight:700} h2,h3,h4{font-weight:650}
 @keyframes kb-breathe{0%,100%{opacity:.75;transform:scale(.96)}50%{opacity:1;transform:scale(1.04)}}
 @keyframes kb-type{0%,60%,100%{transform:scaleX(1);opacity:1}25%{transform:scaleX(.82);opacity:.7}}
 @keyframes kb-blink{0%,60%,100%{opacity:1}25%{opacity:.7}}
-@keyframes kb-sway{0%,100%{transform:rotate(-2.5deg) translateX(-4px)}50%{transform:rotate(2.5deg) translateX(4px)}}
-@keyframes kb-drift{0%,100%{translate:-10px 0}50%{translate:10px 0}}
+/* dentro do SVG 1px = 1 unidade do viewBox (~230px na tela): por isso o balanço interno só gira, sem deslocar */
+@keyframes kb-sway{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}
+/* órbita: o balão inteiro percorre um círculo pequeno (raio 10px) sem girar */
+@keyframes kb-orbit{from{transform:rotate(0deg) translateX(10px) rotate(0deg)}to{transform:rotate(360deg) translateX(10px) rotate(-360deg)}}
 
 /* Início: herói de ponta a ponta (sem cartão), o fundo some na página */
 .kx{border:0;border-radius:0;margin:-32px calc(50% - 50vw) 0;padding-inline:calc(50vw - 50%);background:transparent}
