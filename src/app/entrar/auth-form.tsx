@@ -14,21 +14,21 @@ export function AuthForm({ linkError = false }: { linkError?: boolean }) {
   return (
     <form action={action}>
       <div>
-        <h2 className="klogin-h">Bem-vindo de volta</h2>
-        <p className="muted" style={{ marginTop: 6 }}>Entre para continuar de onde parou.</p>
+        <h1>Bem-vindo de volta</h1>
+        <p className="kauth-sub">Entre para continuar de onde parou.</p>
       </div>
       <label className="field">E-mail<input className="input" type="email" name="email" autoComplete="email" placeholder="seuemail@empresa.com.br" required /></label>
       <label className="field">
         Senha
         <input className="input" type="password" name="password" autoComplete="current-password" required />
       </label>
-      <Link href="/entrar/esqueci" className="dim" style={{ fontSize: 13, justifySelf: "end", marginTop: -6 }}>Esqueci a senha</Link>
+      <Link href="/entrar/esqueci" className="kauth-link">Esqueci a senha</Link>
       {linkError && !state && (
         <p className="err" role="alert">Link inválido ou vencido. Peça outro. <Link href="/entrar/esqueci" style={{ textDecoration: "underline" }}>Pedir novo link</Link></p>
       )}
       {state?.error && <p className="err" role="alert">{state.error}</p>}
       {state?.info && <p className="ok-msg" role="status">{state.info}</p>}
-      <button className="btn btn-p" style={{ justifyContent: "center" }} disabled={pending}>
+      <button className="btn btn-p" disabled={pending}>
         {pending ? "Aguarde…" : "Entrar"}
       </button>
     </form>
