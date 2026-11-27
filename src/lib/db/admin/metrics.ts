@@ -1,6 +1,10 @@
 // Números do painel do admin. Tudo vem das tabelas reais. Admins ficam fora das contas.
 import { cache } from "react";
-import { loadMetricsSource } from "../supabase/admin/metrics";
+import * as sb from "../supabase/admin/metrics";
+import * as pg from "../pg/admin";
+import { adminFn } from "./guard";
+
+const loadMetricsSource = adminFn(sb.loadMetricsSource, pg.loadMetricsSource);
 import { getAdminTracks } from "./queries";
 import type { AdminSession } from "./session";
 import type { DropRow, QuizRow, StudentRow, TrackRow } from "./types";
@@ -12,7 +16,7 @@ const PASS = 0.7;
 
 export const getMetrics = cache(async (admin: AdminSession) => {
   const now = Date.now();
-  const [tracks, { profiles, progress, attempts, certs, pendingQuestions }] = await Promise.all([getAdminTracks(admin), loadMetricsSource()]);
+  const [tracks, { profiles, progress, attempts, certs, pendingQuestions }] = await Promise.all([getAdminTracks(admin), loadMetricsSource(admin)]);
 
   const students = profiles.filter((p) => !p.is_admin);
   const isStudent = new Set(students.map((p) => p.id));

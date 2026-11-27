@@ -1,52 +1,51 @@
 // Escritas do /admin. Cada função exige a prova de admin (AdminSession) como primeiro parâmetro.
-import {
-  findLessonByYoutubeId, linkLessonToModule, listModuleLessonIds, removeLesson, reorderModuleLessons, saveLessonRpc,
-  setLessonKeyPoints, setPublished, unlinkLessonFromModule, writeLessonText, writeLessonTranscript,
-} from "../supabase/admin/lessons";
-import { getModuleTrackId, insertModule, listTrackModuleIds, removeModule, renameModule as renameModuleRow, reorderModules as reorderModuleRows } from "../supabase/admin/modules";
-import { insertNews, listNewsIds, removeNews, reorderNews as reorderNewsRows, updateNewsRow } from "../supabase/admin/news";
-import { writeAnswer } from "../supabase/admin/questions";
-import { replaceQuiz } from "../supabase/admin/quizzes";
-import { insertTrack, listTrackIds, removeTrack, reorderTracks as reorderTrackRows, updateTrackRow } from "../supabase/admin/tracks";
-import { withAdmin } from "./guard";
+// adminFn escolhe Supabase ou Postgres do Doca (DATA_BACKEND) a cada chamada.
+import * as lessons from "../supabase/admin/lessons";
+import * as modules from "../supabase/admin/modules";
+import * as news from "../supabase/admin/news";
+import * as questions from "../supabase/admin/questions";
+import * as quizzes from "../supabase/admin/quizzes";
+import * as tracks from "../supabase/admin/tracks";
+import * as pg from "../pg/admin";
+import { adminFn } from "./guard";
 
 // Aulas
-export const findLessonByYoutube = withAdmin(findLessonByYoutubeId);
-export const saveLesson = withAdmin(saveLessonRpc);
-export const saveLessonKeyPoints = withAdmin(setLessonKeyPoints);
-export const saveLessonText = withAdmin(writeLessonText);
-export const saveLessonTranscript = withAdmin(writeLessonTranscript);
-export const setLessonPublished = withAdmin(setPublished);
-export const deleteLesson = withAdmin(removeLesson);
-export const linkLesson = withAdmin(linkLessonToModule);
-export const unlinkLesson = withAdmin(unlinkLessonFromModule);
-export const getModuleLessonIds = withAdmin(listModuleLessonIds);
-export const reorderLessonsInModule = withAdmin(reorderModuleLessons);
+export const findLessonByYoutube = adminFn(lessons.findLessonByYoutubeId, pg.findLessonByYoutubeId);
+export const saveLesson = adminFn(lessons.saveLessonRpc, pg.saveLessonRpc);
+export const saveLessonKeyPoints = adminFn(lessons.setLessonKeyPoints, pg.setLessonKeyPoints);
+export const saveLessonText = adminFn(lessons.writeLessonText, pg.writeLessonText);
+export const saveLessonTranscript = adminFn(lessons.writeLessonTranscript, pg.writeLessonTranscript);
+export const setLessonPublished = adminFn(lessons.setPublished, pg.setPublished);
+export const deleteLesson = adminFn(lessons.removeLesson, pg.removeLesson);
+export const linkLesson = adminFn(lessons.linkLessonToModule, pg.linkLessonToModule);
+export const unlinkLesson = adminFn(lessons.unlinkLessonFromModule, pg.unlinkLessonFromModule);
+export const getModuleLessonIds = adminFn(lessons.listModuleLessonIds, pg.listModuleLessonIds);
+export const reorderLessonsInModule = adminFn(lessons.reorderModuleLessons, pg.reorderModuleLessons);
 
 // Módulos
-export const renameModule = withAdmin(renameModuleRow);
-export const createModule = withAdmin(insertModule);
-export const deleteModule = withAdmin(removeModule);
-export const getTrackIdOfModule = withAdmin(getModuleTrackId);
-export const getTrackModuleIds = withAdmin(listTrackModuleIds);
-export const reorderModules = withAdmin(reorderModuleRows);
+export const renameModule = adminFn(modules.renameModule, pg.renameModule);
+export const createModule = adminFn(modules.insertModule, pg.insertModule);
+export const deleteModule = adminFn(modules.removeModule, pg.removeModule);
+export const getTrackIdOfModule = adminFn(modules.getModuleTrackId, pg.getModuleTrackId);
+export const getTrackModuleIds = adminFn(modules.listTrackModuleIds, pg.listTrackModuleIds);
+export const reorderModules = adminFn(modules.reorderModules, pg.reorderModules);
 
 // Novidades
-export const updateNews = withAdmin(updateNewsRow);
-export const createNews = withAdmin(insertNews);
-export const deleteNews = withAdmin(removeNews);
-export const getNewsIds = withAdmin(listNewsIds);
-export const reorderNews = withAdmin(reorderNewsRows);
+export const updateNews = adminFn(news.updateNewsRow, pg.updateNewsRow);
+export const createNews = adminFn(news.insertNews, pg.insertNews);
+export const deleteNews = adminFn(news.removeNews, pg.removeNews);
+export const getNewsIds = adminFn(news.listNewsIds, pg.listNewsIds);
+export const reorderNews = adminFn(news.reorderNews, pg.reorderNews);
 
 // Dúvidas
-export const answerQuestionRow = withAdmin(writeAnswer);
+export const answerQuestionRow = adminFn(questions.writeAnswer, pg.writeAnswer);
 
 // Quizzes
-export const saveQuiz = withAdmin(replaceQuiz);
+export const saveQuiz = adminFn(quizzes.replaceQuiz, pg.replaceQuiz);
 
 // Trilhas
-export const updateTrack = withAdmin(updateTrackRow);
-export const createTrack = withAdmin(insertTrack);
-export const deleteTrack = withAdmin(removeTrack);
-export const getTrackIds = withAdmin(listTrackIds);
-export const reorderTracks = withAdmin(reorderTrackRows);
+export const updateTrack = adminFn(tracks.updateTrackRow, pg.updateTrackRow);
+export const createTrack = adminFn(tracks.insertTrack, pg.insertTrack);
+export const deleteTrack = adminFn(tracks.removeTrack, pg.removeTrack);
+export const getTrackIds = adminFn(tracks.listTrackIds, pg.listTrackIds);
+export const reorderTracks = adminFn(tracks.reorderTracks, pg.reorderTracks);

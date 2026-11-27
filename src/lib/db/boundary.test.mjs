@@ -50,7 +50,7 @@ test("toda função de lib/db/admin exige a prova de admin como primeiro parâme
     const exported = [...text.matchAll(/^export const (\w+) = (.*)$/gm)];
     assert.ok(exported.length > 5, `${name}: nenhuma exportação encontrada`);
     for (const [, fn, rhs] of exported) {
-      assert.ok(/withAdmin\(|\(admin: AdminSession/.test(rhs), `${name}.${fn} não passa por withAdmin`);
+      assert.ok(/withAdmin\(|adminFn\(|\(admin: AdminSession/.test(rhs), `${name}.${fn} não passa por withAdmin`);
     }
   }
 });
@@ -60,4 +60,12 @@ test("o aluno nunca lê o gabarito do quiz (correct/explanation)", () => {
     const reads = [...f.text.matchAll(/from\("quiz_questions"\)\.select\(([^)]*)\)/g)];
     for (const [, args] of reads) assert.ok(!/\*|correct|explanation/.test(args), `${f.path}: select de quiz_questions com ${args}`);
   }
+});
+
+test("no Postgres, o caminho do aluno nunca lê correct/explanation do quiz", () => {
+  const text = files.find((f) => f.path === "lib/db/pg/aluno.ts").text;
+  const sqls = [...text.matchAll(/`([^`]*)`/g)].map((m) => m[1]);
+  const bad = sqls.filter((s) => /\b(correct|explanation)\b/.test(s));
+  assert.deepEqual(bad, []);
+  assert.ok(sqls.some((s) => s.includes("quiz_questions_aluno")), "perguntas do aluno vêm da view sem gabarito");
 });

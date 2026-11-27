@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --test src/lib/admin/validate.test.mjs src/lib/article-parse.test.mjs src/lib/search.test.mjs src/lib/db/boundary.test.mjs src/lib/db/pg/schema.test.mjs src/lib/db/pg/auth.test.mjs src/lib/db/pg/aluno.test.mjs scripts/migrar-dados.test.mjs"
+    "test": "node --test src/lib/admin/validate.test.mjs src/lib/article-parse.test.mjs src/lib/search.test.mjs src/lib/db/boundary.test.mjs src/lib/db/pg/schema.test.mjs src/lib/db/pg/auth.test.mjs src/lib/db/pg/aluno.test.mjs src/lib/db/pg/admin.test.mjs scripts/migrar-dados.test.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
