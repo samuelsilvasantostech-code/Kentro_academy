@@ -1,6 +1,10 @@
 import { cache } from "react";
 import { notFound, redirect } from "next/navigation";
-import { resolveAdmin } from "../supabase/admin/session";
+import { isPostgres } from "../backend";
+import { resolveAdmin as resolveSupabase } from "../supabase/admin/session";
+import { resolveAdmin as resolvePostgres } from "../pg/auth";
+
+const resolveAdmin = () => (isPostgres() ? resolvePostgres() : resolveSupabase());
 import type { SessionUser } from "../auth/types";
 
 declare const adminBrand: unique symbol;

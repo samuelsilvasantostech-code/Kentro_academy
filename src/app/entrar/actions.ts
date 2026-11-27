@@ -11,6 +11,7 @@ const MSG: Partial<Record<AuthFailure, string>> = {
   email_not_confirmed: "Confirme seu e-mail antes de entrar. Procure a mensagem da Kentro Academy na sua caixa de entrada.",
   user_exists: "Já existe uma conta com este e-mail. Entre com sua senha ou use “Esqueci a senha”.",
   weak_password: "A senha precisa ter pelo menos 8 caracteres.",
+  rate_limited: "Muitas tentativas sem sucesso. Aguarde 15 minutos e tente de novo, ou use “Esqueci a senha”.",
 };
 const pt = (f: AuthFailure) => MSG[f] ?? "Não deu certo. Tente de novo em instantes.";
 

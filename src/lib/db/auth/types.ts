@@ -1,7 +1,7 @@
 export type SessionUser = { id: string; email: string };
 
 /** Motivo de falha de entrada/cadastro, já sem depender do texto do provedor. */
-export type AuthFailure = "invalid_credentials" | "email_not_confirmed" | "user_exists" | "weak_password" | "other";
+export type AuthFailure = "invalid_credentials" | "email_not_confirmed" | "user_exists" | "weak_password" | "rate_limited" | "other";
 
 export type SignInResult = { error: AuthFailure | null };
 export type SignUpResult = { error: AuthFailure | null; signedIn: boolean };
