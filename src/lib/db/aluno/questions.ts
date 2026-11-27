@@ -1,4 +1,8 @@
-import { insertQuestion, loadUnseenAnswers, markAnswersSeenOf } from "../supabase/aluno/questions";
+import * as sb from "../supabase/aluno/questions";
+import * as pg from "../pg/aluno";
+import { pick } from "../pg/sql";
+
+const { insertQuestion, loadUnseenAnswers, markAnswersSeenOf } = pick(sb, pg);
 import type { DbError } from "../types";
 import type { UnseenAnswer } from "./types";
 

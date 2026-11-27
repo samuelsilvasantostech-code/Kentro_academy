@@ -1,5 +1,9 @@
 import { cache } from "react";
-import { probeLearningFeatures, probeLessonTexts, probeTranscripts } from "./supabase/features";
+import * as sb from "./supabase/features";
+import * as pg from "./pg/aluno";
+import { pick } from "./pg/sql";
+
+const { probeLearningFeatures, probeLessonTexts, probeTranscripts } = pick(sb, pg);
 
 // Migrações opcionais já aplicadas? Enquanto não, os recursos ficam escondidos e o resto do app segue igual.
 // Uma consulta por requisição cada.

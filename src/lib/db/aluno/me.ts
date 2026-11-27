@@ -1,9 +1,13 @@
 import { cache } from "react";
 import { redirect } from "next/navigation";
 import { getSessionUserFast } from "../auth";
-import { loadStudentState, saveOnboarding, setLastLesson, updateProfileName } from "../supabase/aluno/me";
+import * as sb from "../supabase/aluno/me";
+import * as pg from "../pg/aluno";
+import { pick } from "../pg/sql";
 import type { DbError } from "../types";
 import type { Me } from "./types";
+
+const { loadStudentState, saveOnboarding, setLastLesson, updateProfileName } = pick(sb, pg);
 
 /**
  * Usuário logado, perfil e progresso. Sem sessão, vai para /entrar.

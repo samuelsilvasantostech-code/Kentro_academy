@@ -1,6 +1,10 @@
-import { deleteNoteOf, insertNote, loadNotes } from "../supabase/aluno/notes";
+import * as sb from "../supabase/aluno/notes";
+import * as pg from "../pg/aluno";
+import { pick } from "../pg/sql";
 import type { DbError } from "../types";
 import type { Note } from "./types";
+
+const { deleteNoteOf, insertNote, loadNotes } = pick(sb, pg);
 
 export const addNote = (userId: string, lessonId: string, body: string): Promise<DbError> => insertNote(userId, lessonId, body);
 /** Só apaga anotação do próprio usuário. */

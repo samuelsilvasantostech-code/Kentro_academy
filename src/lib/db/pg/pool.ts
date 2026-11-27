@@ -1,4 +1,8 @@
-import { Pool } from "pg";
+import { Pool, types } from "pg";
+
+// Datas saem como texto ISO (como no Supabase), não como Date: o resto do app trata data como string.
+types.setTypeParser(1184, (v) => new Date(v).toISOString()); // timestamptz
+types.setTypeParser(1082, (v) => v); // date
 
 /**
  * Conexão com o Postgres do Doca: só DATABASE_URL.

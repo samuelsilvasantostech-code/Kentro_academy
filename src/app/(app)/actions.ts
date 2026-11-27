@@ -121,10 +121,10 @@ export async function markAnswersSeen(lessonId: string) {
 
 /** Corrige no banco (submit_quiz). Sem aprovação, o aluno só recebe acerto/erro por questão, nunca o gabarito. */
 export async function submitQuiz(moduleId: string, answers: number[]): Promise<QuizResult | null> {
-  await authed();
+  const user = await authed();
   if (typeof moduleId !== "string" || !UUID.test(moduleId)) return null;
   if (!Array.isArray(answers) || answers.length < 1 || answers.length > 100 || !answers.every((a) => Number.isInteger(a) && a >= 0 && a <= 5)) return null;
-  const { result, error } = await dbSubmitQuiz(moduleId, answers);
+  const { result, error } = await dbSubmitQuiz(user.id, moduleId, answers);
   logErr("submitQuiz", error);
   if (error?.code === "54000") return { score: 0, total: 0, passed: false, results: [], tooFast: true };
   if (error || !result) return null;
