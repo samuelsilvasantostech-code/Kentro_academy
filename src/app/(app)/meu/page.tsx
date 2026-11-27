@@ -8,10 +8,10 @@ import { Ico, type IcoName } from "@/components/ico";
 import { CrystalGlyph } from "@/components/crystal/CrystalGlyph";
 import { getTrackStatuses, type TrackStatus } from "../certificado/completion";
 
-export const metadata: Metadata = { title: "Meus cursos" };
+export const metadata: Metadata = { title: "Meu progresso" };
 
 const TABS = [
-  ["cursos", "Cursos", "layers"],
+  ["cursos", "Trilhas", "layers"],
   ["conquistas", "Conquistas", "award"],
   ["anotacoes", "Anotações", "pen"],
   ["perfil", "Perfil", "user"],
@@ -100,8 +100,8 @@ export default async function Meu({ searchParams }: { searchParams: Promise<{ ab
 
   return (
     <div className="page-narrow meu">
-      <h1>Meus cursos</h1>
-      <p className="muted" style={{ marginTop: 6 }}>Seu progresso, suas conquistas e seus certificados.</p>
+      <h1>Meu progresso</h1>
+      <p className="muted" style={{ marginTop: 6 }}>Suas trilhas, conquistas, anotações e certificados.</p>
       <div className="grid g4 stats" style={{ marginTop: 24 }}>
         <Stat icon="book" label="Aulas concluídas">{done.size}<span className="dim n-sub"> de {all.length}</span></Stat>
         <Stat icon="clock" label="Tempo de estudo">{minutes(studied)}</Stat>
@@ -109,7 +109,7 @@ export default async function Meu({ searchParams }: { searchParams: Promise<{ ab
         <Stat icon="award" label="Trilhas concluídas">{completed.length}</Stat>
       </div>
 
-      <nav className="mtabs" aria-label="Seções de Meus cursos">
+      <nav className="mtabs" aria-label="Seções de Meu progresso">
         {TABS.map(([k, label, icon]) => (
           <Link key={k} href={k === "cursos" ? "/meu" : `/meu?aba=${k}`} aria-current={tab === k ? "page" : undefined} scroll={false}>
             <Ico name={icon} size={16} />{label}{counts[k] && <span className="mtabs-n">{counts[k]}</span>}
@@ -126,7 +126,7 @@ export default async function Meu({ searchParams }: { searchParams: Promise<{ ab
             ) : (
               <div className="empty">
                 <span className="empty-ico" aria-hidden="true"><Ico name="flow" size={28} /></span>
-                <h3>{completed.length ? "Nenhuma trilha em andamento" : "Você ainda não começou nenhuma aula"}</h3>
+                <h3>{completed.length ? "Nenhuma trilha em andamento" : "Você ainda não começou nenhuma trilha"}</h3>
                 <p className="muted">Escolha uma trilha e assista à primeira aula. Seu progresso aparece aqui.</p>
                 <div className="empty-btns">
                   <Link className="btn btn-p" href="/trilhas">Ver trilhas</Link>
@@ -155,7 +155,7 @@ export default async function Meu({ searchParams }: { searchParams: Promise<{ ab
               ...tracks.map((t, i) => {
                 const p = progress(t, done);
                 const st = statuses.get(t.id);
-                return { k: t.id, name: t.name, got: !!st?.certified, hint: `${p.pct}% concluído. Faltam ${p.total - p.done} aulas.`, pct: p.pct, href: st?.certified ? `/certificado/${t.id}` : `/trilha/${t.id}`, date: st?.issuedAt, tilt: (i % 3) * 8 - 8 };
+                return { k: t.id, name: t.name, got: !!st?.certified, hint: p.total - p.done > 0 ? `${p.pct}% concluída. ${p.total - p.done === 1 ? "Falta 1 aula" : `Faltam ${p.total - p.done} aulas`}.` : "Aulas concluídas. Faltam os quizzes.", pct: p.pct, href: st?.certified ? `/certificado/${t.id}` : `/trilha/${t.id}`, date: st?.issuedAt, tilt: (i % 3) * 8 - 8 };
               }),
             ].map((b) => (
               <li key={b.k} className={`mbadge${b.got ? " is-on" : ""}`}>
@@ -217,7 +217,7 @@ export default async function Meu({ searchParams }: { searchParams: Promise<{ ab
         <div className="mpanel" id="nome">
           <h2 className="mpanel-h">Seu nome no certificado</h2>
           <NameForm current={profile.full_name ?? ""} />
-          <p className="dim mpanel-sub" style={{ marginTop: 16 }}>Conta: {user.email}</p>
+          <p className="dim mpanel-sub" style={{ marginTop: 16 }}>E-mail da conta: {user.email}</p>
         </div>
       )}
     </div>

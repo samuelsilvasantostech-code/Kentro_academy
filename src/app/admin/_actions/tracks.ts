@@ -36,7 +36,7 @@ export async function saveTrack(_prev: FormState, form: FormData): Promise<FormS
     const { data: last } = await supabase.from("tracks").select("position").order("position", { ascending: false }).limit(1);
     const { error } = await supabase.from("tracks").insert({ id: slug, ...row, position: (last?.[0]?.position ?? 0) + 1 });
     if (error) {
-      if (isUnique(error)) return fail("Corrija o endereço.", form, { id: "Esse endereço já existe" });
+      if (isUnique(error)) return fail("Escolha outro endereço para a trilha.", form, { id: "Esse endereço já está em uso" });
       logDbError("saveTrack.insert", error);
       return fail(GENERIC_ERROR, form);
     }
@@ -56,14 +56,14 @@ export async function deleteTrack(id: string): Promise<FormState> {
     return { ok: false, message: GENERIC_ERROR };
   }
   catalogChanged();
-  return { ok: true, message: "Trilha apagada." };
+  return { ok: true, message: "Trilha excluída." };
 }
 
 export async function moveTrack(id: string, dir: string): Promise<FormState> {
   const { supabase } = await requireAdmin();
   const slug = parseSlug(id);
   const d = parseDirection(dir);
-  if (!slug.ok || !d.ok) return { ok: false, message: "Pedido inválido." };
+  if (!slug.ok || !d.ok) return { ok: false, message: "Não foi possível concluir. Recarregue a página e tente de novo." };
   const { data, error } = await supabase.from("tracks").select("id").order("position").order("id");
   if (error) {
     logDbError("moveTrack.read", error);

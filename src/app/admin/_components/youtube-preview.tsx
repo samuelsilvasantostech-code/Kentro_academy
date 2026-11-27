@@ -10,7 +10,7 @@ export function YoutubePreview({ value }: { value: string }) {
   if (!r.ok)
     return (
       <p className="adm-fielderr" role="status">
-        Link inválido. Cole um link do YouTube ou o ID de 11 caracteres.
+        Não reconhecemos esse link. Cole um link do YouTube ou o ID do vídeo, com 11 caracteres.
       </p>
     );
   return (

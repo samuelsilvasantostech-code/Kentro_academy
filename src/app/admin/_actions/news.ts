@@ -53,14 +53,14 @@ export async function deleteNews(id: string): Promise<FormState> {
     return { ok: false, message: GENERIC_ERROR };
   }
   revalidatePath("/", "layout");
-  return { ok: true, message: "Novidade apagada." };
+  return { ok: true, message: "Novidade excluída." };
 }
 
 export async function moveNews(id: string, dir: string): Promise<FormState> {
   const { supabase } = await requireAdmin();
   const uuid = parseUuid(id);
   const d = parseDirection(dir);
-  if (!uuid.ok || !d.ok) return { ok: false, message: "Pedido inválido." };
+  if (!uuid.ok || !d.ok) return { ok: false, message: "Não foi possível concluir. Recarregue a página e tente de novo." };
   const { data, error } = await supabase.from("news").select("id").order("position").order("id");
   if (error) {
     logDbError("moveNews.read", error);

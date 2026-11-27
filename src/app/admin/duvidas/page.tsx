@@ -18,9 +18,9 @@ export default async function DuvidasPage({ searchParams }: { searchParams: Prom
       <div className="adm-head">
         <div>
           <h1>Dúvidas</h1>
-          <p className="muted">{answered ? "Respondidas mais recentes primeiro." : "Fila sem resposta, da mais antiga para a mais nova."}</p>
+          <p className="muted">{answered ? "Dúvidas respondidas, da mais recente para a mais antiga." : "Dúvidas sem resposta, da mais antiga para a mais recente."}</p>
         </div>
-        <nav className="adm-seg" aria-label="Filtro">
+        <nav className="adm-seg" aria-label="Filtrar dúvidas">
           <Link href="/admin/duvidas" aria-current={answered ? undefined : "page"}>Pendentes</Link>
           <Link href="/admin/duvidas?filtro=respondidas" aria-current={answered ? "page" : undefined}>Respondidas</Link>
         </nav>

@@ -12,7 +12,7 @@ const str = (v: unknown) => (typeof v === "string" ? v : "");
 export function text(v: unknown, o: { min?: number; max: number }): Result<string> {
   const s = str(v).replace(/\u0000/g, "").replace(/\r\n?/g, "\n").trim();
   const min = o.min ?? 0;
-  if (s.length === 0 && min > 0) return err("Campo obrigatório");
+  if (s.length === 0 && min > 0) return err("Preencha este campo");
   if (s.length < min) return err(`Use pelo menos ${min} caracteres`);
   if (s.length > o.max) return err(`Use no máximo ${o.max} caracteres`);
   return ok(s);
@@ -70,7 +70,7 @@ function timestamp(s: string, allowZero: boolean): Result<number> {
   if (parts.length === 3 && (parts[1].length !== 2 || min > 59 || n[0] > 23)) return bad;
   const total = parts.length === 3 ? n[0] * 3600 + min * 60 + sec : min * 60 + sec;
   if (!allowZero && total === 0) return err("A duração deve ser maior que zero");
-  if (total > 24 * 3600) return err("Duração acima de 24 horas");
+  if (total > 24 * 3600) return err("A duração passa de 24 horas");
   return ok(total);
 }
 
@@ -91,7 +91,7 @@ export function formatDuration(total: number): string {
 /** Uma entrada por linha; linhas vazias são ignoradas. */
 export function parseLines(v: unknown, o: { max: number; maxLen: number }): Result<string[]> {
   const lines = str(v).replace(/\u0000/g, "").split(/\r\n?|\n/).map((l) => l.trim()).filter(Boolean);
-  if (lines.length > o.max) return err(`No máximo ${o.max} linhas`);
+  if (lines.length > o.max) return err(`Use no máximo ${o.max} linhas`);
   if (lines.some((l) => l.length > o.maxLen)) return err(`Cada linha aceita até ${o.maxLen} caracteres`);
   return ok(lines);
 }
@@ -201,13 +201,13 @@ export type QuizQuestion = { question: string; options: string[]; correct: numbe
 /** Opções: uma por linha, de 2 a 6. */
 export function parseQuizOptions(v: unknown): Result<string[]> {
   const lines = parseLines(v, { max: 6, maxLen: 300 });
-  if (!lines.ok) return err("No máximo 6 opções, de até 300 caracteres");
-  return lines.value.length < 2 ? err("Informe de 2 a 6 opções, uma por linha") : ok(lines.value);
+  if (!lines.ok) return err("Use no máximo 6 alternativas, com até 300 caracteres cada");
+  return lines.value.length < 2 ? err("Escreva de 2 a 6 alternativas, uma por linha") : ok(lines.value);
 }
 
 /** Índice (a partir de 0) da opção correta dentro das n opções. */
 export function parseCorrectIndex(v: unknown, n: number): Result<number> {
   const s = str(v).trim();
   const i = /^\d{1,2}$/.test(s) ? Number(s) : -1;
-  return i >= 0 && i < n ? ok(i) : err("Marque a opção correta");
+  return i >= 0 && i < n ? ok(i) : err("Escolha a alternativa correta");
 }

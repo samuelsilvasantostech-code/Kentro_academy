@@ -27,7 +27,7 @@ export default async function Certificado({ params }: { params: Promise<{ trilha
       <div className="empty">
         <span className="empty-ico" aria-hidden="true"><Ico name="lock" size={28} /></span>
         <h1>Conclua a trilha para liberar o certificado</h1>
-        <p className="muted">Faça todas as aulas e os quizzes de {t.name} para receber o seu.</p>
+        <p className="muted">Conclua as aulas com vídeo e passe nos quizzes de {t.name} para liberar o seu.</p>
         <Link className="btn btn-p" href={`/trilha/${t.id}`}>Ir para a trilha<Ico name="arrowR" /></Link>
       </div>
     );
@@ -39,7 +39,7 @@ export default async function Certificado({ params }: { params: Promise<{ trilha
       <div className="empty">
         <span className="empty-ico" aria-hidden="true"><Ico name="pen" size={28} /></span>
         <h1>Complete seu nome para emitir o certificado</h1>
-        <p className="muted">Seu perfil está sem nome. Preencha em Meus cursos, na aba Perfil, e volte aqui.</p>
+        <p className="muted">Seu perfil está sem nome. Preencha em Meu progresso, na aba Perfil, e volte aqui.</p>
         <Link className="btn btn-p" href="/meu?aba=perfil"><Ico name="pen" />Preencher meu nome</Link>
       </div>
     );
@@ -60,7 +60,7 @@ export default async function Certificado({ params }: { params: Promise<{ trilha
     <>
       <div className="cert-actions">
         <Link className="btn btn-s" href={`/trilha/${t.id}`}><Ico name="arrowL" />Voltar à trilha</Link>
-        <a className="btn btn-s" href={linkedin} target="_blank" rel="noopener noreferrer">Adicionar ao LinkedIn<span className="sr-only"> (abre em nova aba)</span></a>
+        <a className="btn btn-s" href={linkedin} target="_blank" rel="noopener noreferrer">Adicionar ao LinkedIn<span className="sr-only"> (abre em outra aba)</span></a>
         <PrintButton />
       </div>
       <section className="cert-hero" aria-labelledby="cert-hero-t">

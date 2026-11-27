@@ -11,7 +11,7 @@ export type FormState =
     }
   | undefined;
 
-export const GENERIC_ERROR = "Não foi possível salvar agora. Tente de novo.";
+export const GENERIC_ERROR = "Não foi possível concluir agora. Tente de novo em instantes.";
 
 /** Valores em texto do formulário (ignora arquivos e os campos internos "$ACTION_*" do React). */
 export function formValues(form: FormData): Record<string, string> {

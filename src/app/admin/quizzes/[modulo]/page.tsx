@@ -21,7 +21,7 @@ export default async function EditarQuiz({ params }: { params: Promise<{ modulo:
         <div>
           <BackLink href="/admin/quizzes">Quizzes</BackLink>
           <h1>Quiz: {mod.title}</h1>
-          <p className="muted">Trilha {track.name}, com {quiz.length} perguntas. O gabarito só aparece aqui, nunca para o aluno.</p>
+          <p className="muted">Trilha {track.name}, com {quiz.length} perguntas. O aluno só vê a resposta correta depois de passar no quiz.</p>
         </div>
       </div>
       <div className="adm-card"><QuizEditor moduleId={mod.id} initial={quiz} lessons={review ? mod.lessons.map((l) => ({ id: l.id, title: l.title })) : null} /></div>

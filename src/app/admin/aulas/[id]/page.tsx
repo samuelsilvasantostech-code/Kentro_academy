@@ -45,7 +45,7 @@ export default async function EditarAula({
       <LessonForm key={lesson.id} initial={lesson} keyPoints={kp} lessonText={lt} transcript={tr} />
 
       <section className="adm-card" aria-labelledby="a-mods">
-        <h2 id="a-mods">Em quais módulos ela aparece</h2>
+        <h2 id="a-mods">Módulos em que a aula aparece</h2>
         {lesson.links.length === 0 ? <p className="muted">Sem módulo: nenhum aluno encontra esta aula.</p> : (
           <ul className="adm-list">
             {lesson.links.map((k) => (
@@ -62,8 +62,8 @@ export default async function EditarAula({
       <section className="adm-card" aria-labelledby="a-del">
         <h2 id="a-del">Excluir aula</h2>
         <ConfirmDelete
-          label="Excluir aula" title={`Excluir a aula "${lesson.title}"?`} run={deleteLesson.bind(null, lesson.id)} redirectTo="/admin/aulas"
-          warning="Apaga a aula em todas as trilhas, junto com o progresso, as anotações e as dúvidas dos alunos nela. Para só tirar de um módulo, use Desvincular do módulo."
+          label="Excluir aula" title={`Excluir a aula “${lesson.title}”?`} run={deleteLesson.bind(null, lesson.id)} redirectTo="/admin/aulas"
+          warning="Exclui a aula de todas as trilhas, junto com o progresso, as anotações e as dúvidas dos alunos nela. Para só tirar a aula de um módulo, use Desvincular do módulo."
           alternative={lesson.links.length > 0 && (
             <div className="adm-list">
               <span className="adm-sub">Alternativa mais segura:</span>

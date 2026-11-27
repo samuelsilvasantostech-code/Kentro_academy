@@ -10,7 +10,7 @@ const section = (p: string) =>
 const ITEMS: [href: string, key: string, icon: IcoName, label: string][] = [
   ["/", "home", "home", "Início"],
   ["/trilhas", "trilhas", "layers", "Trilhas"],
-  ["/meu", "meu", "video", "Meus cursos"],
+  ["/meu", "meu", "video", "Progresso"],
   ["/ajuda", "ajuda", "help", "Ajuda"],
 ];
 

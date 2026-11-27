@@ -49,7 +49,7 @@ export default async function Trilha({ params, searchParams }: { params: Promise
     lessonsLeft > 0 && `${lessonsLeft} ${lessonsLeft === 1 ? "aula" : "aulas"}`,
     quizzesLeft > 0 && `${quizzesLeft} ${quizzesLeft === 1 ? "quiz" : "quizzes"}`,
   ].filter(Boolean).join(" + ");
-  const leftText = left ? `${lessonsLeft + quizzesLeft === 1 ? "Falta" : "Faltam"} ${left}${p.secondsLeft > 0 ? ` (cerca de ${minutes(p.secondsLeft)})` : ""}.` : earned ? "Trilha concluída." : "Tudo feito. O certificado já pode ser emitido.";
+  const leftText = left ? `${lessonsLeft + quizzesLeft === 1 ? "Falta" : "Faltam"} ${left}${p.secondsLeft > 0 ? ` (cerca de ${minutes(p.secondsLeft)})` : ""}.` : earned ? "Trilha concluída." : "Tudo feito. Seu certificado está liberado.";
   // Só o módulo onde o aluno está fica aberto (o da próxima aula; se a trilha acabou, nenhum).
   const openModule = nx && lessonsLeft > 0 ? nx.moduleIndex : -1;
 
@@ -87,7 +87,7 @@ export default async function Trilha({ params, searchParams }: { params: Promise
             <div className="th2-cta">
               {nx && lessonsLeft > 0 && (
                 <Link className="btn btn-p btn-lg th2-go" href={`/aula/${t.id}/${nx.id}`}>
-                  <Ico name="play" size={16} />{first ? "Começar agora" : "Continuar trilha"}
+                  <Ico name="play" size={16} />{first ? "Começar trilha" : "Continuar trilha"}
                 </Link>
               )}
               {earned ? <Link className="btn btn-s btn-lg" href={`/certificado/${t.id}`}><Ico name="award" size={16} />Ver certificado</Link>
@@ -112,7 +112,7 @@ export default async function Trilha({ params, searchParams }: { params: Promise
 
 
       <section className="sec" id="conteudo">
-        <div className="sec-h"><h2>Conteúdo da trilha</h2><p className="sec-hint">{t.modules.length} {t.modules.length === 1 ? "módulo" : "módulos"}. Toque em um módulo para ver as aulas.</p></div>
+        <div className="sec-h"><h2>Conteúdo da trilha</h2><p className="sec-hint">{t.modules.length} {t.modules.length === 1 ? "módulo" : "módulos"}. Abra um módulo para ver as aulas.</p></div>
         {!p.count && (
           <div className="empty" style={{ marginTop: 16 }}>
             
@@ -135,7 +135,7 @@ export default async function Trilha({ params, searchParams }: { params: Promise
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <span className="mod-k">Módulo {mi + 1}{nx?.moduleIndex === mi && lessonsLeft > 0 ? " · você está aqui" : ""}</span>
                     <h3>{m.title}</h3>
-                    <div className="meta"><span>{m.lessons.length} {m.lessons.length === 1 ? "aula" : "aulas"}</span><span>{minutes(secs)}</span><span>{d}/{m.lessons.length} concluídas</span>{quizPassed.has(m.id) && <span style={{ color: "var(--sinal-tx)" }}>Quiz feito</span>}</div>
+                    <div className="meta"><span>{m.lessons.length} {m.lessons.length === 1 ? "aula" : "aulas"}</span><span>{minutes(secs)}</span><span>{d}/{m.lessons.length} concluídas</span>{quizPassed.has(m.id) && <span style={{ color: "var(--sinal-tx)" }}>Quiz aprovado</span>}</div>
                   </div>
                   <svg className="chev dim" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="m6 9 6 6 6-6" /></svg>
                 </summary>
@@ -160,7 +160,7 @@ export default async function Trilha({ params, searchParams }: { params: Promise
             <span className="cert-ico" aria-hidden><Ico name={earned ? "award" : "lock"} size={26} /></span>
             <div style={{ flex: 1 }}>
               <b>Certificado: {t.name}</b>
-              <div className="dim" style={{ fontSize: 13 }}>{earned ? `Conquistado${st?.hasNew ? ". Novo conteúdo nesta trilha" : ""}.` : `Liberado ao concluir todas as aulas${quizzes.length ? " e quizzes" : ""}.`}</div>
+              <div className="dim" style={{ fontSize: 13 }}>{earned ? `Conquistado${st?.hasNew ? ". Esta trilha ganhou conteúdo novo" : ""}.` : `Liberado ao concluir todas as aulas${quizzes.length ? " e quizzes" : ""}.`}</div>
             </div>
             {earned ? <Link className="btn btn-p btn-sm" href={`/certificado/${t.id}`}>Ver certificado</Link> : <span className="cert-pct">{p.pct}%</span>}
           </div>

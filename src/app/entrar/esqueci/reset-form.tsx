@@ -11,13 +11,13 @@ export function ResetRequestForm() {
     <form action={action}>
       <div>
         <h1>Esqueceu a senha?</h1>
-        <p className="kauth-sub">Informe o e-mail da sua conta e enviamos um link para criar uma nova.</p>
+        <p className="kauth-sub">Digite o e-mail da sua conta. Vamos enviar um link para você criar uma nova senha.</p>
       </div>
       <label className="field">E-mail<input className="input" type="email" name="email" autoComplete="email" required /></label>
       {state?.error && <p className="err" role="alert">{state.error}</p>}
       {state?.info && <p className="ok-msg" role="status">{state.info}</p>}
       <button className="btn btn-p" disabled={pending}>{pending ? "Enviando…" : "Enviar link"}</button>
-      <Link href="/entrar" className="kauth-back"><Ico name="arrowL" size={16} />Voltar para entrar</Link>
+      <Link href="/entrar" className="kauth-back"><Ico name="arrowL" size={16} />Voltar para Entrar</Link>
     </form>
   );
 }

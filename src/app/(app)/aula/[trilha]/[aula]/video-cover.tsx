@@ -91,7 +91,7 @@ export function VideoCover({ lessonId, youtubeId, title, moduleTitle, trackName,
   const play = () => { setFrom(saved); onPlay(); };
   return (
     <div className="video">
-      <button type="button" className="vcover" onClick={play} aria-label={saved ? `Continuar a aula de ${mmss(saved)}: ${title}` : `Assistir à aula: ${title}`}>
+      <button type="button" className="vcover" onClick={play} aria-label={saved ? `Continuar a aula a partir de ${mmss(saved)}: ${title}` : `Assistir à aula: ${title}`}>
         <svg className="vc-flow" viewBox="0 0 400 120" aria-hidden="true" preserveAspectRatio="xMaxYMax meet">
           <path d="M10 90 C 70 90, 70 30, 130 30 S 190 90, 250 90 S 310 30, 370 30" />
           {[10, 130, 250, 370].map((x, i) => <circle key={x} cx={x} cy={i % 2 ? 30 : 90} r={i === 3 ? 9 : 6} />)}

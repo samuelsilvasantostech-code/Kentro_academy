@@ -27,7 +27,7 @@ export function QuizEditor({ moduleId, initial, lessons = null }: { moduleId: st
       <input type="hidden" name="module_id" value={moduleId} />
       {qs.length === 0 && (
         <div className="adm-empty">
-          <p>Este módulo ainda não tem perguntas.</p>
+          <p>Este módulo ainda não tem perguntas. Clique em Adicionar pergunta para começar.</p>
         </div>
       )}
       {qs.map((q, i) => {
@@ -37,15 +37,15 @@ export function QuizEditor({ moduleId, initial, lessons = null }: { moduleId: st
             <legend className="adm-legend">Pergunta {i + 1}</legend>
             <Field name={`q${i}_question`} label="Enunciado" multiline rows={2} value={q.question} onChange={(e) => patch(q.key, { question: e.target.value })} error={err[`q${i}_question`]} />
             <Field
-              name={`q${i}_options`} label="Opções" multiline rows={4} value={q.options}
+              name={`q${i}_options`} label="Alternativas" multiline rows={4} value={q.options}
               onChange={(e) => patch(q.key, { options: e.target.value })} error={err[`q${i}_options`]}
-              hint="Uma opção por linha (de 2 a 6)."
+              hint="Uma alternativa por linha (de 2 a 6)."
             />
             <SelectField
               name={`q${i}_correct`} label="Resposta correta" value={q.correct}
               onChange={(e) => patch(q.key, { correct: e.target.value })} error={err[`q${i}_correct`]}
             >
-              <option value="">Escolha a correta</option>
+              <option value="">Escolha a alternativa correta</option>
               {opts.map((o, j) => <option key={j} value={j}>{`${j + 1}. ${o.length > 60 ? o.slice(0, 57) + "…" : o}`}</option>)}
             </SelectField>
             <Field
@@ -82,7 +82,7 @@ export function QuizEditor({ moduleId, initial, lessons = null }: { moduleId: st
       {qs.length === 0 && initial.length > 0 && (
         <label className="adm-check">
           <input type="checkbox" name="confirm_clear" value="1" checked={clear} onChange={(e) => setClear(e.target.checked)} />
-          <span>Apagar todas as perguntas deste módulo</span>
+          <span>Excluir todas as perguntas deste módulo</span>
         </label>
       )}
       <FormMessage state={state} />

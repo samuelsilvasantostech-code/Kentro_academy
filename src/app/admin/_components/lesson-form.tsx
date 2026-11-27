@@ -53,7 +53,7 @@ export function LessonForm({ initial, tracks = [], presetModule, keyPoints = fal
         <Field
           name="youtube" label="Link do YouTube" value={youtube} onChange={(e) => setYoutube(e.target.value)}
           error={err.youtube} placeholder="https://youtu.be/dQw4w9WgXcQ" autoComplete="off" inputMode="url"
-          hint="Aceita link do YouTube ou o ID. Deixe vazio para uma aula sem vídeo."
+          hint="Cole o link do YouTube ou o ID do vídeo. Deixe vazio para uma aula só de leitura."
         />
         <YoutubePreview value={youtube} />
         {hasVideo && (
@@ -66,7 +66,7 @@ export function LessonForm({ initial, tracks = [], presetModule, keyPoints = fal
 
       {!editing && (
         <div className="adm-card">
-          <h2>Onde ela entra</h2>
+          <h2>Onde a aula entra</h2>
           <div className="adm-2">
             <SelectField
               name="track_id" label="Trilha" value={trackId}
@@ -78,7 +78,7 @@ export function LessonForm({ initial, tracks = [], presetModule, keyPoints = fal
             <SelectField
               name="module_id" label="Módulo" value={moduleId} onChange={(e) => setModuleId(e.target.value)}
               disabled={!trackId} error={err.module_id} required
-              hint={trackId && modules.length === 0 ? "Essa trilha ainda não tem módulos." : "A aula entra no fim do módulo."}
+              hint={trackId && modules.length === 0 ? "Esta trilha ainda não tem módulos. Crie um na página da trilha." : "A aula entra no fim do módulo."}
             >
               <option value="">{trackId ? "Escolha o módulo" : "Escolha a trilha primeiro"}</option>
               {modules.map((m) => <option key={m.id} value={m.id}>{m.title}</option>)}
@@ -130,25 +130,25 @@ export function LessonForm({ initial, tracks = [], presetModule, keyPoints = fal
           {preview && <div className="lart adm-lart"><div className="lart-body">{body.trim() ? <ArticleBody a={parseArticle(body)} /> : <p className="dim">Nada escrito ainda.</p>}</div></div>}
           <label className="adm-check">
             <input type="checkbox" name="body_pub" defaultChecked={initial?.text.published ?? false} />
-            <span>Publicar o texto para os alunos <span className="dim">(desmarcado, só administradores veem, com o aviso de rascunho)</span></span>
+            <span>Publicar o texto para os alunos <span className="dim">(desmarcado, fica como rascunho e só administradores veem)</span></span>
           </label>
         </div>
       )}
 
       {transcript && (
         <div className="adm-card">
-          <h2>Transcrição (só para a busca, o aluno não vê)</h2>
+          <h2>Transcrição (só para a busca; o aluno não vê)</h2>
           <Field
             name="transcript" label="Transcrição do vídeo" note="(opcional)" multiline rows={10} error={err.transcript}
             defaultValue={v("transcript", initial?.transcript ?? "")}
-            hint="Texto corrido da fala do vídeo. Serve para o aluno achar a aula pela busca; nunca é mostrado. Pode ter erros de reconhecimento. Evite nomes de clientes, telefones e e-mails."
+            hint="Cole o texto falado no vídeo. Ele só ajuda o aluno a achar a aula na busca e nunca aparece na tela. Pequenos erros de reconhecimento não atrapalham. Tire nomes de clientes, telefones e e-mails."
           />
         </div>
       )}
 
       <FormMessage state={state} />
       <div className="adm-btns">
-        <SubmitButton>{editing ? "Salvar aula" : "Criar aula (rascunho)"}</SubmitButton>
+        <SubmitButton>{editing ? "Salvar aula" : "Criar aula como rascunho"}</SubmitButton>
       </div>
     </form>
   );

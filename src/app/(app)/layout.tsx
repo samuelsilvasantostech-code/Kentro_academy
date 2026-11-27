@@ -24,7 +24,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             <summary className="avatar" aria-label="Menu da conta">{initials(profile.full_name || user.email || "")}</summary>
             <div className="pop">
               <div><b>{profile.full_name || "Aluno"}</b><div className="dim" style={{ fontSize: 12 }}>{user.email}</div></div>
-              <Link href="/meu">Meus cursos e certificados</Link>
+              <Link href="/meu">Meu progresso e certificados</Link>
               <Link href="/ajuda">Ajuda</Link>
               <Link href="/comecar">Trocar minha trilha</Link>
               {profile.is_admin && <Link href="/admin">Admin</Link>}

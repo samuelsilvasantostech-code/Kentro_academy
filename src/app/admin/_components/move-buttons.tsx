@@ -15,8 +15,8 @@ export function MoveButtons({
 }) {
   return (
     <>
-      <ActionButton className="adm-icon" run={up} disabled={first} label={`Mover ${what} ${name} para cima`} title="Para cima"><Ico name="up" size={16} /></ActionButton>
-      <ActionButton className="adm-icon" run={down} disabled={last} label={`Mover ${what} ${name} para baixo`} title="Para baixo"><Ico name="down" size={16} /></ActionButton>
+      <ActionButton className="adm-icon" run={up} disabled={first} label={`Mover ${what} ${name} para cima`} title="Mover para cima"><Ico name="up" size={16} /></ActionButton>
+      <ActionButton className="adm-icon" run={down} disabled={last} label={`Mover ${what} ${name} para baixo`} title="Mover para baixo"><Ico name="down" size={16} /></ActionButton>
     </>
   );
 }

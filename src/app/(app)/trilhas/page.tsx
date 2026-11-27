@@ -90,8 +90,8 @@ export default async function Trilhas() {
 
       <ol className="cat-how" aria-label="Como funciona">
         <li><span className="cat-how-n">1</span><div><b>Escolha a trilha</b><span>Comece pela recomendada para a sua função ou pela que você precisa agora.</span></div></li>
-        <li><span className="cat-how-n">2</span><div><b>Assista às aulas</b><span>Vídeos curtos, com passo a passo para repetir no seu Kentro.</span></div></li>
-        <li><span className="cat-how-n">3</span><div><b>Ganhe o certificado</b><span>Conclua as aulas e os quizzes e baixe o seu certificado.</span></div></li>
+        <li><span className="cat-how-n">2</span><div><b>Assista às aulas</b><span>Aulas curtas, com passo a passo para repetir no seu Kentro.</span></div></li>
+        <li><span className="cat-how-n">3</span><div><b>Ganhe o certificado</b><span>Conclua as aulas e passe nos quizzes. O certificado fica pronto para imprimir ou salvar em PDF.</span></div></li>
       </ol>
 
       <section aria-labelledby="cat-all">
@@ -100,7 +100,7 @@ export default async function Trilhas() {
           {ordered.map((c, i) => <TrackCard key={c.t.id} c={c} rec={c.t.id === recId} i={i} />)}
         </ul>
       </section>
-      <p className="cat-cred dim"><Link href="/creditos">Créditos das fotos das capas</Link></p>
+      <p className="cat-cred dim"><Link href="/creditos">Créditos das imagens</Link></p>
     </div>
   );
 }

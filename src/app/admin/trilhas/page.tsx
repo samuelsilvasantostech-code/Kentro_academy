@@ -16,7 +16,7 @@ export default async function TrilhasPage() {
         <Link className="btn btn-p" href="/admin/trilhas/nova"><Ico name="plus" size={16} />Nova trilha</Link>
       </div>
       {tracks.length === 0 ? (
-        <div className="adm-empty"><p>Nenhuma trilha ainda.</p><Link className="btn btn-p" href="/admin/trilhas/nova">Criar a primeira</Link></div>
+        <div className="adm-empty"><p>Nenhuma trilha ainda.</p><Link className="btn btn-p" href="/admin/trilhas/nova">Criar a primeira trilha</Link></div>
       ) : (
         <ul className="adm-list">
           {tracks.map((t, i) => {

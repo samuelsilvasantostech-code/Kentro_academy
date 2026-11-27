@@ -34,9 +34,9 @@ export default async function Painel({ searchParams }: { searchParams: Promise<{
   const todo: Todo[] = [];
   if (t.pendingQuestions) todo.push({ icon: "chat", tone: "alert", title: pl(t.pendingQuestions, "dúvida sem resposta", "dúvidas sem resposta"), desc: "Alunos esperando retorno. Responda pela fila de dúvidas.", href: "/admin/duvidas", cta: "Responder" });
   if (hardQuiz.length) todo.push({ icon: "target", tone: "info", title: pl(hardQuiz.length, "quiz difícil demais", "quizzes difíceis demais"), desc: `Menos da metade passa de primeira em ${hardQuiz.slice(0, 2).map((q) => q.moduleTitle).join(" e ")}. Revise as perguntas ou a aula.`, href: `/admin/quizzes/${hardQuiz[0].moduleId}`, cta: "Revisar" });
-  if (noQuiz.length) todo.push({ icon: "help", tone: "info", title: pl(noQuiz.length, "módulo publicado sem quiz", "módulos publicados sem quiz"), desc: `O aluno conclui esses módulos só assistindo às aulas. Um quiz ajuda a fixar o conteúdo. Ex.: ${noQuiz.slice(0, 2).map((x) => `${x.title} (${x.track})`).join("; ")}${noQuiz.length > 2 ? "…" : ""}`, href: `/admin/quizzes/${noQuiz[0].id}`, cta: noQuiz.length > 1 ? "Criar o primeiro" : "Criar quiz" });
+  if (noQuiz.length) todo.push({ icon: "help", tone: "info", title: pl(noQuiz.length, "módulo publicado sem quiz", "módulos publicados sem quiz"), desc: `O aluno conclui esses módulos só assistindo às aulas. Um quiz ajuda a fixar o conteúdo. Ex.: ${noQuiz.slice(0, 2).map((x) => `${x.title} (${x.track})`).join("; ")}${noQuiz.length > 2 ? "…" : ""}`, href: `/admin/quizzes/${noQuiz[0].id}`, cta: noQuiz.length > 1 ? "Criar o primeiro quiz" : "Criar quiz" });
   if (draftLessons) todo.push({ icon: "pen", tone: "info", title: pl(draftLessons, "aula em rascunho", "aulas em rascunho"), desc: "Os alunos não veem rascunhos. Publique quando estiverem prontas.", href: "/admin/aulas?status=rascunho", cta: "Ver rascunhos" });
-  if (draftTracks.length) todo.push({ icon: "layers", tone: "info", title: pl(draftTracks.length, "trilha em rascunho", "trilhas em rascunho"), desc: draftTracks.slice(0, 3).map((x) => x.name).join(", "), href: `/admin/trilhas/${draftTracks[0].id}`, cta: draftTracks.length > 1 ? "Abrir a primeira" : "Abrir" });
+  if (draftTracks.length) todo.push({ icon: "layers", tone: "info", title: pl(draftTracks.length, "trilha em rascunho", "trilhas em rascunho"), desc: draftTracks.slice(0, 3).map((x) => x.name).join(", "), href: `/admin/trilhas/${draftTracks[0].id}`, cta: draftTracks.length > 1 ? "Abrir a primeira trilha" : "Abrir trilha" });
   if (loose) todo.push({ icon: "inbox", tone: "info", title: pl(loose, "aula fora de qualquer módulo", "aulas fora de qualquer módulo"), desc: "Aulas soltas não aparecem em nenhuma trilha.", href: "/admin/aulas?trilha=sem-modulo", cta: "Organizar" });
   if (idleAll) todo.push({ icon: "sleep", tone: "info", title: pl(idleAll, "aluno parado há mais de 14 dias", "alunos parados há mais de 14 dias"), desc: "Começaram uma trilha e não concluem aula nem quiz há duas semanas.", href: "#pn-alunos", cta: "Ver alunos" });
 
@@ -45,7 +45,7 @@ export default async function Painel({ searchParams }: { searchParams: Promise<{
       <div className="adm-head">
         <div>
           <h1>Painel</h1>
-          <p className="muted">Uso da Academy pelos alunos. Atividade conta aula concluída e quiz feito; o sistema não registra acesso nem tempo assistido.</p>
+          <p className="muted">Como os alunos usam a Kentro Academy. Atividade é concluir uma aula ou fazer um quiz. Acessos e tempo assistido não são registrados.</p>
         </div>
       </div>
 
@@ -88,7 +88,7 @@ export default async function Painel({ searchParams }: { searchParams: Promise<{
                   <th scope="row">{r.name}{!r.published && <span className="pn-tag">Rascunho</span>}</th>
                   <td>{r.total}</td>
                   <td>{r.started}</td>
-                  <td>{r.started ? <span className="pn-bar"><span className="pbar" aria-hidden><i style={{ width: `${r.avgPct}%` }} /></span>{r.avgPct}%</span> : "—"}</td>
+                  <td>{r.started ? <span className="pn-bar"><span className="pbar" aria-hidden><i style={{ width: `${r.avgPct}%` }} /></span>{r.avgPct}%</span> : "Ninguém começou"}</td>
                   <td>{r.certified}</td>
                 </tr>
               ))}
@@ -152,8 +152,8 @@ export default async function Painel({ searchParams }: { searchParams: Promise<{
                 {students.map((s) => (
                   <tr key={s.id}>
                     <th scope="row">{s.name}</th>
-                    <td>{s.company ?? "—"}</td>
-                    <td>{s.currentTrack ?? "—"}</td>
+                    <td>{s.company ?? "Não informada"}</td>
+                    <td>{s.currentTrack ?? "Nenhuma"}</td>
                     <td>{s.lessons}</td>
                     <td>{s.certs}</td>
                     <td>{ago(s.lastActive, now)}</td>

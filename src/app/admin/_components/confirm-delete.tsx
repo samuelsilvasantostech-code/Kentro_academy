@@ -36,7 +36,7 @@ export function ConfirmDelete({
       {alternative}
       <label className="adm-check">
         <input type="checkbox" checked={ok} onChange={(e) => setOk(e.target.checked)} />
-        <span>Entendo que isso não pode ser desfeito.</span>
+        <span>Entendo que a exclusão não pode ser desfeita.</span>
       </label>
       {error && <p className="err" role="alert">{error}</p>}
       <div className="adm-btns">
@@ -48,13 +48,13 @@ export function ConfirmDelete({
             start(async () => {
               setError(null);
               const r = await run();
-              if (r && r.ok === false) setError(r.message ?? "Não foi possível excluir.");
+              if (r && r.ok === false) setError(r.message ?? "Não foi possível excluir. Tente de novo.");
               else if (redirectTo) router.push(redirectTo);
               else setOpen(false);
             })
           }
         >
-          {pending ? "Excluindo…" : "Excluir de vez"}
+          {pending ? "Excluindo…" : "Excluir definitivamente"}
         </button>
         <button
           type="button"

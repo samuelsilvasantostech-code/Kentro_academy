@@ -163,7 +163,7 @@ export async function getQuestions(status: "pending" | "answered", limit = 50): 
   const P = new Map((profiles.data ?? []).map((p) => [p.id as string, p as { id: string; full_name: string; company: string | null }]));
   return rows.map((r) => ({
     id: r.id, body: r.body, answer: r.answer, created_at: r.created_at, answered_at: r.answered_at,
-    lesson: { id: r.lesson_id, title: L.get(r.lesson_id) ?? "Aula removida" },
+    lesson: { id: r.lesson_id, title: L.get(r.lesson_id) ?? "Aula excluída" },
     student: P.get(r.user_id) ?? { id: r.user_id, full_name: "Aluno", company: null },
   }));
 }

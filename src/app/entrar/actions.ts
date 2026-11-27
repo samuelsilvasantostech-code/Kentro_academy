@@ -7,9 +7,9 @@ import { createClient } from "@/lib/supabase/server";
 export type AuthState = { error?: string; info?: string } | undefined;
 
 const MSG: Record<string, string> = {
-  "Invalid login credentials": "E-mail ou senha incorretos.",
+  "Invalid login credentials": "E-mail ou senha incorretos. Confira e tente de novo.",
   "Email not confirmed": "Confirme seu e-mail antes de entrar. Procure a mensagem da Kentro Academy na sua caixa de entrada.",
-  "User already registered": "Já existe uma conta com este e-mail. Use a aba Entrar.",
+  "User already registered": "Já existe uma conta com este e-mail. Entre com sua senha ou use “Esqueci a senha”.",
 };
 const pt = (m: string) => MSG[m] ?? (m.includes("Password") ? "A senha precisa ter pelo menos 8 caracteres." : "Não deu certo. Tente de novo em instantes.");
 
@@ -51,12 +51,12 @@ function siteUrl(h: Headers) {
   return h.get("origin") ?? (host ? `${h.get("x-forwarded-proto") ?? "https"}://${host}` : "");
 }
 
-const RESET_INFO = "Se esse e-mail tem conta, enviamos um link para redefinir a senha.";
+const RESET_INFO = "Se houver uma conta com esse e-mail, enviamos um link para criar uma nova senha. Confira também a caixa de spam.";
 
 /** Pede o link de redefinição. A resposta é sempre a mesma, exista a conta ou não. */
 export async function requestReset(_: AuthState, form: FormData): Promise<AuthState> {
   const email = String(form.get("email") ?? "").trim().slice(0, 254);
-  if (!email || !email.includes("@")) return { error: "Informe o e-mail da sua conta." };
+  if (!email || !email.includes("@")) return { error: "Digite o e-mail da sua conta." };
   const origin = siteUrl(await headers());
   const supabase = await createClient();
   const { error } = await supabase.auth.resetPasswordForEmail(email, {

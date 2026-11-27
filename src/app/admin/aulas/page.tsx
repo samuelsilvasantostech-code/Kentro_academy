@@ -20,7 +20,7 @@ export default async function AulasPage({ searchParams }: { searchParams: Promis
   return (
     <>
       <div className="adm-head">
-        <div><h1>Aulas</h1><p className="muted">{lessons.length} aulas no total, com rascunhos.</p></div>
+        <div><h1>Aulas</h1><p className="muted">{lessons.length} aulas no total, contando os rascunhos.</p></div>
         <Link className="btn btn-p" href="/admin/aulas/nova"><Ico name="plus" size={16} />Nova aula</Link>
       </div>
 
@@ -45,7 +45,7 @@ export default async function AulasPage({ searchParams }: { searchParams: Promis
           </select>
         </div>
         <button className="btn btn-s">Filtrar</button>
-        {(q || trilha || status) && <Link className="btn btn-s" href="/admin/aulas">Limpar</Link>}
+        {(q || trilha || status) && <Link className="btn btn-s" href="/admin/aulas">Limpar filtros</Link>}
       </form>
 
       {shown.length === 0 ? (

@@ -21,10 +21,10 @@ export default function NotFound() {
           <circle cx="196" cy="28" r="10" className="nf-ghost" strokeDasharray="4 4" />
         </svg>
         <p className="state-n" aria-hidden="true">404</p>
-        <h1>Esta página não existe</h1>
-        <p className="muted">O endereço pode ter mudado ou você não tem acesso a ele. Volte ao início para continuar de onde parou.</p>
+        <h1>Página não encontrada</h1>
+        <p className="muted">O link pode estar errado, a página pode ter mudado de endereço ou você não tem acesso a ela. Volte ao Início para continuar de onde parou.</p>
         <div className="state-btns">
-          <Link className="btn btn-p" href="/"><Ico name="home" />Ir para o início</Link>
+          <Link className="btn btn-p" href="/"><Ico name="home" />Ir para o Início</Link>
         </div>
       </div>
     </div>

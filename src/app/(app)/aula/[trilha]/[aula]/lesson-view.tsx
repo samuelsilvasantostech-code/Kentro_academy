@@ -97,12 +97,12 @@ export function LessonView(p: Props) {
           {p.prevId && <Link className="btn btn-s lesson-prev" href={`/aula/${track.id}/${p.prevId}`} aria-label="Aula anterior"><Ico name="arrowL" /><span aria-hidden="true">Aula anterior</span></Link>}
           {p.done ? (
             <>
-              <button className="btn btn-s" disabled={pending} onClick={() => { setPopFor(null); run(() => undoLesson(l.id)); }} title="Desmarcar como concluída">{pop ? <span className="ck-pop" aria-hidden="true"><Ico name="check" strokeWidth={3} /></span> : <Ico name="check" strokeWidth={3} />}Concluída</button>
+              <button className="btn btn-s" disabled={pending} onClick={() => { setPopFor(null); run(() => undoLesson(l.id)); }} title="Desmarcar aula como concluída">{pop ? <span className="ck-pop" aria-hidden="true"><Ico name="check" strokeWidth={3} /></span> : <Ico name="check" strokeWidth={3} />}Concluída</button>
               {p.hasNext && <button className="btn btn-p" disabled={pending} onClick={() => run(() => completeLesson(track.id, l.id))}>Próxima aula<Ico name="arrowR" /></button>}
             </>
           ) : (
             <button className="btn btn-p" disabled={pending} onClick={() => { setPopFor(l.id); run(() => completeLesson(track.id, l.id)); }}>
-              {pending ? <>{pop && <span className="ck-pop" aria-hidden="true"><Ico name="check" strokeWidth={3} /></span>}Salvando…</> : p.hasNext ? <>Concluir e avançar<Ico name="arrowR" /></> : <>Concluir trilha<Ico name="award" /></>}
+              {pending ? <>{pop && <span className="ck-pop" aria-hidden="true"><Ico name="check" strokeWidth={3} /></span>}Salvando…</> : p.hasNext ? <>Concluir e avançar<Ico name="arrowR" /></> : <>Concluir aula<Ico name="award" /></>}
             </button>
           )}
         </div>
@@ -112,7 +112,7 @@ export function LessonView(p: Props) {
         {tabs.map((k) => (
           <button key={k} id={`tab-${k}`} role="tab" aria-selected={tab === k} aria-controls={`painel-${k}`} tabIndex={tab === k ? 0 : -1} className={tab === k ? "on" : ""} onClick={() => setTab(k)} onKeyDown={onTabKey}>
             {TABS[k]}{k === "capitulos" ? ` (${p.chapters.length})` : k === "anotacoes" && p.notes.length ? ` (${p.notes.length})` : ""}
-            {k === "duvidas" && unseen && <span className="dot" role="img" aria-label="resposta nova" />}
+            {k === "duvidas" && unseen && <span className="dot" role="img" aria-label="Nova resposta" />}
           </button>
         ))}
       </div>
@@ -184,7 +184,7 @@ export function LessonView(p: Props) {
                   <div className="note-h"><b>{date(n.created_at)}</b></div>
                   {n.body}
                 </div>
-                <button className="lnk-btn" disabled={pending} onClick={() => run(() => deleteNote(n.id))} aria-label={`Apagar anotação de ${date(n.created_at)}`}>Apagar</button>
+                <button className="lnk-btn" disabled={pending} onClick={() => run(() => deleteNote(n.id))} aria-label={`Excluir anotação de ${date(n.created_at)}`}>Excluir</button>
               </div>
             ))}
           </>
@@ -193,9 +193,9 @@ export function LessonView(p: Props) {
         {tab === "duvidas" && (
           <>
             <label className="sr-only" htmlFor="nova-duvida">Sua dúvida</label>
-            <textarea id="nova-duvida" value={question} onChange={(e) => setQuestion(e.target.value)} maxLength={4000} placeholder="Ficou com alguma dúvida sobre esta aula? Pergunte aqui. A equipe Kentro responde por esta aba." />
+            <textarea id="nova-duvida" value={question} onChange={(e) => setQuestion(e.target.value)} maxLength={4000} placeholder="Escreva sua dúvida sobre esta aula. A resposta da equipe Kentro aparece aqui, nesta aba." />
             <div><button className="btn btn-p btn-sm" disabled={pending || !question.trim()} onClick={() => run(async () => { await askQuestion(l.id, question); setQuestion(""); })}>Enviar dúvida</button></div>
-            {p.questions.length === 0 && <p className="dim">Nenhuma dúvida enviada nesta aula.</p>}
+            {p.questions.length === 0 && <p className="dim">Você ainda não enviou dúvidas nesta aula.</p>}
             {p.questions.map((q) => (
               <div key={q.id} className="note qa">
                 <div className="qa-q">

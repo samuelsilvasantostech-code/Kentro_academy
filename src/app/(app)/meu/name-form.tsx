@@ -13,7 +13,7 @@ export function NameForm({ current }: { current: string }) {
       <div className="name-row">
         <input id={id} className="input" name="full_name" defaultValue={state.name ?? current} required minLength={3} maxLength={80}
           autoComplete="name" aria-describedby={`${id}-msg`} aria-invalid={!!state.error} />
-        <button className="btn btn-s" disabled={pending}>{pending ? "Salvando..." : "Salvar"}</button>
+        <button className="btn btn-s" disabled={pending}>{pending ? "Salvando…" : "Salvar nome"}</button>
       </div>
       <p id={`${id}-msg`} className={state.error ? "name-msg is-err" : "name-msg"} role="status">
         {state.error ?? (state.ok ? "Nome salvo." : "É o nome que aparece nos seus certificados.")}

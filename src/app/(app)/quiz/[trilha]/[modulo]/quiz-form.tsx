@@ -111,13 +111,13 @@ export function QuizForm({ moduleId, trackId, questions, lessons, review = [], s
           ) : (
             <>
               <h2 className="qres-h">Ainda não foi desta vez</h2>
-              <p className="muted">Você precisa de 70% para concluir. {wrong.length === 1 ? "Você errou a pergunta" : "Você errou as perguntas"} {wrong.map((i) => i + 1).join(", ").replace(/, (\d+)$/, " e $1")}. Reveja as aulas e tente de novo.</p>
+              <p className="muted">Para passar, acerte pelo menos 70%. {wrong.length === 1 ? "Você errou a pergunta" : "Você errou as perguntas"} {wrong.map((i) => i + 1).join(", ").replace(/, (\d+)$/, " e $1")}. Reveja as aulas e tente de novo.</p>
               {lessons.length > 0 && (
                 <div className="qrev" id="rever">
                   <p className="qrev-k">Aulas deste módulo</p>
                   <ol>
                     {lessons.map((l, i) => (
-                      <li key={l.id} className={toReview.has(l.id) ? "is-hint" : undefined}><Link href={l.href}><span className="qrev-n">{i + 1}</span><span className="qrev-t">{l.title}{toReview.has(l.id) && <span className="qrev-tag">Revise esta</span>}</span><Ico name="arrowR" size={16} /></Link></li>
+                      <li key={l.id} className={toReview.has(l.id) ? "is-hint" : undefined}><Link href={l.href}><span className="qrev-n">{i + 1}</span><span className="qrev-t">{l.title}{toReview.has(l.id) && <span className="qrev-tag">Reveja esta</span>}</span><Ico name="arrowR" size={16} /></Link></li>
                     ))}
                   </ol>
                 </div>
@@ -128,7 +128,7 @@ export function QuizForm({ moduleId, trackId, questions, lessons, review = [], s
                 </button>
                 <Link className="btn btn-s" href={`/trilha/${trackId}`}>Voltar à trilha</Link>
               </div>
-              {cool.left > 0 && <p className="dim qres-wait">Há um intervalo de {COOLDOWN} segundos entre as tentativas.</p>}
+              {cool.left > 0 && <p className="dim qres-wait">Espere {COOLDOWN} segundos entre uma tentativa e outra.</p>}
             </>
           )}
         </div>
@@ -206,8 +206,8 @@ export function QuizForm({ moduleId, trackId, questions, lessons, review = [], s
         )}
       </div>
       {chosen === undefined && <p className="dim qnav-hint">Escolha uma alternativa para continuar.</p>}
-      {cool.left > 0 && <p className="expl" role="status">Há um intervalo de {COOLDOWN} segundos entre as tentativas. O botão libera sozinho.</p>}
-      {failed && <p className="err" role="alert">Não foi possível corrigir o quiz. Verifique sua conexão e envie de novo.</p>}
+      {cool.left > 0 && <p className="expl" role="status">Espere {COOLDOWN} segundos entre uma tentativa e outra. O botão volta a funcionar sozinho.</p>}
+      {failed && <p className="err" role="alert">Não foi possível enviar suas respostas. Confira sua conexão e clique em Ver resultado de novo.</p>}
     </div>
   );
 }

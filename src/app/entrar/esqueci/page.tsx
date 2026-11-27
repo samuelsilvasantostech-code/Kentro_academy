@@ -9,7 +9,7 @@ export default function EsqueciPage() {
   return (
     <main className="kauth">
       <div className="kauth-in">
-        <Link className="logo" href="/entrar" aria-label="Kentro, voltar para entrar"><Logo /></Link>
+        <Link className="logo" href="/entrar" aria-label="Kentro Academy, voltar para Entrar"><Logo /></Link>
         <ResetRequestForm />
       </div>
     </main>

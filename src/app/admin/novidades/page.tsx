@@ -17,7 +17,7 @@ export default async function NovidadesPage() {
         <Link className="btn btn-p" href="/admin/novidades/nova"><Ico name="plus" size={16} />Nova novidade</Link>
       </div>
       {news.length === 0 ? (
-        <div className="adm-empty"><p>Nenhuma novidade ainda.</p></div>
+        <div className="adm-empty"><p>Nenhuma novidade ainda. Crie uma para avisar os alunos no Início.</p></div>
       ) : (
         <ul className="adm-list">
           {news.map((n, i) => (
@@ -34,7 +34,7 @@ export default async function NovidadesPage() {
                   <Link className="btn btn-s btn-sm" href={`/admin/novidades/${n.id}`}>Editar</Link>
                 </div>
               </div>
-              <ConfirmDelete label="Excluir" title={`Excluir "${n.title}"?`} run={deleteNews.bind(null, n.id)} warning="A novidade some do Início dos alunos." />
+              <ConfirmDelete label="Excluir novidade" title={`Excluir a novidade “${n.title}”?`} run={deleteNews.bind(null, n.id)} warning="A novidade sai do Início dos alunos." />
             </li>
           ))}
         </ul>

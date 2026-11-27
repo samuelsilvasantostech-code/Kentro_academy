@@ -15,7 +15,7 @@ const TABS = [
 export function AdminNav({ pending }: { pending: number }) {
   const path = usePathname();
   return (
-    <nav aria-label="Seções do painel" className="adm-tabs">
+    <nav aria-label="Seções do admin" className="adm-tabs">
       {TABS.map(([href, label]) => {
         const current = path === href || path.startsWith(`${href}/`);
         return (

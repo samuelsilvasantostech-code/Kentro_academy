@@ -32,11 +32,11 @@ export type NameState = { ok?: true; error?: string; name?: string };
 export async function updateName(_prev: NameState, form: FormData): Promise<NameState> {
   const { supabase, user } = await authed();
   const name = String(form.get("full_name") ?? "").replace(/\s+/g, " ").trim();
-  if (name.length < 3 || name.length > 80) return { error: "Use de 3 a 80 caracteres.", name };
-  if (!/\p{L}/u.test(name)) return { error: "Digite um nome válido.", name };
+  if (name.length < 3 || name.length > 80) return { error: "O nome precisa ter de 3 a 80 caracteres.", name };
+  if (!/\p{L}/u.test(name)) return { error: "Digite seu nome usando letras.", name };
   const { error } = await supabase.from("profiles").update({ full_name: name }).eq("id", user.id);
   logErr("updateName", error);
-  if (error) return { error: "Não foi possível salvar agora. Tente de novo.", name };
+  if (error) return { error: "Não foi possível salvar o nome. Tente de novo em instantes.", name };
   revalidatePath("/", "layout");
   return { ok: true, name };
 }

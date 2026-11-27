@@ -38,7 +38,7 @@ export function ActionButton({
             // Avisa os formulários da página (ex.: "Aula adicionada") para limparem a mensagem da ação anterior.
             window.dispatchEvent(new Event(ADMIN_ACTION_EVENT));
             const r = await run();
-            if (r && r.ok === false) setError(r.message ?? "Não foi possível concluir.");
+            if (r && r.ok === false) setError(r.message ?? "Não deu certo. Tente de novo.");
             else if (redirectTo) router.push(redirectTo);
           })
         }

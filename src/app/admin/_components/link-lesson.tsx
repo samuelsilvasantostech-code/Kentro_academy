@@ -34,12 +34,12 @@ export function LinkLessonToModule({ moduleId, lessons }: { moduleId: string; le
           start(async () => {
             setMsg(null);
             const r = await linkLesson(lessonId, moduleId);
-            setMsg({ ok: !!r?.ok, text: r?.message ?? (r?.ok ? "Aula vinculada." : "Não foi possível vincular.") });
+            setMsg({ ok: !!r?.ok, text: r?.message ?? (r?.ok ? "Aula vinculada." : "Não foi possível vincular a aula. Tente de novo.") });
             if (r?.ok) setLessonId("");
           })
         }
       >
-        {pending ? "Vinculando…" : "Vincular"}
+        {pending ? "Vinculando…" : "Vincular aula"}
       </button>
       {msg && <p className={msg.ok ? "ok-msg" : "err"} role={msg.ok ? "status" : "alert"} style={{ width: "100%" }}>{msg.text}</p>}
     </div>
@@ -75,7 +75,7 @@ export function LinkToAnotherModule({
             start(async () => {
               setMsg(null);
               const r = await linkLesson(lessonId, moduleId);
-              setMsg({ ok: !!r?.ok, text: r?.message ?? (r?.ok ? "Aula vinculada." : "Não foi possível vincular.") });
+              setMsg({ ok: !!r?.ok, text: r?.message ?? (r?.ok ? "Aula vinculada." : "Não foi possível vincular a aula. Tente de novo.") });
             })
           }
         >

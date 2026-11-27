@@ -69,8 +69,8 @@ export default async function Home() {
   const hint = done.size === 0 ? "São poucos minutos por aula. Seu progresso fica salvo."
     : moved ? `Você concluiu ${cur.name}. Siga para a próxima trilha.`
     : certified ? `Você concluiu ${t.name}.`
-    : p.pct === 100 ? "Falta só o quiz para o seu certificado."
-    : `${p.total - p.done} ${p.total - p.done === 1 ? "aula falta" : "aulas faltam"} para o certificado.`;
+    : p.pct === 100 ? "Aulas concluídas. Agora passe nos quizzes dos módulos para ganhar o certificado."
+    : `${p.total - p.done === 1 ? "Falta 1 aula" : `Faltam ${p.total - p.done} aulas`} para o certificado.`;
 
   return (
     <div className="kh">

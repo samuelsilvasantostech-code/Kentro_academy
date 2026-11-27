@@ -53,7 +53,7 @@ export async function saveLesson(_prev: FormState, form: FormData): Promise<Form
     const { data: dup } = await supabase.from("lessons").select("id, title").eq("youtube_id", youtubeId).limit(1);
     if (dup?.length && dup[0].id !== id)
       return fail("Esse vídeo já está cadastrado.", form, {
-        youtube: `Esse vídeo já está na aula "${dup[0].title}" (id ${dup[0].id}).`,
+        youtube: `Esse vídeo já está na aula “${dup[0].title}” (id ${dup[0].id}).`,
       });
   }
 
@@ -108,7 +108,7 @@ export async function saveLesson(_prev: FormState, form: FormData): Promise<Form
 export async function setLessonPublished(id: string, published: boolean): Promise<FormState> {
   const { supabase } = await requireAdmin();
   const lessonId = parseLessonId(id);
-  if (!lessonId.ok || typeof published !== "boolean") return { ok: false, message: "Pedido inválido." };
+  if (!lessonId.ok || typeof published !== "boolean") return { ok: false, message: "Não foi possível concluir. Recarregue a página e tente de novo." };
   const { data, error } = await supabase.from("lessons").update({ published }).eq("id", lessonId.value).select("id");
   if (error) {
     logDbError("setLessonPublished", error);
@@ -130,7 +130,7 @@ export async function deleteLesson(id: string): Promise<FormState> {
     return { ok: false, message: GENERIC_ERROR };
   }
   catalogChanged();
-  return { ok: true, message: "Aula apagada." };
+  return { ok: true, message: "Aula excluída." };
 }
 
 /** Coloca uma aula existente no fim de outro módulo (a mesma aula pode estar em várias trilhas). */
@@ -138,14 +138,14 @@ export async function linkLesson(lessonId: string, moduleId: string): Promise<Fo
   const { supabase } = await requireAdmin();
   const l = parseLessonId(lessonId);
   const m = parseUuid(moduleId);
-  if (!l.ok || !m.ok) return { ok: false, message: "Pedido inválido." };
+  if (!l.ok || !m.ok) return { ok: false, message: "Não foi possível concluir. Recarregue a página e tente de novo." };
   const { error } = await supabase.rpc("admin_link_lesson", { p_module: m.value, p_lesson: l.value });
   if (error) {
     logDbError("linkLesson", error);
     return { ok: false, message: error.code === "23503" ? "Aula ou módulo não encontrado." : GENERIC_ERROR };
   }
   catalogChanged();
-  return { ok: true, message: "Aula adicionada ao módulo." };
+  return { ok: true, message: "Aula vinculada ao módulo." };
 }
 
 /** Tira a aula de um módulo (a aula continua existindo e nos outros módulos). */
@@ -153,14 +153,14 @@ export async function unlinkLesson(lessonId: string, moduleId: string): Promise<
   const { supabase } = await requireAdmin();
   const l = parseLessonId(lessonId);
   const m = parseUuid(moduleId);
-  if (!l.ok || !m.ok) return { ok: false, message: "Pedido inválido." };
+  if (!l.ok || !m.ok) return { ok: false, message: "Não foi possível concluir. Recarregue a página e tente de novo." };
   const { error } = await supabase.from("module_lessons").delete().eq("module_id", m.value).eq("lesson_id", l.value);
   if (error) {
     logDbError("unlinkLesson", error);
     return { ok: false, message: GENERIC_ERROR };
   }
   catalogChanged();
-  return { ok: true, message: "Aula removida do módulo." };
+  return { ok: true, message: "Aula desvinculada do módulo." };
 }
 
 export async function moveLessonInModule(moduleId: string, lessonId: string, dir: string): Promise<FormState> {
@@ -168,7 +168,7 @@ export async function moveLessonInModule(moduleId: string, lessonId: string, dir
   const m = parseUuid(moduleId);
   const l = parseLessonId(lessonId);
   const d = parseDirection(dir);
-  if (!m.ok || !l.ok || !d.ok) return { ok: false, message: "Pedido inválido." };
+  if (!m.ok || !l.ok || !d.ok) return { ok: false, message: "Não foi possível concluir. Recarregue a página e tente de novo." };
   const { data, error } = await supabase.from("module_lessons").select("lesson_id").eq("module_id", m.value).order("position").order("lesson_id");
   if (error) {
     logDbError("moveLessonInModule.read", error);

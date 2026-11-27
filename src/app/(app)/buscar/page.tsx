@@ -92,7 +92,7 @@ export default async function Buscar({ searchParams }: { searchParams: Promise<{
           )}
         </>
       )}
-      {!q && <p className="muted res-n">Digite um termo ou escolha uma sugestão para encontrar aulas em todas as trilhas.</p>}
+      {!q && <p className="muted res-n">Digite uma palavra ou escolha uma sugestão para encontrar aulas em todas as trilhas.</p>}
     </div>
   );
 }

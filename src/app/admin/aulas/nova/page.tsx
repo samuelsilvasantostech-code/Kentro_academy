@@ -15,7 +15,7 @@ export default async function NovaAula({ searchParams }: { searchParams: Promise
         <div>
           <BackLink href="/admin/aulas">Aulas</BackLink>
           <h1>Nova aula</h1>
-          <p className="muted">Ela nasce como rascunho. Você publica depois de conferir.</p>
+          <p className="muted">A aula começa como rascunho. Publique depois de conferir.</p>
         </div>
       </div>
       <LessonForm tracks={tracks} presetModule={modulo} keyPoints={kp} lessonText={lt} transcript={tr} />

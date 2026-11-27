@@ -63,7 +63,7 @@ export default async function EditarTrilha({ params }: { params: Promise<{ id: s
                         <div className="adm-acts">
                           <MoveButtons what="aula" name={l.title} first={li === 0} last={li === m.lessons.length - 1}
                             up={moveLessonInModule.bind(null, m.id, l.id, "up")} down={moveLessonInModule.bind(null, m.id, l.id, "down")} />
-                          <ActionButton run={setLessonPublished.bind(null, l.id, !l.published)}>{l.published ? "Despublicar" : "Publicar"}</ActionButton>
+                          <ActionButton run={setLessonPublished.bind(null, l.id, !l.published)}>{l.published ? "Voltar para rascunho" : "Publicar"}</ActionButton>
                           <ActionButton run={unlinkLesson.bind(null, l.id, m.id)} label={`Desvincular ${l.title} deste módulo`}>Desvincular</ActionButton>
                         </div>
                       </li>
@@ -73,8 +73,8 @@ export default async function EditarTrilha({ params }: { params: Promise<{ id: s
                 <div className="adm-btns"><Link className="btn btn-s btn-sm" href={`/admin/aulas/nova?modulo=${m.id}`}><Ico name="plus" size={16} />Nova aula neste módulo</Link></div>
                 <LinkLessonToModule moduleId={m.id} lessons={available} />
                 <ConfirmDelete
-                  label="Excluir módulo" title={`Excluir o módulo "${m.title}"?`} run={deleteModule.bind(null, m.id)}
-                  warning="Apaga as perguntas do quiz e as tentativas dos alunos neste módulo. As aulas continuam existindo, só perdem o vínculo."
+                  label="Excluir módulo" title={`Excluir o módulo “${m.title}”?`} run={deleteModule.bind(null, m.id)}
+                  warning="Exclui as perguntas do quiz e as tentativas dos alunos neste módulo. As aulas não são excluídas, só saem do módulo."
                 />
               </li>
             );
@@ -86,8 +86,8 @@ export default async function EditarTrilha({ params }: { params: Promise<{ id: s
       <section className="adm-card" aria-labelledby="t-del">
         <h2 id="t-del">Excluir trilha</h2>
         <ConfirmDelete
-          label="Excluir trilha" title={`Excluir a trilha "${track.name}"?`} run={deleteTrack.bind(null, track.id)} redirectTo="/admin/trilhas"
-          warning="Apaga a trilha, os módulos, os quizzes e as tentativas. As aulas continuam existindo, mas ficam sem módulo."
+          label="Excluir trilha" title={`Excluir a trilha “${track.name}”?`} run={deleteTrack.bind(null, track.id)} redirectTo="/admin/trilhas"
+          warning="Exclui a trilha, os módulos, os quizzes e as tentativas dos alunos. As aulas não são excluídas, mas ficam sem módulo."
         />
       </section>
     </>

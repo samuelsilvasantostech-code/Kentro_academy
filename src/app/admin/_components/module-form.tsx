@@ -22,7 +22,7 @@ export function ModuleForm({ trackId, module }: { trackId?: string; module?: { i
             placeholder={module ? undefined : "Ex.: Primeiros passos"}
           />
         </div>
-        <SubmitButton className="btn btn-s btn-sm">{module ? "Renomear" : "Adicionar módulo"}</SubmitButton>
+        <SubmitButton className="btn btn-s btn-sm">{module ? "Renomear módulo" : "Adicionar módulo"}</SubmitButton>
       </div>
       <FormMessage state={state} />
     </form>

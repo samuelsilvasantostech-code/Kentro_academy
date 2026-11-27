@@ -27,7 +27,7 @@ export function TrackForm({ initial }: { initial?: Initial }) {
       <div className="adm-2">
         <Field name="name" label="Nome da trilha" defaultValue={v("name", initial?.name ?? "")} error={err.name} required />
         {editing ? (
-          <Field name="id" label="Endereço (slug)" value={initial.id} readOnly hint="Não pode ser alterado depois de criada." />
+          <Field name="id" label="Endereço (slug)" value={initial.id} readOnly hint="Não pode ser alterado depois que a trilha é criada." />
         ) : (
           <Field
             name="id" label="Endereço (slug)" defaultValue={v("id", "")} error={err.id}
@@ -40,7 +40,7 @@ export function TrackForm({ initial }: { initial?: Initial }) {
         <Field name="icon" label="Ícone (emoji)" defaultValue={v("icon", initial?.icon ?? "📚")} error={err.icon} maxLength={16} required />
         <Field name="color" label="Cor" type="color" defaultValue={v("color", initial?.color ?? "#6D28F5")} error={err.color} style={{ height: 46, padding: 4 }} />
       </div>
-      <Field name="pitch" label="Resumo" multiline rows={3} defaultValue={v("pitch", initial?.pitch ?? "")} error={err.pitch} hint="Uma ou duas frases que vendem a trilha." />
+      <Field name="pitch" label="Resumo" multiline rows={3} defaultValue={v("pitch", initial?.pitch ?? "")} error={err.pitch} hint="Uma ou duas frases sobre o que o aluno ganha com a trilha." />
       <Field
         name="outcomes" label="O que o aluno aprende" multiline rows={5}
         defaultValue={v("outcomes", initial?.outcomes.join("\n") ?? "")} error={err.outcomes}

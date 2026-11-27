@@ -36,7 +36,7 @@ export async function saveQuiz(_prev: FormState, form: FormData): Promise<FormSt
   }
   if (f.failed) return fail("Confira as perguntas destacadas.", form, f.errors);
   // Lista vazia apaga o quiz: só com confirmação explícita (campo confirm_clear=1).
-  if (!questions.length && String(form.get("confirm_clear") ?? "") !== "1") return fail("Adicione ao menos uma pergunta.", form);
+  if (!questions.length && String(form.get("confirm_clear") ?? "") !== "1") return fail("Adicione pelo menos uma pergunta.", form);
 
   const { error } = await supabase.rpc("admin_save_quiz", { p_module: moduleId, p_questions: questions });
   if (error) {
@@ -44,5 +44,5 @@ export async function saveQuiz(_prev: FormState, form: FormData): Promise<FormSt
     return fail(error.code === "P0002" ? "Módulo não encontrado." : GENERIC_ERROR, form);
   }
   revalidatePath("/", "layout");
-  return done(questions.length ? `Quiz salvo (${questions.length} perguntas).` : "Quiz removido.", moduleId);
+  return done(questions.length ? `Quiz salvo com ${questions.length} ${questions.length === 1 ? "pergunta" : "perguntas"}.` : "Quiz excluído.", moduleId);
 }

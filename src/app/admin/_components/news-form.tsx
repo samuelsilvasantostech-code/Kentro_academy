@@ -25,7 +25,7 @@ export function NewsForm({ initial }: { initial?: AdminNews }) {
       <Field name="description" label="Descrição" note="(opcional)" multiline rows={3} defaultValue={v("description", initial?.description ?? "")} error={err.description} />
       <Field
         name="href" label="Link" note="(opcional)" defaultValue={v("href", initial?.href ?? "")} error={err.href}
-        hint="Use https://… ou um caminho como /trilha/crm. Vazio mostra “Em breve”." placeholder="/trilha/automacao"
+        hint="Use um link https:// ou um caminho do site, como /trilha/crm. Sem link, a novidade aparece como “Em breve”." placeholder="/trilha/automacao"
       />
       <label className="adm-check">
         <input type="checkbox" name="published" defaultChecked={state?.values ? state.values.published === "on" : (initial?.published ?? true)} />

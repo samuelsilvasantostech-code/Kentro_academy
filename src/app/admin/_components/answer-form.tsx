@@ -17,7 +17,7 @@ export function AnswerForm({ id, answer }: { id: string; answer?: string | null 
       />
       <FormMessage state={state} />
       <div className="adm-btns">
-        <SubmitButton className="btn btn-p btn-sm" pendingText="Enviando…">{answer ? "Salvar resposta" : "Responder"}</SubmitButton>
+        <SubmitButton className="btn btn-p btn-sm" pendingText="Enviando…">{answer ? "Salvar resposta" : "Enviar resposta"}</SubmitButton>
       </div>
     </form>
   );

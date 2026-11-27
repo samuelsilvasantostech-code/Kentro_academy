@@ -36,7 +36,7 @@ export default async function Quiz({ params }: { params: Promise<{ trilha: strin
       <h1>{m.title}</h1>
       <div className="meta qz-meta">
         <span><Ico name="help" size={15} />{questions.length} pergunta{questions.length > 1 ? "s" : ""}</span>
-        <span><Ico name="target" size={15} />Você precisa de 70% para concluir o módulo</span>
+        <span><Ico name="target" size={15} />Acerte pelo menos 70% para passar</span>
       </div>
       <QuizForm moduleId={m.id} trackId={t.id} questions={questions} review={review} lessons={m.lessons.map((l) => ({ id: l.id, title: l.title, href: `/aula/${t.id}/${l.id}` }))} />
     </div>

@@ -20,7 +20,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <div className="adm-top-in">
           <div className="adm-bar">
             <Link className="logo" href="/admin"><Logo tag="Admin" /></Link>
-            <BackLink href="/">Voltar para a Academy</BackLink>
+            <BackLink href="/">Voltar para a Kentro Academy</BackLink>
           </div>
           <AdminNav pending={pending} />
         </div>

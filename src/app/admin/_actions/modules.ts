@@ -54,14 +54,14 @@ export async function deleteModule(id: string): Promise<FormState> {
     return { ok: false, message: GENERIC_ERROR };
   }
   catalogChanged();
-  return { ok: true, message: "Módulo apagado." };
+  return { ok: true, message: "Módulo excluído." };
 }
 
 export async function moveModule(id: string, dir: string): Promise<FormState> {
   const { supabase } = await requireAdmin();
   const uuid = parseUuid(id);
   const d = parseDirection(dir);
-  if (!uuid.ok || !d.ok) return { ok: false, message: "Pedido inválido." };
+  if (!uuid.ok || !d.ok) return { ok: false, message: "Não foi possível concluir. Recarregue a página e tente de novo." };
   const { data: me } = await supabase.from("modules").select("track_id").eq("id", uuid.value).maybeSingle();
   if (!me) return { ok: false, message: "Módulo não encontrado." };
   const { data, error } = await supabase.from("modules").select("id").eq("track_id", me.track_id).order("position").order("id");
