@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getAdminLesson, getAdminTracks } from "@/lib/admin/queries";
+import { getAdminLesson, getAdminOrNotFound, getAdminTracks } from "@/lib/db/admin";
 import { hasLearningFeatures, hasLessonTexts, hasTranscripts } from "@/lib/features";
 import { deleteLesson, setLessonPublished, unlinkLesson } from "../../_actions/lessons";
 import { ActionButton } from "../../_components/action-button";
@@ -16,9 +16,10 @@ export default async function EditarAula({
 }: { params: Promise<{ id: string }>; searchParams: Promise<{ nova?: string }> }) {
   const { id } = await params;
   const { nova } = await searchParams;
-  const lesson = await getAdminLesson(id);
+  const admin = await getAdminOrNotFound();
+  const lesson = await getAdminLesson(admin, id);
   if (!lesson) notFound();
-  const [tracks, kp, lt, tr] = await Promise.all([getAdminTracks(), hasLearningFeatures(), hasLessonTexts(), hasTranscripts()]);
+  const [tracks, kp, lt, tr] = await Promise.all([getAdminTracks(admin), hasLearningFeatures(), hasLessonTexts(), hasTranscripts()]);
 
   return (
     <>

@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { NameForm } from "./name-form";
-import { allLessons, getCatalog, getMe, nextOf, progress, type Track } from "@/lib/catalog";
-import { createClient } from "@/lib/supabase/server";
+import { allLessons, nextOf, progress, type Track } from "@/lib/catalog";
+import { getCatalog, getMe, getNotes, getTrackStatuses, type TrackStatus } from "@/lib/db/aluno";
 import { minutes, normalize } from "@/lib/format";
 import { Ico, type IcoName } from "@/components/ico";
 import { CrystalGlyph } from "@/components/crystal/CrystalGlyph";
-import { getTrackStatuses, type TrackStatus } from "../certificado/completion";
 
 export const metadata: Metadata = { title: "Meu progresso" };
 
@@ -70,20 +69,16 @@ export default async function Meu({ searchParams }: { searchParams: Promise<{ ab
   const all = allLessons(tracks);
   const studied = all.filter((l) => done.has(l.id)).reduce((a, l) => a + l.duration_seconds, 0);
 
-  const supabase = await createClient();
   // Certificado existente OU conclusão atual (getTrackStatuses emite o certificado se for a primeira vez).
   const [statuses, notesQ] = await Promise.all([
     getTrackStatuses(),
-    tab === "anotacoes"
-      ? supabase.from("notes").select("id, body, lesson_id, created_at", { count: "exact" }).eq("user_id", user.id).order("created_at", { ascending: false }).limit(q ? 500 : 50)
-      : supabase.from("notes").select("id", { count: "exact", head: true }).eq("user_id", user.id),
+    getNotes(user.id, tab === "anotacoes" ? (q ? 500 : 50) : 0),
   ]);
-  const notesCount = notesQ.count ?? 0;
-  type Note = { id: string; body: string; lesson_id: string; created_at: string };
+  const notesCount = notesQ.count;
   const byId = new Map(all.map((l) => [l.id, l]));
   // Busca nas anotações: texto da nota e título da aula, sem diferenciar acento nem maiúscula.
   const terms = normalize(q).split(/\s+/).filter(Boolean);
-  const notes = (tab === "anotacoes" ? ((notesQ.data ?? []) as Note[]) : [])
+  const notes = (tab === "anotacoes" ? notesQ.notes : [])
     .filter((n) => byId.has(n.lesson_id))
     .filter((n) => { const hay = normalize(`${n.body} ${byId.get(n.lesson_id)!.title}`); return terms.every((t) => hay.includes(t)); })
     .slice(0, 50);

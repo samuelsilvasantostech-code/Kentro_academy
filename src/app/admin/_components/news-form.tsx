@@ -3,7 +3,7 @@
 import { useActionState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { saveNews } from "../_actions/news";
-import type { AdminNews } from "@/lib/admin/queries";
+import type { AdminNews } from "@/lib/db/admin";
 import { Field } from "./field";
 import { FormMessage } from "./form-message";
 import { SubmitButton } from "./submit-button";

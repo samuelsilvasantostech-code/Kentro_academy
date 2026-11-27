@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getAdminTracks } from "@/lib/admin/queries";
+import { getAdminOrNotFound, getAdminTracks } from "@/lib/db/admin";
 import { moveTrack } from "../_actions/tracks";
 import { MoveButtons } from "../_components/move-buttons";
 import { Ico } from "@/components/ico";
@@ -8,7 +8,7 @@ import { Ico } from "@/components/ico";
 export const metadata: Metadata = { title: "Trilhas" };
 
 export default async function TrilhasPage() {
-  const tracks = await getAdminTracks();
+  const tracks = await getAdminTracks(await getAdminOrNotFound());
   return (
     <>
       <div className="adm-head">

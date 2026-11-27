@@ -1,8 +1,8 @@
 import type { LessonItem, TrackItem } from "@/components/explorer";
 import { lessonsOf, progress, type Track } from "@/lib/catalog";
+import type { TrackStatus } from "@/lib/db/aluno";
 import { trackKind } from "@/lib/category";
 import { normalize } from "@/lib/format";
-import type { TrackStatus } from "./certificado/completion";
 
 /** Dados do explorador (busca + filtros) a partir do catálogo real e do progresso do aluno. */
 export function exploreData(tracks: Track[], done: Set<string>, statuses: Map<string, TrackStatus>, recId?: string) {

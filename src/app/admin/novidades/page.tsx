@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getAdminNews } from "@/lib/admin/queries";
+import { getAdminNews, getAdminOrNotFound } from "@/lib/db/admin";
 import { deleteNews, moveNews } from "../_actions/news";
 import { ConfirmDelete } from "../_components/confirm-delete";
 import { MoveButtons } from "../_components/move-buttons";
@@ -9,7 +9,7 @@ import { Ico } from "@/components/ico";
 export const metadata: Metadata = { title: "Novidades" };
 
 export default async function NovidadesPage() {
-  const news = await getAdminNews();
+  const news = await getAdminNews(await getAdminOrNotFound());
   return (
     <>
       <div className="adm-head">

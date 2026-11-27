@@ -1,33 +1,14 @@
-// Leituras do /admin (só servidor: usa cookies via getAdmin). Quem não é admin recebe 404.
-// Rascunhos e trilhas não publicadas aparecem aqui; o gabarito do quiz vem sempre pela RPC admin_quiz_questions.
-import { cache } from "react";
-import { notFound } from "next/navigation";
-import { getAdmin } from "@/lib/admin/require-admin";
+// Leituras do /admin. Rascunhos e trilhas não publicadas aparecem aqui; o gabarito do quiz vem sempre
+// pela RPC admin_quiz_questions. A prova de admin é exigida em src/lib/db/admin (esta camada só consulta).
+import { createClient } from "../client";
 import type { Chapter, Material } from "@/lib/admin/validate";
-
-async function must() {
-  const a = await getAdmin();
-  if (!a) notFound();
-  return a.supabase;
-}
-
-export type AdminLessonRow = {
-  id: string;
-  youtube_id: string | null;
-  title: string;
-  duration_seconds: number;
-  published: boolean;
-  position: number;
-};
-export type AdminModule = { id: string; title: string; position: number; quizCount: number; lessons: AdminLessonRow[] };
-export type AdminTrack = {
-  id: string; name: string; audience: string; icon: string; color: string; pitch: string;
-  outcomes: string[]; position: number; published: boolean; modules: AdminModule[];
-};
+import type {
+  AdminLessonDetail, AdminLessonLink, AdminLessonListItem, AdminLessonRow, AdminNews, AdminQuestion, AdminQuizQuestion, AdminTrack,
+} from "../../admin/types";
 
 /** Trilhas > módulos > aulas (com rascunhos), na ordem de exibição, e quantas perguntas cada módulo tem. */
-export const getAdminTracks = cache(async (): Promise<AdminTrack[]> => {
-  const supabase = await must();
+export async function loadAdminTracks(): Promise<AdminTrack[]> {
+  const supabase = await createClient();
   const [tracks, quiz] = await Promise.all([
     supabase
       .from("tracks")
@@ -54,10 +35,7 @@ export const getAdminTracks = cache(async (): Promise<AdminTrack[]> => {
         lessons: [...m.module_lessons].sort((a, b) => a.position - b.position).map((ml) => ({ ...ml.lessons, position: ml.position })),
       })),
   }));
-});
-
-export type AdminLessonLink = { moduleId: string; moduleTitle: string; trackId: string; trackName: string };
-export type AdminLessonListItem = AdminLessonRow & { created_at: string; links: AdminLessonLink[] };
+}
 
 type LessonLinkRow = { modules: { id: string; title: string; tracks: { id: string; name: string } | null } | null }[];
 const toLinks = (rows: LessonLinkRow): AdminLessonLink[] =>
@@ -68,8 +46,8 @@ const toLinks = (rows: LessonLinkRow): AdminLessonLink[] =>
   );
 
 /** Todas as aulas (publicadas e rascunhos), mais recentes primeiro, com os módulos/trilhas em que estão. */
-export const getAdminLessons = cache(async (): Promise<AdminLessonListItem[]> => {
-  const supabase = await must();
+export async function loadAdminLessons(): Promise<AdminLessonListItem[]> {
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from("lessons")
     .select("id, youtube_id, title, duration_seconds, published, created_at, module_lessons(modules(id, title, tracks(id, name)))")
@@ -79,22 +57,11 @@ export const getAdminLessons = cache(async (): Promise<AdminLessonListItem[]> =>
   return (data as unknown as (Omit<AdminLessonListItem, "links" | "position"> & { module_lessons: LessonLinkRow })[]).map(
     ({ module_lessons, ...l }) => ({ ...l, position: 0, links: toLinks(module_lessons) }),
   );
-});
+}
 
-export type AdminLessonDetail = {
-  id: string; youtube_id: string | null; title: string; summary: string | null; duration_seconds: number;
-  steps: string[]; published: boolean; chapters: Chapter[]; materials: Material[]; links: AdminLessonLink[];
-  /** Pontos-chave (migração 0007; lista vazia enquanto ela não existir). */
-  key_points: string[];
-  /** Texto da aula (migração 0008; vazio enquanto ela não existir). */
-  text: { body: string; published: boolean };
-  /** Transcrição só para a busca (migração 0009; vazia enquanto ela não existir). */
-  transcript: string;
-};
-
-/** Uma aula completa para o formulário de edição (use chaptersToText/materialsToText/formatDuration de validate.ts). */
-export async function getAdminLesson(id: string): Promise<AdminLessonDetail | null> {
-  const supabase = await must();
+/** Uma aula completa para o formulário de edição. */
+export async function loadAdminLesson(id: string): Promise<AdminLessonDetail | null> {
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from("lessons")
     .select(
@@ -125,28 +92,20 @@ export async function getAdminLesson(id: string): Promise<AdminLessonDetail | nu
   };
 }
 
-export type AdminQuizQuestion = { id: string; position: number; question: string; options: string[]; correct: number; explanation: string | null; lesson_id?: string | null };
-
 /** Gabarito completo de um módulo (RPC admin_quiz_questions: a tabela não entrega correct/explanation nem ao admin). */
-export async function getAdminQuiz(moduleId: string): Promise<AdminQuizQuestion[]> {
-  const supabase = await must();
+export async function loadAdminQuiz(moduleId: string): Promise<AdminQuizQuestion[]> {
+  const supabase = await createClient();
   const { data, error } = await supabase.rpc("admin_quiz_questions", { p_module: moduleId });
   if (error) throw error;
   return (data ?? []) as AdminQuizQuestion[];
 }
 
-export type AdminQuestion = {
-  id: string; body: string; answer: string | null; created_at: string; answered_at: string | null;
-  lesson: { id: string; title: string };
-  student: { id: string; full_name: string; company: string | null };
-};
-
 /**
  * Dúvidas dos alunos. "pending" = sem resposta, mais antigas primeiro (a fila);
- * "answered" = respondidas, mais recentes primeiro. Até `limit` itens (padrão 50).
+ * "answered" = respondidas, mais recentes primeiro. Até `limit` itens.
  */
-export async function getQuestions(status: "pending" | "answered", limit = 50): Promise<AdminQuestion[]> {
-  const supabase = await must();
+export async function loadQuestions(status: "pending" | "answered", limit: number): Promise<AdminQuestion[]> {
+  const supabase = await createClient();
   const base = supabase.from("lesson_questions").select("id, user_id, lesson_id, body, answer, created_at, answered_at");
   const { data, error } =
     status === "pending"
@@ -168,19 +127,16 @@ export async function getQuestions(status: "pending" | "answered", limit = 50): 
   }));
 }
 
-/** Contador da fila de dúvidas (para o menu). Devolve 0 para quem não é admin, sem dar 404. */
-export const getPendingCount = cache(async (): Promise<number> => {
-  const a = await getAdmin();
-  if (!a) return 0;
-  const { count } = await a.supabase.from("lesson_questions").select("id", { count: "exact", head: true }).is("answer", null);
+/** Quantas dúvidas estão sem resposta. */
+export async function countPendingQuestions(): Promise<number> {
+  const supabase = await createClient();
+  const { count } = await supabase.from("lesson_questions").select("id", { count: "exact", head: true }).is("answer", null);
   return count ?? 0;
-});
+}
 
-export type AdminNews = { id: string; title: string; description: string | null; href: string | null; position: number; published: boolean };
-
-export const getAdminNews = cache(async (): Promise<AdminNews[]> => {
-  const supabase = await must();
+export async function loadAdminNews(): Promise<AdminNews[]> {
+  const supabase = await createClient();
   const { data, error } = await supabase.from("news").select("*").order("position");
   if (error) throw error;
   return data as AdminNews[];
-});
+}

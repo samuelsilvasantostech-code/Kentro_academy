@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getCatalog, getMe } from "@/lib/catalog";
-import { getTrackStatuses } from "../completion";
+import { getCatalog, getMe, getTrackStatuses } from "@/lib/db/aluno";
 import { Ico } from "@/components/ico";
 import { PrintButton } from "./print-button";
 import { nextTrack } from "@/lib/next-track";

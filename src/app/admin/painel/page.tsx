@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getMetrics } from "@/lib/admin/metrics";
-import { getAdminLessons, getAdminTracks } from "@/lib/admin/queries";
+import { getAdminLessons, getAdminOrNotFound, getAdminTracks, getMetrics } from "@/lib/db/admin";
 import { Ico, type IcoName } from "@/components/ico";
 
 export const metadata: Metadata = { title: "Painel" };
@@ -18,7 +17,8 @@ type Todo = { icon: IcoName; tone: "alert" | "info"; title: string; desc: string
 
 export default async function Painel({ searchParams }: { searchParams: Promise<{ empresa?: string }> }) {
   const { empresa } = await searchParams;
-  const [m, tracks, lessons] = await Promise.all([getMetrics(), getAdminTracks(), getAdminLessons()]);
+  const admin = await getAdminOrNotFound();
+  const [m, tracks, lessons] = await Promise.all([getMetrics(admin), getAdminTracks(admin), getAdminLessons(admin)]);
   const now = Date.parse(m.generatedAt);
   const t = m.totals;
   const students = empresa ? m.students.filter((s) => s.company === empresa) : m.students;

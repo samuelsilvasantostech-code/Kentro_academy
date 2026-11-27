@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { allLessons, getCatalog, getMe, nextOf, progress, type Track } from "@/lib/catalog";
+import { allLessons, nextOf, progress, type Track } from "@/lib/catalog";
+import { getCatalog, getMe, getTrackStatuses, type TrackStatus } from "@/lib/db/aluno";
 import { minutes } from "@/lib/format";
 import { COVERS, trackKind } from "@/lib/category";
 import { coverOf } from "@/lib/covers";
@@ -8,7 +9,6 @@ import { trackCopy } from "@/lib/track-copy";
 import { Cover } from "@/components/cover";
 import { Ico } from "@/components/ico";
 import { PointerGlow } from "@/components/pointer-glow";
-import { getTrackStatuses, type TrackStatus } from "../certificado/completion";
 
 export const metadata: Metadata = { title: "Trilhas" };
 

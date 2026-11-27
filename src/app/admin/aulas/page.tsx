@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element -- miniatura externa do YouTube */
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getAdminLessons, getAdminTracks } from "@/lib/admin/queries";
+import { getAdminLessons, getAdminOrNotFound, getAdminTracks } from "@/lib/db/admin";
 import { formatDuration } from "@/lib/admin/validate";
 import { Ico } from "@/components/ico";
 
@@ -9,7 +9,8 @@ export const metadata: Metadata = { title: "Aulas" };
 
 export default async function AulasPage({ searchParams }: { searchParams: Promise<{ trilha?: string; q?: string; status?: string }> }) {
   const { trilha = "", q = "", status = "" } = await searchParams;
-  const [lessons, tracks] = await Promise.all([getAdminLessons(), getAdminTracks()]);
+  const admin = await getAdminOrNotFound();
+  const [lessons, tracks] = await Promise.all([getAdminLessons(admin), getAdminTracks(admin)]);
   const term = q.trim().toLowerCase();
   const shown = lessons.filter((l) => {
     if (trilha === "sem-modulo" ? l.links.length > 0 : trilha && !l.links.some((k) => k.trackId === trilha)) return false;

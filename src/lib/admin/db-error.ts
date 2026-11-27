@@ -1,4 +1,4 @@
-// Erros do Supabase viram mensagem genérica; o detalhe vai só para o log do servidor (sem dados do formulário).
+// Erros do banco viram mensagem genérica; o detalhe vai só para o log do servidor (sem dados do formulário).
 type DbError = { code?: string; message?: string } | null | undefined;
 
 export function logDbError(action: string, error: DbError) {

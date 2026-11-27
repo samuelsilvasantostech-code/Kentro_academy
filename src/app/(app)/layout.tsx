@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { MenuCloser } from "@/components/menu-closer";
 import Form from "next/form";
-import { getMe } from "@/lib/catalog";
+import { getMe } from "@/lib/db/aluno";
 import { initials } from "@/lib/format";
 import { NavLinks, BottomNav } from "@/components/nav-links";
 import { signOut } from "../entrar/actions";

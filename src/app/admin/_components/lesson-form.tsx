@@ -3,7 +3,7 @@
 import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { saveLesson } from "../_actions/lessons";
-import type { AdminLessonDetail, AdminTrack } from "@/lib/admin/queries";
+import type { AdminLessonDetail, AdminTrack } from "@/lib/db/admin";
 import { chaptersToText, formatDuration, materialsToText } from "@/lib/admin/validate";
 import { Field, SelectField } from "./field";
 import { FormMessage } from "./form-message";

@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getAdmin } from "@/lib/admin/require-admin";
-import { getPendingCount } from "@/lib/admin/queries";
+import { getAdmin, getPendingCount } from "@/lib/db/admin";
 import { AdminNav } from "./_components/admin-nav";
 import { BackLink } from "./_components/back-link";
 import { Logo } from "@/components/logo";
@@ -12,7 +11,7 @@ export const metadata: Metadata = { title: { default: "Admin", template: "%s · 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const a = await getAdmin();
   if (!a) notFound();
-  const pending = await getPendingCount();
+  const pending = await getPendingCount(a);
   return (
     <div className="adm">
       <a className="skip" href="#conteudo">Pular para o conteúdo</a>

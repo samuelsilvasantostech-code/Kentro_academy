@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getAdminLessons, getAdminTracks } from "@/lib/admin/queries";
+import { getAdminLessons, getAdminOrNotFound, getAdminTracks } from "@/lib/db/admin";
 import { formatDuration } from "@/lib/admin/validate";
 import { deleteTrack } from "../../_actions/tracks";
 import { deleteModule, moveModule } from "../../_actions/modules";
@@ -19,7 +19,8 @@ export const metadata: Metadata = { title: "Editar trilha" };
 
 export default async function EditarTrilha({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const [tracks, allLessons] = await Promise.all([getAdminTracks(), getAdminLessons()]);
+  const admin = await getAdminOrNotFound();
+  const [tracks, allLessons] = await Promise.all([getAdminTracks(admin), getAdminLessons(admin)]);
   const track = tracks.find((t) => t.id === id);
   if (!track) notFound();
 

@@ -1,31 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Form from "next/form";
-import { allLessons, getCatalog, getMe } from "@/lib/catalog";
-import { createClient } from "@/lib/supabase/server";
-import { queryGroups, queryWords, searchInMemory, snippet, WHERE_LABEL, type Hit, type MatchWhere } from "@/lib/search";
+import { allLessons } from "@/lib/catalog";
+import { getCatalog, getMe, getPublishedTexts, searchLessons } from "@/lib/db/aluno";
+import { queryWords, searchInMemory, snippet, WHERE_LABEL, type Hit } from "@/lib/search";
 import { LessonRow } from "@/components/cards";
 import { Ico } from "@/components/ico";
 
 export const metadata: Metadata = { title: "Buscar" };
 const SUGESTOES = ["etiqueta", "whatsapp oficial", "funil", "relatório", "gatilho", "contato", "webchat"];
-
-type Client = Awaited<ReturnType<typeof createClient>>;
-
-/** Textos publicados das aulas (RLS: só publicado). Antes da migração 0008 a tabela não existe: devolve vazio. */
-async function publishedTexts(supabase: Client, ids?: string[]): Promise<Map<string, string>> {
-  let query = supabase.from("lesson_texts").select("lesson_id, body").eq("published", true);
-  if (ids) query = query.in("lesson_id", ids);
-  const { data, error } = await query;
-  return new Map(error ? [] : (data ?? []).map((r) => [r.lesson_id as string, r.body as string]));
-}
-
-/** Busca no banco (RPC search_lessons, migração 0009). Null = RPC ausente ou com erro: usa a busca em memória. */
-async function searchRpc(supabase: Client, q: string, words: string[]): Promise<Hit[] | null> {
-  const { data, error } = await supabase.rpc("search_lessons", { q: q.slice(0, 120), groups: queryGroups(words) });
-  if (error) return null;
-  return (data as { lesson_id: string; matched: MatchWhere }[]).map((r) => ({ id: r.lesson_id, matched: r.matched }));
-}
 
 export default async function Buscar({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
   const q = ((await searchParams).q ?? "").trim();
@@ -33,18 +16,17 @@ export default async function Buscar({ searchParams }: { searchParams: Promise<{
   const words = queryWords(q);
   const lessons = allLessons(tracks);
   const byId = new Map(lessons.map((l) => [l.id, l]));
-  const supabase = await createClient();
 
   let hits: Hit[] = [];
   let texts = new Map<string, string>();
   if (words.length) {
-    const rpc = await searchRpc(supabase, q, words);
+    const rpc = await searchLessons(q, words);
     if (rpc) {
       hits = rpc;
       const ids = rpc.filter((h) => h.matched === "text").map((h) => h.id);
-      if (ids.length) texts = await publishedTexts(supabase, ids);
+      if (ids.length) texts = await getPublishedTexts(ids);
     } else {
-      texts = await publishedTexts(supabase);
+      texts = await getPublishedTexts();
       hits = searchInMemory(lessons.map((l) => ({ ...l, text: texts.get(l.id) })), q);
     }
   }

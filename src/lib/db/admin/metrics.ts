@@ -1,51 +1,18 @@
-// Números do painel do admin. Tudo vem das tabelas reais (o RLS deixa o admin ler o progresso de todos).
-// Admins ficam fora das contas. As leituras são paginadas: o Supabase devolve no máximo 1000 linhas por vez.
+// Números do painel do admin. Tudo vem das tabelas reais. Admins ficam fora das contas.
 import { cache } from "react";
-import { notFound } from "next/navigation";
-import { getAdmin } from "@/lib/admin/require-admin";
-import { getAdminTracks } from "@/lib/admin/queries";
+import { loadMetricsSource } from "../supabase/admin/metrics";
+import { getAdminTracks } from "./queries";
+import type { AdminSession } from "./session";
+import type { DropRow, QuizRow, StudentRow, TrackRow } from "./types";
 
-type Sb = NonNullable<Awaited<ReturnType<typeof getAdmin>>>["supabase"];
-const PAGE = 1000;
+export type { DropRow, QuizRow, StudentRow, TrackRow } from "./types";
+
 const DAY = 86_400_000;
 const PASS = 0.7;
 
-async function all<T>(q: (from: number, to: number) => PromiseLike<{ data: T[] | null; error: unknown }>): Promise<T[]> {
-  const out: T[] = [];
-  for (let from = 0; ; from += PAGE) {
-    const { data, error } = await q(from, from + PAGE - 1);
-    if (error) throw error;
-    out.push(...(data ?? []));
-    if (!data || data.length < PAGE) return out;
-  }
-}
-
-export type StudentRow = {
-  id: string; name: string; company: string | null; joined: string;
-  lessons: number; certs: number; currentTrack: string | null; lastActive: string | null;
-};
-export type TrackRow = { id: string; name: string; published: boolean; total: number; started: number; certified: number; avgPct: number };
-export type QuizRow = { moduleId: string; trackName: string; moduleTitle: string; students: number; attempts: number; passRate: number; firstTryRate: number };
-export type DropRow = { trackName: string; lessonTitle: string; reached: number; previous: number };
-
-export const getMetrics = cache(async () => {
+export const getMetrics = cache(async (admin: AdminSession) => {
   const now = Date.now();
-  const a = await getAdmin();
-  if (!a) notFound();
-  const sb: Sb = a.supabase;
-
-  const [tracks, profiles, progress, attempts, certs, pending] = await Promise.all([
-    getAdminTracks(),
-    all<{ id: string; full_name: string | null; company: string | null; is_admin: boolean; last_track_id: string | null; created_at: string }>((f, t) =>
-      sb.from("profiles").select("id, full_name, company, is_admin, last_track_id, created_at").order("id").range(f, t)),
-    all<{ user_id: string; lesson_id: string; completed_at: string }>((f, t) =>
-      sb.from("lesson_progress").select("user_id, lesson_id, completed_at").order("user_id").order("lesson_id").range(f, t)),
-    all<{ user_id: string; module_id: string; score: number; total: number; created_at: string }>((f, t) =>
-      sb.from("quiz_attempts").select("user_id, module_id, score, total, created_at").order("created_at").range(f, t)),
-    all<{ user_id: string; track_id: string; issued_at: string }>((f, t) =>
-      sb.from("track_certificates").select("user_id, track_id, issued_at").order("user_id").order("track_id").range(f, t)),
-    sb.from("lesson_questions").select("id", { count: "exact", head: true }).is("answer", null),
-  ]);
+  const [tracks, { profiles, progress, attempts, certs, pendingQuestions }] = await Promise.all([getAdminTracks(admin), loadMetricsSource()]);
 
   const students = profiles.filter((p) => !p.is_admin);
   const isStudent = new Set(students.map((p) => p.id));
@@ -120,7 +87,7 @@ export const getMetrics = cache(async () => {
       active30: activeIn(30),
       lessonsDone: prog.length,
       certificates: cert.length,
-      pendingQuestions: pending.count ?? 0,
+      pendingQuestions,
     },
     tracks: trackRows,
     quizzes: quizRows,

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getAdminTracks } from "@/lib/admin/queries";
+import { getAdminOrNotFound, getAdminTracks } from "@/lib/db/admin";
 import { hasLearningFeatures, hasLessonTexts, hasTranscripts } from "@/lib/features";
 import { LessonForm } from "../../_components/lesson-form";
 import { BackLink } from "../../_components/back-link";
@@ -8,7 +8,8 @@ export const metadata: Metadata = { title: "Nova aula" };
 
 export default async function NovaAula({ searchParams }: { searchParams: Promise<{ modulo?: string }> }) {
   const { modulo } = await searchParams;
-  const [tracks, kp, lt, tr] = await Promise.all([getAdminTracks(), hasLearningFeatures(), hasLessonTexts(), hasTranscripts()]);
+  const admin = await getAdminOrNotFound();
+  const [tracks, kp, lt, tr] = await Promise.all([getAdminTracks(admin), hasLearningFeatures(), hasLessonTexts(), hasTranscripts()]);
   return (
     <>
       <div className="adm-head">

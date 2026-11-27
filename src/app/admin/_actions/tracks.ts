@@ -1,7 +1,7 @@
 "use server";
 
 import { catalogChanged } from "@/lib/admin/revalidate";
-import { requireAdmin } from "@/lib/admin/require-admin";
+import { createTrack, deleteTrack as dbDeleteTrack, getTrackIds, reorderTracks, requireAdmin, updateTrack } from "@/lib/db/admin";
 import { logDbError, isUnique } from "@/lib/admin/db-error";
 import { GENERIC_ERROR, done, fail, fields, type FormState } from "@/lib/admin/form-state";
 import { moveId, parseCheckbox, parseDirection, parseHexColor, parseLines, parseSlug, text } from "@/lib/admin/validate";
@@ -12,7 +12,7 @@ import { moveId, parseCheckbox, parseDirection, parseHexColor, parseLines, parse
  * pitch, outcomes (uma por linha), published ("on" = publicada).
  */
 export async function saveTrack(_prev: FormState, form: FormData): Promise<FormState> {
-  const { supabase } = await requireAdmin();
+  const admin = await requireAdmin();
   const originalId = String(form.get("original_id") ?? "").trim();
   const f = fields();
   const slug = f.get("id", parseSlug(originalId || form.get("id")));
@@ -24,17 +24,19 @@ export async function saveTrack(_prev: FormState, form: FormData): Promise<FormS
   const outcomes = f.get("outcomes", parseLines(form.get("outcomes"), { max: 12, maxLen: 200 }));
   if (f.failed) return fail("Confira os campos destacados.", form, f.errors);
 
-  const row = { name, audience, icon, color, pitch, outcomes, published: parseCheckbox(form.get("published")) };
+  const row = {
+    name: name!, audience: audience!, icon: icon!, color: color!, pitch: pitch!, outcomes: outcomes!,
+    published: parseCheckbox(form.get("published")),
+  };
   if (originalId) {
-    const { data, error } = await supabase.from("tracks").update(row).eq("id", slug!).select("id");
+    const { found, error } = await updateTrack(admin, slug!, row);
     if (error) {
       logDbError("saveTrack.update", error);
       return fail(GENERIC_ERROR, form);
     }
-    if (!data?.length) return fail("Trilha não encontrada.", form);
+    if (!found) return fail("Trilha não encontrada.", form);
   } else {
-    const { data: last } = await supabase.from("tracks").select("position").order("position", { ascending: false }).limit(1);
-    const { error } = await supabase.from("tracks").insert({ id: slug, ...row, position: (last?.[0]?.position ?? 0) + 1 });
+    const error = await createTrack(admin, slug!, row);
     if (error) {
       if (isUnique(error)) return fail("Escolha outro endereço para a trilha.", form, { id: "Esse endereço já está em uso" });
       logDbError("saveTrack.insert", error);
@@ -47,10 +49,10 @@ export async function saveTrack(_prev: FormState, form: FormData): Promise<FormS
 
 /** Apaga a trilha e seus módulos (as aulas continuam existindo, só perdem o vínculo). */
 export async function deleteTrack(id: string): Promise<FormState> {
-  const { supabase } = await requireAdmin();
+  const admin = await requireAdmin();
   const slug = parseSlug(id);
   if (!slug.ok) return { ok: false, message: slug.error };
-  const { error } = await supabase.from("tracks").delete().eq("id", slug.value);
+  const error = await dbDeleteTrack(admin, slug.value);
   if (error) {
     logDbError("deleteTrack", error);
     return { ok: false, message: GENERIC_ERROR };
@@ -60,18 +62,18 @@ export async function deleteTrack(id: string): Promise<FormState> {
 }
 
 export async function moveTrack(id: string, dir: string): Promise<FormState> {
-  const { supabase } = await requireAdmin();
+  const admin = await requireAdmin();
   const slug = parseSlug(id);
   const d = parseDirection(dir);
   if (!slug.ok || !d.ok) return { ok: false, message: "Não foi possível concluir. Recarregue a página e tente de novo." };
-  const { data, error } = await supabase.from("tracks").select("id").order("position").order("id");
+  const { ids, error } = await getTrackIds(admin);
   if (error) {
     logDbError("moveTrack.read", error);
     return { ok: false, message: GENERIC_ERROR };
   }
-  const next = moveId((data ?? []).map((r) => r.id as string), slug.value, d.value);
+  const next = moveId(ids, slug.value, d.value);
   if (!next) return { ok: true };
-  const { error: e2 } = await supabase.rpc("admin_reorder_tracks", { p_ids: next });
+  const e2 = await reorderTracks(admin, next);
   if (e2) {
     logDbError("moveTrack.rpc", e2);
     return { ok: false, message: GENERIC_ERROR };

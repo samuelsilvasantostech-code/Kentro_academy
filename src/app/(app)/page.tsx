@@ -1,8 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { redirect } from "next/navigation";
-import { allLessons, getCatalog, getMe, isRequired, lessonsOf, nextOf, progress } from "@/lib/catalog";
-import { createClient } from "@/lib/supabase/server";
+import { allLessons, isRequired, lessonsOf, nextOf, progress } from "@/lib/catalog";
+import { getCatalog, getMe, getPublishedNews, getTrackStatuses, getUnseenAnswers } from "@/lib/db/aluno";
 import { duration, firstName, minutes } from "@/lib/format";
 import { COVERS } from "@/lib/category";
 import { Cover } from "@/components/cover";
@@ -12,7 +12,6 @@ import { BubbleHero } from "@/components/bubble/BubbleHero";
 import { Ico } from "@/components/ico";
 import { PointerGlow } from "@/components/pointer-glow";
 import { nextTrack } from "@/lib/next-track";
-import { getTrackStatuses } from "./certificado/completion";
 import { exploreData } from "./explore-data";
 
 export default async function Home() {
@@ -21,19 +20,11 @@ export default async function Home() {
 
   const rec = tracks.find((t) => t.id === profile.role_track) ?? tracks[0];
   const cur = tracks.find((x) => x.id === profile.last_track_id) ?? rec;
-  const supabase = await createClient();
   // Certificados, novidades e respostas de dúvidas saem juntos, não em fila.
-  const [statuses, { data: news }, { data: answered }] = await Promise.all([
+  const [statuses, news, answered] = await Promise.all([
     getTrackStatuses(),
-    supabase.from("news").select("*").eq("published", true).order("position").limit(3),
-    supabase
-      .from("lesson_questions")
-      .select("id, lesson_id, body, answered_at")
-      .eq("user_id", user.id)
-      .not("answer", "is", null)
-      .is("answer_seen_at", null)
-      .order("answered_at", { ascending: false })
-      .limit(5),
+    getPublishedNews(3),
+    getUnseenAnswers(user.id, 5),
   ]);
   // Trilha atual já certificada: o card passa a sugerir a próxima sem certificado (se houver).
   const isCert = (id: string) => !!statuses.get(id)?.certified;
@@ -57,7 +48,7 @@ export default async function Home() {
   const certs = [...statuses.values()].filter((s) => s.certified).length;
 
   const lessonIndex = new Map(allLessons(tracks).map((x) => [x.id, x]));
-  const replies = (answered ?? []).flatMap((q) => {
+  const replies = answered.flatMap((q) => {
     const x = lessonIndex.get(q.lesson_id as string);
     return x ? [{ id: q.id as string, body: q.body as string, trackId: x.trackIds[0], lessonId: x.id, title: x.title }] : [];
   });
@@ -152,7 +143,7 @@ export default async function Home() {
         </section>
       )}
 
-      {!!news?.length && (
+      {news.length > 0 && (
         <section className="ksec" aria-labelledby="news-h">
           <div className="sec-h"><h2 id="news-h">Novidades</h2></div>
           <ul className="knews">

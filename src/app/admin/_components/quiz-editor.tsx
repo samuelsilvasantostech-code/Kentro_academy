@@ -2,7 +2,7 @@
 
 import { useActionState, useRef, useState } from "react";
 import { saveQuiz } from "../_actions/quizzes";
-import type { AdminQuizQuestion } from "@/lib/admin/queries";
+import type { AdminQuizQuestion } from "@/lib/db/admin";
 import { Field, SelectField } from "./field";
 import { FormMessage } from "./form-message";
 import { SubmitButton } from "./submit-button";

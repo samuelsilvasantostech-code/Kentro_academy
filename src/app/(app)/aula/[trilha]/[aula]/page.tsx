@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { allLessons, getCatalog, getMe, lessonsOf, progress } from "@/lib/catalog";
-import { createClient } from "@/lib/supabase/server";
+import { allLessons, lessonsOf, progress } from "@/lib/catalog";
+import { getCatalog, getLessonPage, getMe, recordLastLesson } from "@/lib/db/aluno";
 import { duration } from "@/lib/format";
 import { Ico } from "@/components/ico";
 import { LessonView } from "./lesson-view";
@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: P) {
 export default async function Aula({ params, searchParams }: P) {
   const { trilha, aula } = await params;
   const { aba } = await searchParams;
-  const [{ user, done, quizPassed }, tracks] = await Promise.all([getMe(), getCatalog()]);
+  const [{ user, profile, done, quizPassed }, tracks] = await Promise.all([getMe(), getCatalog()]);
   const t = tracks.find((x) => x.id === trilha);
   if (!t) notFound();
   const L = lessonsOf(t);
@@ -30,25 +30,13 @@ export default async function Aula({ params, searchParams }: P) {
   const others = (allLessons(tracks).find((x) => x.id === l.id)?.trackIds ?? []).filter((x) => x !== t.id)
     .map((id) => tracks.find((x) => x.id === id)!);
 
-  const supabase = await createClient();
-  // Pontos-chave e posição do vídeo vêm em consultas próprias: antes da migração 0007 dão erro e são ignoradas.
-  // O texto da aula (migração 0008) também: o RLS só entrega rascunho para admin.
-  const [{ data: chapters }, { data: materials }, { data: notes }, { data: questions }, { data: quizRows }, , kp, vp, tx] = await Promise.all([
-    supabase.from("chapters").select("start_seconds, title").eq("lesson_id", l.id).order("start_seconds"),
-    supabase.from("materials").select("id, title, description, url").eq("lesson_id", l.id).order("position"),
-    supabase.from("notes").select("id, body, created_at").eq("lesson_id", l.id).eq("user_id", user.id).order("created_at", { ascending: false }),
-    supabase.from("lesson_questions").select("id, body, answer, created_at, answered_at, answer_seen_at").eq("lesson_id", l.id).eq("user_id", user.id).order("created_at", { ascending: false }),
-    supabase.from("quiz_questions").select("module_id").in("module_id", t.modules.map((m) => m.id)),
-    supabase.from("profiles").update({ last_track_id: t.id, last_lesson_id: l.id }).eq("id", user.id),
-    supabase.from("lessons").select("key_points").eq("id", l.id).maybeSingle(),
-    supabase.from("video_progress").select("seconds").eq("user_id", user.id).eq("lesson_id", l.id).maybeSingle(),
-    supabase.from("lesson_texts").select("body, published").eq("lesson_id", l.id).maybeSingle(),
+  // Pontos-chave, texto e posição do vídeo: antes das migrações 0007/0008 dão erro e são ignorados.
+  // Só o admin (pré-visualização) enxerga aula e texto em rascunho; para o aluno cada leitura filtra published.
+  const [page] = await Promise.all([
+    getLessonPage({ userId: user.id, lessonId: l.id, moduleIds: t.modules.map((m) => m.id), preview: profile.is_admin }),
+    recordLastLesson(user.id, t.id, l.id),
   ]);
-  const article = tx.data?.body?.trim() ? { md: tx.data.body as string, draft: !tx.data.published } : null;
-  const keyPoints = (kp.data?.key_points as string[] | undefined) ?? [];
-  const serverAt = typeof vp.data?.seconds === "number" ? vp.data.seconds : null;
-  const quizModules = new Set((quizRows ?? []).map((r) => r.module_id as string));
-
+  const { chapters, materials, notes, questions, quizModuleIds: quizModules, keyPoints, serverAt, article } = page;
 
   return (
     <div className="player-grid">
@@ -60,10 +48,10 @@ export default async function Aula({ params, searchParams }: P) {
         hasNext={!!next}
         done={done.has(l.id)}
         others={others.map((o) => ({ id: o.id, name: o.name }))}
-        chapters={chapters ?? []}
-        materials={materials ?? []}
-        notes={notes ?? []}
-        questions={questions ?? []}
+        chapters={chapters}
+        materials={materials}
+        notes={notes}
+        questions={questions}
         keyPoints={keyPoints}
         serverAt={serverAt}
         article={article}

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getAdminLessons, getQuestions } from "@/lib/admin/queries";
+import { getAdminLessons, getAdminOrNotFound, getQuestions } from "@/lib/db/admin";
 import { AnswerForm } from "../_components/answer-form";
 
 export const metadata: Metadata = { title: "Dúvidas" };
@@ -10,7 +10,8 @@ const fmt = new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "s
 export default async function DuvidasPage({ searchParams }: { searchParams: Promise<{ filtro?: string }> }) {
   const { filtro } = await searchParams;
   const answered = filtro === "respondidas";
-  const [list, lessons] = await Promise.all([getQuestions(answered ? "answered" : "pending"), getAdminLessons()]);
+  const admin = await getAdminOrNotFound();
+  const [list, lessons] = await Promise.all([getQuestions(admin, answered ? "answered" : "pending"), getAdminLessons(admin)]);
   const studentLink = new Map(lessons.map((l) => [l.id, l.links[0] ? `/aula/${l.links[0].trackId}/${l.id}` : null]));
 
   return (

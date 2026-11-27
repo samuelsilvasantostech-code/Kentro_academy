@@ -1,6 +1,5 @@
-import { type EmailOtpType } from "@supabase/supabase-js";
 import { NextResponse, type NextRequest } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { confirmEmailLink } from "@/lib/db/auth";
 
 /** Só caminhos do próprio site: começa com "/", não com "//", sem "\" nem caracteres de controle. */
 function safeNext(raw: string | null, origin: string) {
@@ -16,19 +15,12 @@ function safeNext(raw: string | null, origin: string) {
 // Link do e-mail (confirmação de cadastro e redefinição de senha): troca o código ou o token por sessão.
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = request.nextUrl;
-  const token_hash = searchParams.get("token_hash");
-  const type = searchParams.get("type") as EmailOtpType | null;
-  const code = searchParams.get("code");
+  const type = searchParams.get("type");
   const next = safeNext(searchParams.get("next"), origin);
-  const supabase = await createClient();
 
-  const { error } = token_hash && type
-    ? await supabase.auth.verifyOtp({ type, token_hash })
-    : code
-      ? await supabase.auth.exchangeCodeForSession(code)
-      : { error: new Error("link sem token") };
+  const ok = await confirmEmailLink({ tokenHash: searchParams.get("token_hash"), type, code: searchParams.get("code") });
 
-  if (error) return NextResponse.redirect(new URL("/entrar?erro=link", origin));
+  if (!ok) return NextResponse.redirect(new URL("/entrar?erro=link", origin));
   // Recuperação de senha sempre cai na tela de nova senha, mesmo sem o parâmetro next.
   return NextResponse.redirect(new URL(type === "recovery" ? "/redefinir-senha" : (next ?? "/comecar"), origin));
 }

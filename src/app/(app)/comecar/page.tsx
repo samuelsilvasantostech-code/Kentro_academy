@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { getCatalog, getMe, progress } from "@/lib/catalog";
+import { progress } from "@/lib/catalog";
+import { getCatalog, getMe } from "@/lib/db/aluno";
 import { Onboarding } from "./onboarding";
 
 export const metadata: Metadata = { title: "Começar" };

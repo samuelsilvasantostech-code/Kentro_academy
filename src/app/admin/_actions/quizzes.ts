@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireAdmin } from "@/lib/admin/require-admin";
+import { requireAdmin, saveQuiz as dbSaveQuiz } from "@/lib/db/admin";
 import { logDbError } from "@/lib/admin/db-error";
 import { GENERIC_ERROR, done, fail, fields, type FormState } from "@/lib/admin/form-state";
 import { parseCorrectIndex, parseLessonId, parseQuizOptions, parseUuid, text, type QuizQuestion } from "@/lib/admin/validate";
@@ -17,7 +17,7 @@ const MAX_QUESTIONS = 50;
  * Erros por campo usam as mesmas chaves (ex.: q2_options).
  */
 export async function saveQuiz(_prev: FormState, form: FormData): Promise<FormState> {
-  const { supabase } = await requireAdmin();
+  const admin = await requireAdmin();
   const f = fields();
   const moduleId = f.get("module_id", parseUuid(form.get("module_id")));
   const questions: QuizQuestion[] = [];
@@ -38,7 +38,7 @@ export async function saveQuiz(_prev: FormState, form: FormData): Promise<FormSt
   // Lista vazia apaga o quiz: só com confirmação explícita (campo confirm_clear=1).
   if (!questions.length && String(form.get("confirm_clear") ?? "") !== "1") return fail("Adicione pelo menos uma pergunta.", form);
 
-  const { error } = await supabase.rpc("admin_save_quiz", { p_module: moduleId, p_questions: questions });
+  const error = await dbSaveQuiz(admin, moduleId!, questions);
   if (error) {
     logDbError("saveQuiz", error);
     return fail(error.code === "P0002" ? "Módulo não encontrado." : GENERIC_ERROR, form);

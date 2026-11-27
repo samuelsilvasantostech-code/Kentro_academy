@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getCatalog, getMe } from "@/lib/catalog";
-import { createClient } from "@/lib/supabase/server";
+import { getCatalog, getMe, getQuizForStudent } from "@/lib/db/aluno";
 import { Ico } from "@/components/ico";
 import { QuizForm } from "./quiz-form";
 
@@ -15,15 +14,9 @@ export default async function Quiz({ params }: { params: Promise<{ trilha: strin
   const m = t?.modules[mi];
   if (!t || !m) notFound();
 
-  const supabase = await createClient();
   // O gabarito não vai para o navegador: a correção é feita no servidor (submitQuiz).
-  const [{ data: questions }, rv] = await Promise.all([
-    supabase.from("quiz_questions").select("question, options").eq("module_id", m.id).order("position"),
-    // Aula indicada para rever cada pergunta (migração 0007; antes dela o erro é ignorado). Não revela o gabarito.
-    supabase.from("quiz_questions").select("lesson_id").eq("module_id", m.id).order("position"),
-  ]);
-  if (!questions?.length) notFound();
-  const review = rv.data?.length === questions.length ? rv.data.map((r) => (r.lesson_id as string | null) ?? null) : [];
+  const { questions, review } = await getQuizForStudent(m.id);
+  if (!questions.length) notFound();
 
   return (
     <div className="qz">

@@ -3,7 +3,7 @@
 import { useActionState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { saveTrack } from "../_actions/tracks";
-import type { AdminTrack } from "@/lib/admin/queries";
+import type { AdminTrack } from "@/lib/db/admin";
 import { Field } from "./field";
 import { FormMessage } from "./form-message";
 import { SubmitButton } from "./submit-button";

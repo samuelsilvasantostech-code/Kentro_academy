@@ -1,15 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { getSessionUser } from "@/lib/db/auth";
 import { NewPasswordForm } from "./new-password-form";
 import { Logo } from "@/components/logo";
 
 export const metadata: Metadata = { title: "Nova senha" };
 
 export default async function RedefinirSenhaPage() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getSessionUser();
   if (!user) redirect("/entrar");
   return (
     <div className="auth solo">

@@ -1,9 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getCatalog, getMe, nextOf, progress } from "@/lib/catalog";
-import { createClient } from "@/lib/supabase/server";
+import { nextOf, progress } from "@/lib/catalog";
+import { getCatalog, getMe, getQuizCounts, getTrackStatuses } from "@/lib/db/aluno";
 import { duration, minutes } from "@/lib/format";
-import { getTrackStatuses } from "../../certificado/completion";
 import { nextTrack } from "@/lib/next-track";
 import { Ico } from "@/components/ico";
 import { Cover } from "@/components/cover";
@@ -31,13 +30,7 @@ export default async function Trilha({ params, searchParams }: { params: Promise
   const p = progress(t, done);
   const nx = p.count ? nextOf(t, done) : null;
 
-  const supabase = await createClient();
-  const [{ data: qrows }, statuses] = await Promise.all([
-    supabase.from("quiz_questions").select("module_id").in("module_id", t.modules.map((m) => m.id)),
-    statusesP,
-  ]);
-  const quizCount = new Map<string, number>();
-  (qrows ?? []).forEach((r) => quizCount.set(r.module_id, (quizCount.get(r.module_id) ?? 0) + 1));
+  const [quizCount, statuses] = await Promise.all([getQuizCounts(t.modules.map((m) => m.id)), statusesP]);
   const quizzes = t.modules.filter((m) => quizCount.get(m.id));
   const st = statuses.get(t.id);
   const earned = !!st?.certified;

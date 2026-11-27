@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getAdminQuiz, getAdminTracks } from "@/lib/admin/queries";
+import { getAdminOrNotFound, getAdminQuiz, getAdminTracks } from "@/lib/db/admin";
 import { hasLearningFeatures } from "@/lib/features";
 import { QuizEditor } from "../../_components/quiz-editor";
 import { BackLink } from "../../_components/back-link";
@@ -9,11 +9,12 @@ export const metadata: Metadata = { title: "Editar quiz" };
 
 export default async function EditarQuiz({ params }: { params: Promise<{ modulo: string }> }) {
   const { modulo } = await params;
-  const tracks = await getAdminTracks();
+  const admin = await getAdminOrNotFound();
+  const tracks = await getAdminTracks(admin);
   const track = tracks.find((t) => t.modules.some((m) => m.id === modulo));
   const mod = track?.modules.find((m) => m.id === modulo);
   if (!track || !mod) notFound();
-  const [quiz, review] = await Promise.all([getAdminQuiz(mod.id), hasLearningFeatures()]);
+  const [quiz, review] = await Promise.all([getAdminQuiz(admin, mod.id), hasLearningFeatures()]);
 
   return (
     <>

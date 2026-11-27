@@ -1,11 +1,11 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getAdminTracks } from "@/lib/admin/queries";
+import { getAdminOrNotFound, getAdminTracks } from "@/lib/db/admin";
 
 export const metadata: Metadata = { title: "Quizzes" };
 
 export default async function QuizzesPage() {
-  const tracks = await getAdminTracks();
+  const tracks = await getAdminTracks(await getAdminOrNotFound());
   return (
     <>
       <div className="adm-head"><div><h1>Quizzes</h1><p className="muted">Um quiz por módulo. Escolha um módulo para editar as perguntas.</p></div></div>
