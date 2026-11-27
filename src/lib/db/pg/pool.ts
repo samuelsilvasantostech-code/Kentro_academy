@@ -1,11 +1,12 @@
 import { Pool } from "pg";
 
 /**
- * Conexão com o Postgres do Doca. DATABASE_URL (ou POSTGRES_URL, se o Doca criar sozinho).
+ * Conexão com o Postgres do Doca: só DATABASE_URL.
+ * NÃO usar POSTGRES_URL: a integração Supabase↔Vercel cria essa variável apontando para o banco do Supabase.
  * Sem a variável, o app segue no Supabase como hoje (a troca é por DATA_BACKEND na etapa 3).
  */
 export function databaseUrl(): string | undefined {
-  return process.env.DATABASE_URL || process.env.POSTGRES_URL || undefined;
+  return process.env.DATABASE_URL || undefined;
 }
 
 // Um pool por processo, mesmo com recarga de módulos no dev.

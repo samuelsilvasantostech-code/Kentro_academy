@@ -144,3 +144,14 @@ test("respostas vistas: só as do próprio aluno", async () => {
   const rows = await q(`select user_id, answer_seen_at is not null seen from lesson_questions order by body`);
   assert.deepEqual(rows.map((r) => r.seen), [true, false]);
 });
+
+test("trava: não aplica migrações num banco do Supabase (com auth.users)", async () => {
+  const supa = new PGlite({ extensions: { unaccent, pgcrypto } });
+  await supa.exec("create schema auth; create table auth.users (id uuid primary key)");
+  await assert.rejects(
+    runMigrations({ exec: (s) => supa.exec(s), query: (s, p) => supa.query(s, p) }, dir, () => {}),
+    /Supabase/,
+  );
+  const { rows } = await supa.query("select to_regclass('public.users') is null as limpo, to_regclass('public.schema_migrations') is null as sm");
+  assert.deepEqual(rows[0], { limpo: true, sm: true });
+});

@@ -127,7 +127,7 @@ async function check(src, dst) {
 
 async function main() {
   const src = pool(process.env.SUPABASE_DB_URL, "SUPABASE_DB_URL");
-  const dst = pool(process.env.DATABASE_URL || process.env.POSTGRES_URL, "DATABASE_URL");
+  const dst = pool(process.env.DATABASE_URL, "DATABASE_URL");
   try {
     const c = await dst.connect();
     try {

@@ -20,6 +20,11 @@ export function migrationsDir(): string {
 
 export async function runMigrations(db: MigrationDb, dir = migrationsDir(), log: (msg: string) => void = console.log): Promise<string[]> {
   const applied: string[] = [];
+  // Trava de segurança: nunca criar estas tabelas num banco do Supabase (que tem o esquema auth).
+  const { rows: guard } = await db.query("select to_regclass('auth.users') is not null as supabase");
+  if (guard[0]?.supabase) {
+    throw new Error("este banco é do Supabase (tem auth.users): migrações do Doca não são aplicadas aqui");
+  }
   await db.query("select pg_advisory_lock($1)", [LOCK]);
   try {
     await db.exec("create table if not exists schema_migrations (name text primary key, applied_at timestamptz not null default now())");

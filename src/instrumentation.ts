@@ -2,6 +2,8 @@
 // Falha aqui não impede o site de subir: o erro vai para o log e o /health mostra o banco com problema.
 export async function register() {
   if (process.env.NEXT_RUNTIME !== "nodejs") return;
+  // Na Vercel o app não usa este banco: migrações são só do Doca.
+  if (process.env.VERCEL) return;
   const { getPool } = await import("./lib/db/pg/pool");
   const pool = getPool();
   if (!pool) return;
